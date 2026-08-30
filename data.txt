@@ -1,0 +1,5 @@
+ankii4899_db_user
+lTv3WOwpcVduhXBi
+
+
+mongodb+srv://ankii4899_db_user:lTv3WOwpcVduhXBi@ecommerce.xmciw6u.mongodb.net/
