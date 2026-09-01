@@ -4,36 +4,202 @@ import jwt from "jsonwebtoken";
 import config from "../config/config.js";
 
 
-export async function registerController(req,res) {
-    const {username,email,password} = req.body;
+export async function registerController(req, res) {
+    const { username, email, password } = req.body;
 
     const isAlreadyRegistered = await userModel.findOne({
-        $or:[{username},{email}]
+        $or: [{ username }, { email }]
     })
 
-    if (isAlreadyRegistered){
-        res.status(409).json({
-            message:"username or email already registered",
+    if (isAlreadyRegistered) {
+        return res.status(409).json({
+            message: "username or email already registered",
         })
     }
     const salt = 10;
-    const hashedPassword = await bcrypt.hash(password,salt);
+    const hashedPassword = await bcrypt.hash(password, salt);
     const user = await userModel.create({
-        username,email,password:hashedPassword
+        username, email, password: hashedPassword
+    })
+    const refreshToken = jwt.sign({
+        id: user._id
+    }, config.JWT_SECRET, {
+        expiresIn: "7d",
+    })
+    const accessToken = jwt.sign({
+        id: user._id
+    }, config.JWT_SECRET, {
+        expiresIn: "15m",
     })
 
+    res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+        maxAge: 15 * 60 * 1000
+    });
 
-    const token = jwt.sign({
-        id:user._id
-    },config.JWT_SECRET,{
-        expiresIn:"1d",
+    res.cookie("refreshToken", refreshToken, {
+        //means client side js can not access the data stored in cookie
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000
     })
+
 
     res.status(201).json({
-        message:"user registered successfully",
-        user:{
-            username:user.username,
-            email:user.email,
-        },token
+        message: "user registered successfully",
+        user: {
+            username: user.username,
+            email: user.email,
+        }, token: accessToken
     })
+}
+
+
+export async function loginController(req, res) {
+    const { email, password } = req.body;
+
+    const user = await userModel.findOne({ email });
+
+    if (!user) {
+        return res.status(401).json({
+            message: "Invalid email or password",
+        });
+    }
+
+    const correctPassword = await bcrypt.compare(password, user.password);
+
+    if (!correctPassword) {
+        return res.status(401).json({
+            message: "Invalid email or password",
+        });
+    }
+
+
+    const refreshToken = jwt.sign({
+        id: user._id
+    }, config.JWT_SECRET, {
+        expiresIn: "7d",
+    })
+
+    const accessToken = jwt.sign({
+        id: user._id
+    }, config.JWT_SECRET, {
+        expiresIn: "15m",
+    })
+
+
+    res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+        maxAge: 15 * 60 * 1000
+    });
+
+
+    res.cookie("refreshToken", refreshToken, {
+        //means client side js can not access the data stored in cookie. only the server can receive and process it during HTTP requests.
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000
+    })
+
+    res.status(200).json({
+        message: "user logged in successfully",
+        user: {
+            username: user.username,
+            email: user.email,
+        },
+        // token: accessToken
+    });
+}
+
+export async function getMe(req, res) {
+    // const token = req.cookies.accessToken;
+    // if (!token) {
+    //     return res.status(401).json({
+    //         message: "token not found",
+    //     })
+    // }
+
+    // // user data stored in decoded from token that is stored during token generation
+    // const decoded = jwt.verify(token, config.JWT_SECRET)
+
+    // console.log(decoded);
+
+
+    const user = await userModel.findById(req.user.id);
+    if (!user) {
+        return res.status(401).json({
+            message: "user not found",
+        })
+    }
+
+    res.status(200).json({
+        message: "user fetched successfully",
+        user: {
+            username: user.username,
+            email: user.email
+        }
+    })
+
+}
+
+export async function refreshTokenController(req, res) {
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+        return res.status(401).json({
+            message: "Refresh token not found"
+        });
+    }
+    const decoded = jwt.verify(refreshToken, config.JWT_SECRET);
+
+    const accessToken = jwt.sign({
+        id: decoded.id
+    }, config.JWT_SECRET, {
+        expiresIn: "15m",
+    })
+
+
+    const newRefreshToken = jwt.sign({
+        id: decoded.id
+    }, config.JWT_SECRET, {
+        expiresIn: "7d",
+    })
+    //Storing the new refresh token in the cookie to add an extra layer of security
+    res.cookie("refreshToken", newRefreshToken, {
+        //means client side js can not access the data stored in cookie
+        httpOnly: true,
+        // browser will send the cookie only over HTTPS.
+        secure: true,
+        // sameSite controls whether the browser sends your cookie when the request comes from another website.     
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000
+    })
+    return res.status(200).json({
+        message: "access token refreshed successfully",
+        token: accessToken
+    });
+}
+
+
+export async function logoutController(req, res) {
+    res.clearCookie("accessToken", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+    });
+
+    res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+    });
+
+    return res.status(200).json({
+        message: "user logged out successfully",
+    });
 }
