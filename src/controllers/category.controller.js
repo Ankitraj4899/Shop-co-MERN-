@@ -1,71 +1,107 @@
 import categoryModel from "../models/category.model.js";
+
 export async function getCategoriesController(req, res) {
-    const categories = await categoryModel.find();
-    return res.status(200).json({
-        message: "categories fetched successfully",
-        categories,
-    });
+    try {
+        const categories = await categoryModel.find();
+        return res.status(200).json({
+            message: "categories fetched successfully",
+            categories,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Something went wrong",
+            error: error.message
+        });
+    }
 }
 
 export async function getCategoryController(req, res) {
-    const { id } = req.params;
-    const category = await categoryModel.findById(id);
-    if (!category) {
-        return res.status(404).json({
-            message: "category not found",
+    try {
+        const { id } = req.params;
+        const category = await categoryModel.findById(id);
+        if (!category) {
+            return res.status(404).json({
+                message: "category not found",
+            });
+        }
+        return res.status(200).json({
+            message: "category fetched successfully",
+            category,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Something went wrong",
+            error: error.message
         });
     }
-    return res.status(200).json({
-        message: "category fetched successfully",
-        category,
-    });
 }
 
 export async function createCategoryController(req, res) {
-    const { name, description } = req.body;
-    const existingCategory = await categoryModel.findOne({ name });
-    if (existingCategory) {
-        return res.status(409).json({
-            message: "category already exists",
+    try {
+        const { name, description } = req.body;
+        const existingCategory = await categoryModel.findOne({ name });
+        if (existingCategory) {
+            return res.status(409).json({
+                message: "category already exists",
+            });
+        }
+        const category = await categoryModel.create({ name, description });
+        return res.status(201).json({
+            message: "category created successfully",
+            category,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Something went wrong",
+            error: error.message
         });
     }
-    const category = await categoryModel.create({ name, description });
-    return res.status(201).json({
-        message: "category created successfully",
-        category,
-    });
 }
 
 
 export async function updateCategoryController(req, res) {
-    const { id } = req.params;
-    const { name, description } = req.body;
-    const category = await categoryModel.findByIdAndUpdate(id, { name, description, },{
+    try {
+        const { id } = req.params;
+        const { name, description } = req.body;
+        const category = await categoryModel.findByIdAndUpdate(id, { name, description, }, {
             new: true,
             runValidators: true,
         }
-    );
-    if (!category) {
-        return res.status(404).json({
-            message: "category not found",
+        );
+        if (!category) {
+            return res.status(404).json({
+                message: "category not found",
+            });
+        }
+        return res.status(200).json({
+            message: "category updated successfully",
+            category,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Something went wrong",
+            error: error.message
         });
     }
-    return res.status(200).json({
-        message: "category updated successfully",
-        category,
-    });
 }
 
 
 export async function deleteCategoryController(req, res) {
-    const { id } = req.params;
-    const category = await categoryModel.findByIdAndDelete(id);
-    if (!category) {
-        return res.status(404).json({
-            message: "category not found",
+    try {
+        const { id } = req.params;
+        const category = await categoryModel.findByIdAndDelete(id);
+        if (!category) {
+            return res.status(404).json({
+                message: "category not found",
+            });
+        }
+        return res.status(200).json({
+            message: "category deleted successfully",
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Something went wrong",
+            error: error.message
         });
     }
-    return res.status(200).json({
-        message: "category deleted successfully",
-    });
 }

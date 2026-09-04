@@ -2,6 +2,7 @@ import { Router } from "express";
 import { getProductsController, getProductController, createProductController, updateProductController, deleteProductController } from "../controllers/product.controller.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 import { adminMiddleware } from "../middlewares/admin.middleware.js";
+import upload from "../middlewares/upload.middleware.js";
 const productRouter = Router();
 
 // Get all products
@@ -11,10 +12,16 @@ productRouter.get("/", getProductsController);
 productRouter.get("/:id", getProductController);
 
 // Create new product
-productRouter.post("/", authMiddleware, adminMiddleware, createProductController);
+productRouter.post("/", authMiddleware, adminMiddleware, upload.fields([
+    { name: "thumbnailImage", maxCount: 1 },
+    { name: "galleryImages", maxCount: 5 }
+]), createProductController);
 
 // Update a product
-productRouter.put("/:id", authMiddleware, adminMiddleware, updateProductController);
+productRouter.put("/:id", authMiddleware, adminMiddleware,upload.fields([
+    { name: "thumbnailImage", maxCount: 1 },
+    { name: "galleryImages", maxCount: 5 }
+]), updateProductController);
 
 // Delete a product
 productRouter.delete("/:id", authMiddleware, adminMiddleware, deleteProductController);
