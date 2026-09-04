@@ -3,8 +3,8 @@ import productModel from "../models/product.model.js";
 
 export async function getAllOrdersController(req, res) {
     try {
-        const page = parseInt(req.query.page);
-        const limit = parseInt(req.query.limit);
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
         const results = {};
@@ -21,7 +21,7 @@ export async function getAllOrdersController(req, res) {
                 limit: limit
             };
         }
-        results.results = await orderModel.find().limit(limit).skip(startIndex);
+        results.results = await orderModel.find().populate("user", "name email").populate("items.product", "name image").limit(limit).skip(startIndex);
         return res.status(200).json({
             message: "orders fetched successfully",
             results
@@ -38,14 +38,15 @@ export async function getAllOrdersController(req, res) {
 export async function createOrderController(req, res) {
     try {
         const { items, shippingAddress } = req.body;
+
         if (!items || items.length === 0) {
             return res.status(400).json({
-                message: "order items are required"
+                message: "Order items are required"
             });
         }
         if (!shippingAddress) {
             return res.status(400).json({
-                message: "shipping address is required"
+                message: "Shipping address is required"
             });
         }
         const orderItems = [];
@@ -53,13 +54,13 @@ export async function createOrderController(req, res) {
         for (const item of items) {
             if (!item.product || !item.quantity || item.quantity < 1) {
                 return res.status(400).json({
-                    message: "product and valid quantity are required"
+                    message: "Invalid product or quantity"
                 });
             }
             const product = await productModel.findById(item.product);
             if (!product) {
                 return res.status(404).json({
-                    message: "product not found"
+                    message: "Product not found"
                 });
             }
             if (product.status !== "active") {
@@ -69,36 +70,33 @@ export async function createOrderController(req, res) {
             }
             if (product.quantity < item.quantity) {
                 return res.status(400).json({
-                    message: `not enough stock for ${product.name}`
+                    message: `Only ${product.quantity} units of ${product.name} are available`
                 });
             }
+            const itemSubtotal = product.price * item.quantity;
             orderItems.push({
                 product: product._id,
                 name: product.name,
                 price: product.price,
                 quantity: item.quantity
             });
-            subtotal += product.price * item.quantity;
+            subtotal += itemSubtotal;
         }
         const discount = 0;
         const totalPrice = subtotal - discount;
-        const order = await orderModel.create({
-            user: req.user.id,
-            items: orderItems,
-            subtotal,
-            discount,
-            totalPrice,
-            shippingAddress
-        });
+        const order = await orderModel.create({user: req.user.id,items: orderItems,subtotal,discount,totalPrice,shippingAddress });
         for (const item of items) {
-            await productModel.findByIdAndUpdate(item.product, {
-                $inc: {
-                    quantity: -item.quantity,
+            await productModel.findByIdAndUpdate(
+                item.product,
+                {
+                    $inc: {
+                        quantity: -item.quantity
+                    }
                 }
-            });
+            );
         }
         return res.status(201).json({
-            message: "order created successfully",
+            message: "Order created successfully",
             order
         });
     } catch (error) {
@@ -108,6 +106,8 @@ export async function createOrderController(req, res) {
         });
     }
 }
+
+
 
 export async function getMyOrdersController(req, res) {
     try {

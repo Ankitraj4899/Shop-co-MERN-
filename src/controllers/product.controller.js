@@ -16,7 +16,6 @@ function uploadToCloudinary(file) {
                 }
             }
         );
-
         stream.end(file.buffer);
     });
 }
@@ -78,7 +77,7 @@ export async function getProductController(req, res) {
 
 export async function createProductController(req, res) {
     try {
-        const { name, description, price, category, variants, status } = req.body;
+        const { name, description, price, category, quantity, variants, status } = req.body;
 
         const isCategory = await categoryModel.findById(category);
 
@@ -88,7 +87,7 @@ export async function createProductController(req, res) {
             });
         }
 
-        const parsedVariants = JSON.parse(variants);
+        const parsedVariants = variants ? JSON.parse(variants) : [];
 
         const thumbnailImage = req.files?.thumbnailImage?.[0];
         const galleryImages = req.files?.galleryImages || [];
@@ -105,7 +104,7 @@ export async function createProductController(req, res) {
             galleryImages.map((file) => uploadToCloudinary(file))
         );
 
-        const product = await productModel.create({ name, description, price, thumbnailImage: thumbnailUrl, galleryImages: galleryUrls, category, variants: parsedVariants, status });
+        const product = await productModel.create({ name, description, price, thumbnailImage: thumbnailUrl, galleryImages: galleryUrls, category, quantity, variants: parsedVariants, status });
 
         return res.status(201).json({
             message: "Product created successfully",
@@ -151,7 +150,7 @@ export async function createProductController(req, res) {
 export async function updateProductController(req, res) {
     try {
         const { id } = req.params;
-        const { name, description, price, category, variants, status } = req.body;
+        const { name, description, price, category, quantity, variants, status } = req.body;
 
         const product = await productModel.findById(id);
 
@@ -173,12 +172,24 @@ export async function updateProductController(req, res) {
 
         const updateData = {};
 
-        if (name !== undefined) updateData.name = name;
-        if (description !== undefined) updateData.description = description;
-        if (price !== undefined) updateData.price = price;
-        if (category !== undefined) updateData.category = category;
-        if (status !== undefined) updateData.status = status;
-
+        if (name !== undefined) {
+            updateData.name = name
+        };
+        if (description !== undefined) {
+            updateData.description = description;
+        }
+        if (price !== undefined) {
+            updateData.price = price;
+        }
+        if (category !== undefined) {
+            updateData.category = category;
+        }
+        if (status !== undefined) {
+            updateData.status = status;
+        }
+        if (quantity !== undefined) {
+            updateData.quantity = quantity;
+        }
         if (variants !== undefined) {
             updateData.variants = JSON.parse(variants);
         }

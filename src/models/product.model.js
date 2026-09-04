@@ -31,7 +31,12 @@ const productSchema = new mongoose.Schema({
         ref: "Category",
         required: true,
     },
-
+    quantity: {
+        type: Number,
+        required: true,
+        min: 0,
+        default: 0
+    },
     variants: [
         {
             size: {
