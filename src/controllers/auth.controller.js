@@ -5,8 +5,7 @@ import config from "../config/config.js";
 
 
 export async function registerController(req, res) {
-    const { username, email, password } = req.body;
-
+    const { username, email, password, role } = req.body;
     const isAlreadyRegistered = await userModel.findOne({
         $or: [{ username }, { email }]
     })
@@ -19,7 +18,7 @@ export async function registerController(req, res) {
     const salt = 10;
     const hashedPassword = await bcrypt.hash(password, salt);
     const user = await userModel.create({
-        username, email, password: hashedPassword
+        username, email, password: hashedPassword, role
     })
     const refreshToken = jwt.sign({
         id: user._id
@@ -34,7 +33,7 @@ export async function registerController(req, res) {
 
     res.cookie("accessToken", accessToken, {
         httpOnly: true,
-        secure: true,
+        secure: false,
         sameSite: "strict",
         maxAge: 15 * 60 * 1000
     });
@@ -42,7 +41,7 @@ export async function registerController(req, res) {
     res.cookie("refreshToken", refreshToken, {
         //means client side js can not access the data stored in cookie
         httpOnly: true,
-        secure: true,
+        secure: false,
         sameSite: "strict",
         maxAge: 7 * 24 * 60 * 60 * 1000
     })
@@ -53,6 +52,7 @@ export async function registerController(req, res) {
         user: {
             username: user.username,
             email: user.email,
+            role: user.role
         }, token: accessToken
     })
 }
@@ -113,7 +113,7 @@ export async function loginController(req, res) {
             username: user.username,
             email: user.email,
         },
-        // token: accessToken
+        token: accessToken
     });
 }
 
@@ -174,7 +174,7 @@ export async function refreshTokenController(req, res) {
         //means client side js can not access the data stored in cookie
         httpOnly: true,
         // browser will send the cookie only over HTTPS.
-        secure: true,
+        secure: false,
         // sameSite controls whether the browser sends your cookie when the request comes from another website.     
         sameSite: "strict",
         maxAge: 7 * 24 * 60 * 60 * 1000
@@ -189,13 +189,13 @@ export async function refreshTokenController(req, res) {
 export async function logoutController(req, res) {
     res.clearCookie("accessToken", {
         httpOnly: true,
-        secure: true,
+        secure: false,
         sameSite: "strict",
     });
 
     res.clearCookie("refreshToken", {
         httpOnly: true,
-        secure: true,
+        secure: false,
         sameSite: "strict",
     });
 

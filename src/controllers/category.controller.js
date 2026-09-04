@@ -1,5 +1,5 @@
 import categoryModel from "../models/category.model.js";
-export async function getCategories(req, res) {
+export async function getCategoriesController(req, res) {
     const categories = await categoryModel.find();
     return res.status(200).json({
         message: "categories fetched successfully",
@@ -7,7 +7,7 @@ export async function getCategories(req, res) {
     });
 }
 
-export async function getCategory(req, res) {
+export async function getCategoryController(req, res) {
     const { id } = req.params;
     const category = await categoryModel.findById(id);
     if (!category) {
@@ -21,7 +21,7 @@ export async function getCategory(req, res) {
     });
 }
 
-export async function createCategory(req, res) {
+export async function createCategoryController(req, res) {
     const { name, description } = req.body;
     const existingCategory = await categoryModel.findOne({ name });
     if (existingCategory) {
@@ -37,15 +37,10 @@ export async function createCategory(req, res) {
 }
 
 
-export async function updateCategory(req, res) {
+export async function updateCategoryController(req, res) {
     const { id } = req.params;
     const { name, description } = req.body;
-    const category = await categoryModel.findByIdAndUpdate(id,
-        {
-            name,
-            description,
-        },
-        {
+    const category = await categoryModel.findByIdAndUpdate(id, { name, description, },{
             new: true,
             runValidators: true,
         }
@@ -62,7 +57,7 @@ export async function updateCategory(req, res) {
 }
 
 
-export async function deleteCategory(req, res) {
+export async function deleteCategoryController(req, res) {
     const { id } = req.params;
     const category = await categoryModel.findByIdAndDelete(id);
     if (!category) {
