@@ -21,7 +21,7 @@ export async function getAllOrdersController(req, res) {
                 limit: limit
             };
         }
-        results.results = await orderModel.find().populate("user", "name email").populate("items.product", "name image").limit(limit).skip(startIndex);
+        results.results = await orderModel.find().populate("user", "username email").populate("items.product", "name thumbnailImage").limit(limit).skip(startIndex);
         return res.status(200).json({
             message: "orders fetched successfully",
             results
@@ -33,7 +33,6 @@ export async function getAllOrdersController(req, res) {
         });
     }
 }
-
 
 export async function createOrderController(req, res) {
     try {
@@ -84,17 +83,29 @@ export async function createOrderController(req, res) {
         }
         const discount = 0;
         const totalPrice = subtotal - discount;
-        const order = await orderModel.create({user: req.user.id,items: orderItems,subtotal,discount,totalPrice,shippingAddress });
         for (const item of items) {
-            await productModel.findByIdAndUpdate(
-                item.product,
+            const updatedProduct = await productModel.findOneAndUpdate(
+                {
+                    _id: item.product,
+                    status: "active",
+                    quantity: { $gte: item.quantity }
+                },
                 {
                     $inc: {
                         quantity: -item.quantity
                     }
+                },
+                {
+                    new: true
                 }
             );
+            if (!updatedProduct) {
+                return res.status(400).json({
+                    message: "Product is out of stock or not enough stock available"
+                });
+            }
         }
+        const order = await orderModel.create({ user: req.user.id, items: orderItems, subtotal, discount, totalPrice, shippingAddress });
         return res.status(201).json({
             message: "Order created successfully",
             order
