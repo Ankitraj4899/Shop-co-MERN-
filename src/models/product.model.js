@@ -4,28 +4,23 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-
     description: {
         type: String,
         required: true,
     },
-
     price: {
         type: Number,
         required: true,
         min: 0,
     },
-
     thumbnailImage: {
         type: String,
         required: true,
     },
-
     galleryImages: {
         type: [String],
         required: true,
     },
-
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Category",
@@ -51,13 +46,15 @@ const productSchema = new mongoose.Schema({
             },
         },
     ],
-
     status: {
         type: String,
         enum: ["active", "inactive"],
         default: "active",
     },
-}, { timestamps: true });
+},
+{ 
+    timestamps: true
+});
 
 const productModel = mongoose.model("Product", productSchema);
 
