@@ -8,7 +8,7 @@ import productRouter from "./routes/product.routes.js";
 const app = express();
 app.use(cors({
     origin: 'http://localhost:5173',
-    credentials: true                // HTTP-only cookies
+    credentials: true  //allow the browser to send and receive credentials such as cookies when making requests between your React frontend and Express backend.
 }));
 app.use(cookieParser());
 app.use(express.json());
