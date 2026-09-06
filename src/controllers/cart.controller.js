@@ -1,5 +1,6 @@
 import cartModel from "../models/cart.model.js";
 import productModel from "../models/product.model.js";
+// Get cart
 export async function getCartController(req, res) {
     try {
         const result = await cartModel.findOne({ user: req.user.id });
@@ -20,6 +21,7 @@ export async function getCartController(req, res) {
     }
 }
 
+// Clear the cart
 export async function clearCartController(req, res) {
     try {
         const deleted = await cartModel.findOneAndUpdate({ user: req.user.id }, { $set: { items: [] } }, { new: true });
@@ -40,7 +42,7 @@ export async function clearCartController(req, res) {
     }
 }
 
-
+// Update the cart
 export async function updateCartController(req, res) {
     try {
         const { id } = req.params;
@@ -94,7 +96,7 @@ export async function updateCartController(req, res) {
     }
 }
 
-
+// Remove item the cart
 export async function removeFromCartController(req, res) {
     try {
         const { id } = req.params;
@@ -128,6 +130,7 @@ export async function removeFromCartController(req, res) {
     }
 }
 
+// Add to the cart
 export async function addToCartController(req, res) {
     try {
         const { items } = req.body;

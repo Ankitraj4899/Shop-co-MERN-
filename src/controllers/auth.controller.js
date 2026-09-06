@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import config from "../config/config.js";
 
-
+// Register a new user
 export async function registerController(req, res) {
     try {
         const { username, email, password, role } = req.body;
@@ -66,7 +66,7 @@ export async function registerController(req, res) {
     }
 }
 
-
+// Login an existing user
 export async function loginController(req, res) {
     try {
         const { email, password } = req.body;
@@ -135,6 +135,7 @@ export async function loginController(req, res) {
     }
 }
 
+// Get the logged in user
 export async function getMe(req, res) {
     try {
         // const token = req.cookies.accessToken;
@@ -173,6 +174,8 @@ export async function getMe(req, res) {
 
 }
 
+
+// Generating a new Refreshing token
 export async function refreshTokenController(req, res) {
     try {
         const refreshToken = req.cookies.refreshToken;
@@ -217,7 +220,7 @@ export async function refreshTokenController(req, res) {
     }
 }
 
-
+// Logout the existing user
 export async function logoutController(req, res) {
     try {
         res.clearCookie("accessToken", {

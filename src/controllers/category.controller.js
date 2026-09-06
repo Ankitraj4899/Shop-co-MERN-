@@ -1,5 +1,5 @@
 import categoryModel from "../models/category.model.js";
-
+// Get all categories
 export async function getCategoriesController(req, res) {
     try {
         const categories = await categoryModel.find();
@@ -14,6 +14,7 @@ export async function getCategoriesController(req, res) {
         });
     }
 }
+// Get a single category
 
 export async function getCategoryController(req, res) {
     try {
@@ -36,6 +37,7 @@ export async function getCategoryController(req, res) {
     }
 }
 
+// Create a new category
 export async function createCategoryController(req, res) {
     try {
         const { name, description } = req.body;
@@ -58,7 +60,7 @@ export async function createCategoryController(req, res) {
     }
 }
 
-
+// Update a category
 export async function updateCategoryController(req, res) {
     try {
         const { id } = req.params;
@@ -85,7 +87,7 @@ export async function updateCategoryController(req, res) {
     }
 }
 
-
+// Delete a category
 export async function deleteCategoryController(req, res) {
     try {
         const { id } = req.params;

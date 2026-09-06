@@ -1,7 +1,7 @@
 import categoryModel from "../models/category.model.js";
 import productModel from "../models/product.model.js";
 import cloudinary from "../config/cloudinary.js";
-
+// uploading the file on cloudinary server
 function uploadToCloudinary(file) {
     return new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
@@ -19,6 +19,7 @@ function uploadToCloudinary(file) {
         stream.end(file.buffer);
     });
 }
+// GEt all products
 export async function getProductsController(req, res) {
     try {
         const page = parseInt(req.query.page) || 1;
@@ -53,7 +54,7 @@ export async function getProductsController(req, res) {
     }
 }
 
-
+// Get Single product
 export async function getProductController(req, res) {
     try {
         const { id } = req.params;
@@ -75,6 +76,7 @@ export async function getProductController(req, res) {
     }
 }
 
+// Create a new product
 export async function createProductController(req, res) {
     try {
         const { name, description, price, category, quantity, variants, status } = req.body;
@@ -146,7 +148,7 @@ export async function createProductController(req, res) {
 // }
 
 
-
+// Update a product
 export async function updateProductController(req, res) {
     try {
         const { id } = req.params;
@@ -228,6 +230,7 @@ export async function updateProductController(req, res) {
     }
 }
 
+// Delete a product
 export async function deleteProductController(req, res) {
     try {
         const { id } = req.params;

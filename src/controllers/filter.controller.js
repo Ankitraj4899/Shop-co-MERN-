@@ -1,5 +1,5 @@
 import productModel from "../models/product.model.js";
-
+// Sorting low to high based on price
 export async function lowToHigh(req, res) {
     try {
         const allProducts = await productModel.find({ status: "active" }).sort({ price: 1 });
@@ -21,6 +21,7 @@ export async function lowToHigh(req, res) {
     }
 }
 
+// Sorting high to low based on price
 export async function highToLow(req, res) {
     try {
         const allProducts = await productModel.find({ status: "active" }).sort({ price: -1 });
@@ -42,6 +43,7 @@ export async function highToLow(req, res) {
     }
 }
 
+// Searching a Product
 export async function search(req, res) {
     try {
         const { key } = req.body;
@@ -68,7 +70,7 @@ export async function search(req, res) {
     }
 }
 
-
+// Filtering a product based on size
 export async function filterSize(req, res) {
     try {
         const { size } = req.body;
@@ -90,6 +92,7 @@ export async function filterSize(req, res) {
     }
 }
 
+// Sort the products nased on new to old
 export async function newest(req, res) {
     try {
         const products = await productModel.find().sort({ createdAt: -1 });
@@ -110,6 +113,7 @@ export async function newest(req, res) {
     }
 }
 
+// Sort the products based on lod to new
 export async function oldest(req, res) {
     try {
         const products = await productModel.find().sort({ createdAt: 1 });

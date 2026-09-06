@@ -1,6 +1,6 @@
 import orderModel from "../models/order.model.js";
 import productModel from "../models/product.model.js";
-
+// Get all the orders
 export async function getAllOrdersController(req, res) {
     try {
         const page = parseInt(req.query.page) || 1;
@@ -34,6 +34,7 @@ export async function getAllOrdersController(req, res) {
     }
 }
 
+// Create a new Order
 export async function createOrderController(req, res) {
     try {
         const { items, shippingAddress } = req.body;
@@ -118,8 +119,7 @@ export async function createOrderController(req, res) {
     }
 }
 
-
-
+// Get user All orders
 export async function getMyOrdersController(req, res) {
     try {
         const orders = await orderModel.find({
@@ -138,6 +138,7 @@ export async function getMyOrdersController(req, res) {
     }
 }
 
+// Get User Single Order
 export async function getMyOrderController(req, res) {
     try {
         const { id } = req.params;
@@ -167,6 +168,7 @@ export async function getMyOrderController(req, res) {
 
 }
 
+// Update the status of the order
 export async function updateOrderStatusController(req, res) {
     try {
         const { id } = req.params;
