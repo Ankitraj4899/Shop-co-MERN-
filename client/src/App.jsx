@@ -6,13 +6,11 @@ import Orders from './pages/Orders.jsx';
 import Product from './pages/Product.jsx';
 import PlaceOrder from './pages/PlaceOrder.jsx';
 import Home from './pages/Home.jsx';
-import Navbar from './components/Navbar.jsx';
-
+import "./App.css";
 
 function App() {
   return (
-    <div className='px-4 sm:px-[5vw] md:px:[7vw] lg:px[9vw]'>
-      <Navbar/>
+    <div>
     <Routes>
       <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />

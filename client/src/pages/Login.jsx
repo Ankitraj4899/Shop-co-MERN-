@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [msg, setMsg] = useState('');
-
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMsg('');
@@ -25,7 +25,7 @@ const Login = () => {
       if (!response.ok) {
         throw new Error(data.message || 'Login failed');
       }
-
+      navigate("/");
       console.log('Login successful!', data.user);
     } catch (e) {
       setMsg(e.message);
@@ -33,9 +33,9 @@ const Login = () => {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 px-4">
+    <main className="min-h-screen flex items-center justify-center px-4">
       <form
-        className="w-full max-w-sm rounded-2xl bg-white p-7 shadow-2xl"
+        className="w-full max-w-sm rounded-2xl bg-white p-7"
         onSubmit={handleSubmit}
       >
         <h3 className="mb-6 text-2xl flex items-center justify-center font-bold text-gray-800">
@@ -84,7 +84,7 @@ const Login = () => {
         </button>
         <p className="mt-5 text-center text-sm text-gray-600">
           New User?{" "}
-          <Link to="/register"  className="font-medium text-purple-600 hover:text-purple-700">
+          <Link to="/register" className="font-medium text-purple-600 hover:text-purple-700">
             SignUp
           </Link>
         </p>

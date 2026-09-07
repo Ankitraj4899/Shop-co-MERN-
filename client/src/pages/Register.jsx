@@ -1,16 +1,15 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [msg, setMsg] = useState('');
-
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMsg('');
-
     try {
       const response = await fetch('http://localhost:3000/api/auth/register', {
         method: 'POST',
@@ -31,15 +30,16 @@ const Register = () => {
       setEmail("");
       setUsername("");
       setPassword("");
+      navigate("/");
     } catch (e) {
       setMsg(e.message);
     }
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 px-4">
+    <main className="min-h-screen flex items-center justify-center px-4">
       <form
-        className="w-full max-w-sm rounded-2xl bg-white p-7 shadow-2xl"
+        className="w-full max-w-sm rounded-2xl bg-white p-7"
         onSubmit={handleSubmit}
       >
         <h3 className="mb-6 text-2xl flex items-center justify-center font-bold text-gray-800">
@@ -121,7 +121,7 @@ const Register = () => {
 
         <p className="mt-5 text-center text-sm text-gray-600">
           Already registered?{" "}
-          <Link to="/login"  className="font-medium text-purple-600 hover:text-purple-700">
+          <Link to="/login" className="font-medium text-purple-600 hover:text-purple-700">
             Login
           </Link>
         </p>
@@ -129,5 +129,4 @@ const Register = () => {
     </main>
   );
 };
-
 export default Register;
