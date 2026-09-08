@@ -213,21 +213,21 @@ const Home = () => {
           <div className="style-grid">
             <div className="style-row">
               <Link to="/categories?style=Casual" className="style-card style-card--casual" aria-label="Casual dress style">
-                <span className="sr-only">Casual</span>
+                <span className="style-title">Casual</span>
                 <img src={casualImage} alt="Casual style" />
               </Link>
               <Link to="/categories?style=Formal" className="style-card style-card--formal" aria-label="Formal dress style">
-                <span className="sr-only">Formal</span>
+                <span className="style-title">Formal</span>
                 <img src={formalImage} alt="Formal style" />
               </Link>
             </div>
             <div className="style-row">
               <Link to="/categories?style=Party" className="style-card style-card--party" aria-label="Party dress style">
-                <span className="sr-only">Party</span>
+                <span className="style-title">Party</span>
                 <img src={partyImage} alt="Party style" />
               </Link>
               <Link to="/categories?style=Gym" className="style-card style-card--gym" aria-label="Gym dress style">
-                <span className="sr-only">Gym</span>
+                <span className="style-title">Gym</span>
                 <img src={gymImage} alt="Gym style" />
               </Link>
             </div>
