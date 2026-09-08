@@ -59,6 +59,15 @@ const Navbar = () => {
         navigate("/");
     };
 
+    const handleProfileClick = () => {
+        setIsUserMenuOpen(false);
+        if (isAuthenticated) {
+            navigate("/profile");
+        } else {
+            navigate("/login");
+        }
+    };
+
     return (
         <nav className="navbar">
             {showBanner && (
@@ -167,7 +176,7 @@ const Navbar = () => {
                                 className="navbar__icon user-button"
                                 type="button"
                                 aria-label="Account menu"
-                                onClick={() => setIsUserMenuOpen((prev) => !prev)}
+                                onClick={handleProfileClick}
                             >
                                 <img src={profile} className="img" alt="profile" />
                             </button>
