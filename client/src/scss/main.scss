@@ -2204,14 +2204,30 @@ body {
 
             .shipping-address-box {
                 background: $color-bg-surface;
-                border-radius: 12px;
-                padding: 16px;
+                border: 1px solid $color-border-light;
+                border-radius: 16px;
+                padding: 18px 20px;
+                margin-top: 10px;
 
-                p {
+                &__header {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    margin-bottom: 8px;
+
+                    strong {
+                        font-size: 14px;
+                        font-weight: 700;
+                        color: $color-black;
+                    }
+                }
+
+                &__text {
                     margin: 0;
                     font-size: 14px;
-                    line-height: 1.5;
+                    line-height: 1.6;
                     color: $color-black;
+                    font-weight: 500;
                 }
             }
 
