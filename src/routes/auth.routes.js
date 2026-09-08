@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { registerController, loginController, getMe, refreshTokenController, logoutController } from "../controllers/auth.controller.js";
+import { registerController, loginController, getMe, updateProfileController, refreshTokenController, logoutController } from "../controllers/auth.controller.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 const authRouter = Router();
 // Register Api
@@ -10,6 +10,7 @@ authRouter.post("/login", loginController);
 
 // Get me Api
 authRouter.get("/get-me", authMiddleware, getMe);
+authRouter.put("/profile", authMiddleware, updateProfileController);
 
 // Generating refresh token Api
 authRouter.post("/refresh", refreshTokenController);

@@ -3,11 +3,9 @@ import productModel from "../models/product.model.js";
 // Get cart
 export async function getCartController(req, res) {
     try {
-        const result = await cartModel.findOne({ user: req.user.id });
+        let result = await cartModel.findOne({ user: req.user.id }).populate("items.product");
         if (!result) {
-            return res.status(404).json({
-                message: "Cart not found"
-            });
+            result = await cartModel.create({ user: req.user.id, items: [] });
         }
         return res.status(200).json({
             message: "cart fetched successfully",
@@ -32,6 +30,7 @@ export async function clearCartController(req, res) {
         }
         return res.status(200).json({
             message: "cart deleted successfully",
+            cart: deleted,
             deleted
         })
     } catch (error) {
@@ -45,14 +44,14 @@ export async function clearCartController(req, res) {
 // Update the cart
 export async function updateCartController(req, res) {
     try {
-        const { id } = req.params;
+        const id = req.params.productId || req.params.id;
         const qty = Number(req.body.quantity);
         if (!Number.isInteger(qty) || qty < 1) {
             return res.status(400).json({
                 message: "Invalid quantity"
             });
         }
-        const cart = await cartModel.findOne({ user: req.user.id });
+        let cart = await cartModel.findOne({ user: req.user.id });
         if (!cart) {
             return res.status(404).json({
                 message: "Cart not found"
@@ -84,6 +83,7 @@ export async function updateCartController(req, res) {
         }
         item.quantity = qty;
         await cart.save();
+        cart = await cartModel.findById(cart._id).populate("items.product");
         return res.status(200).json({
             message: "Cart updated successfully",
             cart
@@ -96,11 +96,11 @@ export async function updateCartController(req, res) {
     }
 }
 
-// Remove item the cart
+// Remove item from the cart
 export async function removeFromCartController(req, res) {
     try {
-        const { id } = req.params;
-        const cart = await cartModel.findOne({ user: req.user.id });
+        const id = req.params.productId || req.params.id;
+        let cart = await cartModel.findOne({ user: req.user.id });
         if (!cart) {
             return res.status(404).json({
                 message: "cart not found"
@@ -118,6 +118,7 @@ export async function removeFromCartController(req, res) {
             item => item.product.toString() !== id
         );
         await cart.save();
+        cart = await cartModel.findById(cart._id).populate("items.product");
         return res.status(200).json({
             message: "item deleted successfully",
             cart
@@ -134,11 +135,9 @@ export async function removeFromCartController(req, res) {
 export async function addToCartController(req, res) {
     try {
         const { items } = req.body;
-        const cart = await cartModel.findOne({ user: req.user.id });
+        let cart = await cartModel.findOne({ user: req.user.id });
         if (!cart) {
-            return res.status(404).json({
-                message: "Not found",
-            })
+            cart = await cartModel.create({ user: req.user.id, items: [] });
         }
         const cartItems = [];
         for (const item of items) {
@@ -163,18 +162,24 @@ export async function addToCartController(req, res) {
                     message: `Only ${product.quantity} units of ${product.name} are available`
                 });
             }
-            cartItems.push({
-                product: product._id,
-                quantity: item.quantity
-            });
+            const existingItem = cart.items.find((cartItem) => cartItem.product.toString() === product._id.toString() && cartItem.size === item.size);
+            if (existingItem) {
+                existingItem.quantity += item.quantity;
+                if (existingItem.quantity > product.quantity) {
+                    return res.status(400).json({ message: `Only ${product.quantity} units of ${product.name} are available` });
+                }
+            } else {
+                cartItems.push({ product: product._id, quantity: item.quantity, size: item.size });
+            }
         }
         cart.items.push(...cartItems);
         await cart.save();
+        await cart.populate("items.product");
         return res.status(200).json({
             message: "Products added to cart successfully",
             cart
         });
- 
+
     } catch (error) {
         return res.status(500).json({
             message: "Something went wrong",

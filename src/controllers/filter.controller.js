@@ -44,18 +44,16 @@ export async function highToLow(req, res) {
 // Searching a Product
 export async function search(req, res) {
     try {
-        const { key } = req.body;
+        const key = req.query.key || req.body?.key;
         if (!key || !key.trim()) {
             return res.status(400).json({
                 message: "Search key is required"
             });
         }
-        const products = await productModel.find({
-            status: "active"
-        });
-        const result = products.filter(product =>
-            product.name.toLowerCase().includes(key.toLowerCase().trim())
-        );
+        const result = await productModel.find({
+            status: "active",
+            name: { $regex: key.trim(), $options: "i" }
+        }).populate("category", "name");
         if (result.length === 0) {
             return res.status(404).json({
                 message: `${key} not found`

@@ -19,32 +19,90 @@ function uploadToCloudinary(file) {
         stream.end(file.buffer);
     });
 }
-// GEt all products
+// Get all products
 export async function getProductsController(req, res) {
     try {
         const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 10;
+        const limit = Math.min(parseInt(req.query.limit) || 12, 50);
         const startIndex = (page - 1) * limit;
-        const endIndex = page * limit;
-        const results = {};
-        const totalProducts = await productModel.countDocuments();
-        if (endIndex < totalProducts) {
-            results.next = {
-                page: page + 1,
-                limit: limit
-            };
+        const { search, category, style, color, size, minPrice, maxPrice, availability, sort = "newest" } = req.query;
+        const filter = { status: "active" };
+
+        if (search?.trim()) {
+            filter.$or = [
+                { name: { $regex: search.trim(), $options: "i" } },
+                { description: { $regex: search.trim(), $options: "i" } }
+            ];
         }
-        if (startIndex > 0) {
-            results.previous = {
-                page: page - 1,
-                limit: limit
-            };
+
+        if (category) {
+            if (category.match(/^[0-9a-fA-F]{24}$/)) {
+                filter.category = category;
+            } else {
+                const foundCategory = await categoryModel.findOne({ name: { $regex: `^${category}$`, $options: "i" } });
+                if (foundCategory) {
+                    filter.category = foundCategory._id;
+                }
+            }
         }
-        results.results = await productModel.find().limit(limit).skip(startIndex);
+
+        if (style && style.toLowerCase() !== "all") {
+            filter.style = { $regex: `^${style}$`, $options: "i" };
+        }
+
+        if (color) {
+            filter["colors.name"] = { $regex: color, $options: "i" };
+        }
+
+        if (size) {
+            filter["variants.size"] = { $regex: `^${size}$`, $options: "i" };
+        }
+
+        if (minPrice || maxPrice) {
+            filter.price = {};
+            if (minPrice) filter.price.$gte = Number(minPrice);
+            if (maxPrice) filter.price.$lte = Number(maxPrice);
+        }
+
+        if (availability === "out-of-stock") filter.quantity = 0;
+        if (availability === "in-stock") filter.quantity = { $gt: 0 };
+
+        const sortMap = {
+            low: { price: 1 },
+            high: { price: -1 },
+            name: { name: 1 },
+            oldest: { createdAt: 1 },
+            newest: { createdAt: -1 },
+            popular: { rating: -1, reviewsCount: -1 },
+            rating: { rating: -1 }
+        };
+
+        const totalProducts = await productModel.countDocuments(filter);
+        const products = await productModel.find(filter)
+            .populate("category", "name")
+            .sort(sortMap[sort] || sortMap.newest)
+            .limit(limit)
+            .skip(startIndex);
+
+        const results = {
+            results: products,
+            products,
+            page,
+            limit,
+            total: totalProducts,
+            totalPages: Math.ceil(totalProducts / limit) || 1,
+            hasNext: page < Math.ceil(totalProducts / limit),
+            hasPrevious: page > 1,
+        };
 
         return res.status(200).json({
             message: "products fetched successfully",
-            results
+            results,
+            products,
+            total: totalProducts,
+            totalPages: Math.ceil(totalProducts / limit) || 1,
+            page,
+            limit
         });
     } catch (error) {
         return res.status(500).json({
@@ -54,11 +112,20 @@ export async function getProductsController(req, res) {
     }
 }
 
+export async function getAdminProductsController(req, res) {
+    try {
+        const products = await productModel.find().populate("category", "name").sort({ createdAt: -1 });
+        return res.status(200).json({ message: "admin products fetched successfully", products });
+    } catch (error) {
+        return res.status(500).json({ message: "Something went wrong", error: error.message });
+    }
+}
+
 // Get Single product
 export async function getProductController(req, res) {
     try {
         const { id } = req.params;
-        const product = await productModel.findById(id);
+        const product = await productModel.findById(id).populate("category", "name");
         if (!product) {
             return res.status(404).json({
                 message: "product not found"
@@ -79,7 +146,7 @@ export async function getProductController(req, res) {
 // Create a new product
 export async function createProductController(req, res) {
     try {
-        const { name, description, price, category, quantity, variants, status } = req.body;
+        const { name, description, price, originalPrice, discount, rating, style, colors, category, quantity, variants, status } = req.body;
 
         const isCategory = await categoryModel.findById(category);
 
@@ -89,24 +156,40 @@ export async function createProductController(req, res) {
             });
         }
 
-        const parsedVariants = variants ? JSON.parse(variants) : [];
+        const parsedVariants = typeof variants === "string" ? JSON.parse(variants) : (variants || []);
+        const parsedColors = typeof colors === "string" ? JSON.parse(colors) : (colors || []);
 
         const thumbnailImage = req.files?.thumbnailImage?.[0];
         const galleryImages = req.files?.galleryImages || [];
 
-        if (!thumbnailImage) {
+        if (!thumbnailImage && !req.body.thumbnailImage) {
             return res.status(400).json({
                 message: "Thumbnail image is required",
             });
         }
 
-        const thumbnailUrl = await uploadToCloudinary(thumbnailImage);
+        const thumbnailUrl = thumbnailImage ? await uploadToCloudinary(thumbnailImage) : req.body.thumbnailImage;
 
-        const galleryUrls = await Promise.all(
-            galleryImages.map((file) => uploadToCloudinary(file))
-        );
+        const galleryUrls = galleryImages.length > 0
+            ? await Promise.all(galleryImages.map((file) => uploadToCloudinary(file)))
+            : (typeof req.body.galleryImages === "string" ? JSON.parse(req.body.galleryImages) : (req.body.galleryImages || []));
 
-        const product = await productModel.create({ name, description, price, thumbnailImage: thumbnailUrl, galleryImages: galleryUrls, category, quantity, variants: parsedVariants, status });
+        const product = await productModel.create({
+            name,
+            description,
+            price: Number(price),
+            originalPrice: originalPrice ? Number(originalPrice) : null,
+            discount: discount ? Number(discount) : 0,
+            rating: rating ? Number(rating) : 4.5,
+            style: style || "Casual",
+            colors: parsedColors,
+            thumbnailImage: thumbnailUrl,
+            galleryImages: galleryUrls,
+            category,
+            quantity: Number(quantity),
+            variants: parsedVariants,
+            status: status || "active"
+        });
 
         return res.status(201).json({
             message: "Product created successfully",
@@ -120,39 +203,11 @@ export async function createProductController(req, res) {
     }
 }
 
-// export async function updateProductController(req, res) {
-//     const { id } = req.params;
-//     const { name, description, price, thumbnailImage, galleryImages, category, variants, quantity, status } = req.body;
-//     const isCategory = await categoryModel.findById(category);
-
-//     if (!isCategory) {
-//         return res.status(404).json({
-//             message: "Category not found",
-//         });
-//     }
-//     const product = await productModel.findByIdAndUpdate(id, { name, description, price, thumbnailImage, galleryImages, category, variants, quantity, status }, {
-//         // returns the updated data
-//         new: true,
-//         // apply schema validation while updation
-//         runValidators: true
-//     });
-//     if (!product) {
-//         return res.status(404).json({
-//             message: "product not found",
-//         });
-//     }
-//     return res.status(200).json({
-//         message: "product updated successfully",
-//         product,
-//     });
-// }
-
-
 // Update a product
 export async function updateProductController(req, res) {
     try {
         const { id } = req.params;
-        const { name, description, price, category, quantity, variants, status } = req.body;
+        const { name, description, price, originalPrice, discount, rating, style, colors, category, quantity, variants, status } = req.body;
 
         const product = await productModel.findById(id);
 
@@ -174,26 +229,21 @@ export async function updateProductController(req, res) {
 
         const updateData = {};
 
-        if (name !== undefined) {
-            updateData.name = name
-        };
-        if (description !== undefined) {
-            updateData.description = description;
-        }
-        if (price !== undefined) {
-            updateData.price = price;
-        }
-        if (category !== undefined) {
-            updateData.category = category;
-        }
-        if (status !== undefined) {
-            updateData.status = status;
-        }
-        if (quantity !== undefined) {
-            updateData.quantity = quantity;
+        if (name !== undefined) updateData.name = name;
+        if (description !== undefined) updateData.description = description;
+        if (price !== undefined) updateData.price = Number(price);
+        if (originalPrice !== undefined) updateData.originalPrice = originalPrice ? Number(originalPrice) : null;
+        if (discount !== undefined) updateData.discount = Number(discount);
+        if (rating !== undefined) updateData.rating = Number(rating);
+        if (style !== undefined) updateData.style = style;
+        if (category !== undefined) updateData.category = category;
+        if (status !== undefined) updateData.status = status;
+        if (quantity !== undefined) updateData.quantity = Number(quantity);
+        if (colors !== undefined) {
+            updateData.colors = typeof colors === "string" ? JSON.parse(colors) : colors;
         }
         if (variants !== undefined) {
-            updateData.variants = JSON.parse(variants);
+            updateData.variants = typeof variants === "string" ? JSON.parse(variants) : variants;
         }
 
         const thumbnailImage = req.files?.thumbnailImage?.[0];
@@ -201,12 +251,16 @@ export async function updateProductController(req, res) {
 
         if (thumbnailImage) {
             updateData.thumbnailImage = await uploadToCloudinary(thumbnailImage);
+        } else if (req.body.thumbnailImage !== undefined) {
+            updateData.thumbnailImage = req.body.thumbnailImage;
         }
 
         if (galleryImages.length > 0) {
             updateData.galleryImages = await Promise.all(
                 galleryImages.map(file => uploadToCloudinary(file))
             );
+        } else if (req.body.galleryImages !== undefined) {
+            updateData.galleryImages = typeof req.body.galleryImages === "string" ? JSON.parse(req.body.galleryImages) : req.body.galleryImages;
         }
 
         const updatedProduct = await productModel.findByIdAndUpdate(
@@ -238,11 +292,63 @@ export async function deleteProductController(req, res) {
         if (!product) {
             return res.status(404).json({
                 message: "product not found",
-            })
+            });
         }
         return res.status(200).json({
             message: "product deleted successfully",
-        })
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Something went wrong",
+            error: error.message
+        });
+    }
+}
+
+// Add a review to a product
+export async function createProductReviewController(req, res) {
+    try {
+        const { id } = req.params;
+        const { rating, comment, name } = req.body;
+
+        if (!rating || !comment?.trim()) {
+            return res.status(400).json({
+                message: "Rating and review comment are required"
+            });
+        }
+
+        const product = await productModel.findById(id);
+        if (!product) {
+            return res.status(404).json({
+                message: "Product not found"
+            });
+        }
+
+        const newReview = {
+            user: req.user?.id,
+            name: name?.trim() || req.user?.username || "Verified Customer",
+            rating: Math.min(5, Math.max(1, Number(rating))),
+            comment: comment.trim(),
+            verified: true,
+            createdAt: new Date()
+        };
+
+        if (!product.reviews) {
+            product.reviews = [];
+        }
+
+        product.reviews.unshift(newReview);
+        product.reviewsCount = product.reviews.length;
+        const totalRating = product.reviews.reduce((acc, item) => acc + item.rating, 0);
+        product.rating = Number((totalRating / product.reviews.length).toFixed(1));
+
+        await product.save();
+
+        return res.status(201).json({
+            message: "Review added successfully",
+            review: newReview,
+            product
+        });
     } catch (error) {
         return res.status(500).json({
             message: "Something went wrong",

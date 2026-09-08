@@ -1,8 +1,8 @@
-export function adminMiddleware(req,res,next){
-    if(req.user.role !== "admin"){
-        return res.status(401).json({
-            message:"Admin access Only"
-        })
+export function adminMiddleware(req, res, next) {
+    if (req.user?.role !== "admin") {
+        return res.status(403).json({
+            message: "Admin access only"
+        });
     }
     next();
 }

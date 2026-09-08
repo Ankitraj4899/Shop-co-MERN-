@@ -1,5 +1,6 @@
 import orderModel from "../models/order.model.js";
 import productModel from "../models/product.model.js";
+import cartModel from "../models/cart.model.js";
 // Get all the orders
 export async function getAllOrdersController(req, res) {
     try {
@@ -37,7 +38,7 @@ export async function getAllOrdersController(req, res) {
 // Create a new Order
 export async function createOrderController(req, res) {
     try {
-        const { items, shippingAddress } = req.body;
+        const { items, shippingAddress, couponCode } = req.body;
 
         if (!items || items.length === 0) {
             return res.status(400).json({
@@ -78,12 +79,17 @@ export async function createOrderController(req, res) {
                 product: product._id,
                 name: product.name,
                 price: product.price,
-                quantity: item.quantity
+                quantity: item.quantity,
+                size: item.size,
+                thumbnailImage: product.thumbnailImage
             });
             subtotal += itemSubtotal;
         }
-        const discount = 0;
-        const totalPrice = subtotal - discount;
+        const shippingFee = 15;
+        const normalizedCoupon = couponCode?.trim().toLowerCase();
+        const discountRate = normalizedCoupon === "save20" ? 0.2 : normalizedCoupon === "save10" ? 0.1 : 0;
+        const discount = Number((subtotal * discountRate).toFixed(2));
+        const totalPrice = subtotal - discount + shippingFee;
         for (const item of items) {
             const updatedProduct = await productModel.findOneAndUpdate(
                 {
@@ -106,7 +112,8 @@ export async function createOrderController(req, res) {
                 });
             }
         }
-        const order = await orderModel.create({ user: req.user.id, items: orderItems, subtotal, discount, totalPrice, shippingAddress });
+        const order = await orderModel.create({ user: req.user.id, items: orderItems, subtotal, discount, couponCode: discountRate ? normalizedCoupon : undefined, shippingFee, totalPrice, shippingAddress });
+        await cartModel.findOneAndUpdate({ user: req.user.id }, { $set: { items: [] } });
         return res.status(201).json({
             message: "Order created successfully",
             order
@@ -124,7 +131,7 @@ export async function getMyOrdersController(req, res) {
     try {
         const orders = await orderModel.find({
             user: req.user.id
-        });
+        }).populate("items.product", "thumbnailImage").sort({ createdAt: -1 });
 
         return res.status(200).json({
             message: "orders fetched successfully",
@@ -146,7 +153,7 @@ export async function getMyOrderController(req, res) {
         const order = await orderModel.findOne({
             _id: id,
             user: req.user.id
-        });
+        }).populate("items.product", "thumbnailImage");
 
         if (!order) {
             return res.status(404).json({

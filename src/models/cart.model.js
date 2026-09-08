@@ -18,13 +18,17 @@ const cartSchema = new mongoose.Schema({
                 required: true,
                 min: 1,
                 default: 1
+            },
+            size: {
+                type: String,
+                trim: true
             }
         }
     ]
 },
-{ 
-    timestamps: true
-});
+    {
+        timestamps: true
+    });
 
 const cartModel = mongoose.model('Cart', cartSchema);
 export default cartModel;

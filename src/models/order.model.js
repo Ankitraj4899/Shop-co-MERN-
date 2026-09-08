@@ -26,6 +26,14 @@ const orderSchema = new mongoose.Schema({
                 required: true,
                 min: 1,
             },
+            size: {
+                type: String,
+                trim: true,
+            },
+            thumbnailImage: {
+                type: String,
+                trim: true,
+            },
         }
     ],
     subtotal: {
@@ -36,6 +44,15 @@ const orderSchema = new mongoose.Schema({
     discount: {
         type: Number,
         default: 0,
+        min: 0,
+    },
+    couponCode: {
+        type: String,
+        trim: true,
+    },
+    shippingFee: {
+        type: Number,
+        default: 15,
         min: 0,
     },
     totalPrice: {
@@ -53,9 +70,9 @@ const orderSchema = new mongoose.Schema({
         default: "pending",
     },
 },
-{
-    timestamps: true,
-});
+    {
+        timestamps: true,
+    });
 
 const orderModel = mongoose.model("Order", orderSchema);
 export default orderModel;
