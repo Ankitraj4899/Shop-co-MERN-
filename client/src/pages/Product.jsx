@@ -70,6 +70,11 @@ const Product = () => {
 
   const handleAddToCart = async () => {
     if (!product) return;
+    if (!isAuthenticated) {
+      setToastMessage("Please log in to add items to your cart.");
+      setTimeout(() => setToastMessage(""), 4000);
+      return;
+    }
     setIsAdding(true);
     try {
       await addItemToCart(product._id, quantity, selectedSize);
