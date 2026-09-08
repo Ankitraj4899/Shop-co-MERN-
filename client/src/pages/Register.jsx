@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
 
+import Footer from "../components/Footer";
+
 const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -90,6 +92,8 @@ const Register = () => {
           </p>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 };

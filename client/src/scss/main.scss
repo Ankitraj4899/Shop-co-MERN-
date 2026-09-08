@@ -2545,13 +2545,14 @@ body {
         @media (max-width: 900px) {
             flex-direction: column;
             padding: 32px 24px;
-            top: -110px;
+            top: -140px;
             align-items: stretch;
+            text-align: left;
         }
 
         h2 {
             font-family: $font-family-heading;
-            font-size: clamp(26px, 3.5vw, 40px);
+            font-size: clamp(28px, 4.5vw, 40px);
             font-weight: 800;
             color: $color-white;
             line-height: 1.05;
@@ -2560,7 +2561,7 @@ body {
             letter-spacing: -0.5px;
 
             @media (max-width: 900px) {
-                text-align: center;
+                text-align: left;
                 max-width: 100%;
             }
         }

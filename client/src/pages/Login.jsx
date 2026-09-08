@@ -3,6 +3,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
 
+import Footer from "../components/Footer";
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -87,6 +89,8 @@ const Login = () => {
           </p>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 };
