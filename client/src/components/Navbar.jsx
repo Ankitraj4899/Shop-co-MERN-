@@ -157,7 +157,12 @@ const Navbar = () => {
                             {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
                         </Link>
 
-                        <div className="user-menu-wrapper" ref={userMenuRef}>
+                        <div
+                            className="user-menu-wrapper"
+                            ref={userMenuRef}
+                            onMouseEnter={() => setIsUserMenuOpen(true)}
+                            onMouseLeave={() => setIsUserMenuOpen(false)}
+                        >
                             <button
                                 className="navbar__icon user-button"
                                 type="button"
