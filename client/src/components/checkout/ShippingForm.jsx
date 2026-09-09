@@ -9,10 +9,10 @@ const ShippingForm = ({
 }) => {
   return (
     <form className="checkout-form-card" onSubmit={onSubmit} noValidate>
-      <h2>1. Shipping Information</h2>
+      <h2 className="checkout-form-card__heading">1. Shipping Information</h2>
 
       <div className="form-group-grid">
-        <label>
+        <label className="checkout-label">
           Full Name
           <input
             type="text"
@@ -20,14 +20,14 @@ const ShippingForm = ({
             value={shippingForm.fullName}
             onChange={onInputChange}
             placeholder="Recipient's name"
-            className={formErrors.fullName ? "input--error" : ""}
+            className={`checkout-input ${formErrors.fullName ? "input--error" : ""}`}
           />
           {formErrors.fullName && (
             <span className="field-error-text">{formErrors.fullName}</span>
           )}
         </label>
 
-        <label>
+        <label className="checkout-label">
           Phone Number
           <input
             type="tel"
@@ -35,7 +35,7 @@ const ShippingForm = ({
             value={shippingForm.phone}
             onChange={onInputChange}
             placeholder="+1 555-0100"
-            className={formErrors.phone ? "input--error" : ""}
+            className={`checkout-input ${formErrors.phone ? "input--error" : ""}`}
           />
           {formErrors.phone && (
             <span className="field-error-text">{formErrors.phone}</span>
@@ -43,7 +43,7 @@ const ShippingForm = ({
         </label>
       </div>
 
-      <label>
+      <label className="checkout-label">
         Street Address
         <textarea
           name="address"
@@ -51,7 +51,7 @@ const ShippingForm = ({
           value={shippingForm.address}
           onChange={onInputChange}
           placeholder="Apartment, suite, unit, building, or street address"
-          className={formErrors.address ? "input--error" : ""}
+          className={`checkout-textarea ${formErrors.address ? "input--error" : ""}`}
         />
         {formErrors.address && (
           <span className="field-error-text">{formErrors.address}</span>
@@ -59,7 +59,7 @@ const ShippingForm = ({
       </label>
 
       <div className="form-group-grid">
-        <label>
+        <label className="checkout-label">
           City
           <input
             type="text"
@@ -67,14 +67,14 @@ const ShippingForm = ({
             value={shippingForm.city}
             onChange={onInputChange}
             placeholder="New York"
-            className={formErrors.city ? "input--error" : ""}
+            className={`checkout-input ${formErrors.city ? "input--error" : ""}`}
           />
           {formErrors.city && (
             <span className="field-error-text">{formErrors.city}</span>
           )}
         </label>
 
-        <label>
+        <label className="checkout-label">
           Postal Code
           <input
             type="text"
@@ -82,7 +82,7 @@ const ShippingForm = ({
             value={shippingForm.postalCode}
             onChange={onInputChange}
             placeholder="10001"
-            className={formErrors.postalCode ? "input--error" : ""}
+            className={`checkout-input ${formErrors.postalCode ? "input--error" : ""}`}
           />
           {formErrors.postalCode && (
             <span className="field-error-text">{formErrors.postalCode}</span>
@@ -90,11 +90,11 @@ const ShippingForm = ({
         </label>
       </div>
 
-      <h2 className="payment-heading">2. Payment Method</h2>
+      <h2 className="checkout-form-card__heading payment-heading">2. Payment Method</h2>
       <div className="payment-method-box">
         <label className="radio-label">
-          <input type="radio" name="payment" defaultChecked />
-          <span>Cash on Delivery (Standard Secure Delivery)</span>
+          <input type="radio" className="radio-input" name="payment" defaultChecked />
+          <span className="radio-text">Cash on Delivery (Standard Secure Delivery)</span>
         </label>
       </div>
 

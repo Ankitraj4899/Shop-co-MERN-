@@ -10,6 +10,7 @@ const CartItem = ({ item, onQuantityStep, onRemove }) => {
         <img
           src={prod.thumbnailImage}
           alt={prod.name || "Product"}
+          className="cart-item__image"
           onError={(e) => {
             e.target.src =
               "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=200&q=80";
@@ -19,7 +20,7 @@ const CartItem = ({ item, onQuantityStep, onRemove }) => {
 
       <div className="cart-item__content">
         <div className="cart-item__top-row">
-          <Link to={`/product/${prod._id}`}>
+          <Link to={`/product/${prod._id}`} className="cart-item__link">
             <h2 className="cart-item__name">{prod.name}</h2>
           </Link>
           <button
@@ -76,13 +77,13 @@ const CartItem = ({ item, onQuantityStep, onRemove }) => {
 
         <div className="cart-item__specs">
           {item.size && (
-            <p>
-              Size: <span>{item.size}</span>
+            <p className="cart-item__spec-item">
+              Size: <span className="cart-item__spec-value">{item.size}</span>
             </p>
           )}
           {prod.style && (
-            <p>
-              Style: <span>{prod.style}</span>
+            <p className="cart-item__spec-item">
+              Style: <span className="cart-item__spec-value">{prod.style}</span>
             </p>
           )}
         </div>
@@ -93,6 +94,7 @@ const CartItem = ({ item, onQuantityStep, onRemove }) => {
           <div className="quantity-stepper quantity-stepper--small">
             <button
               type="button"
+              className="stepper-btn"
               aria-label="Decrease quantity"
               onClick={() =>
                 onQuantityStep(prod._id, item.quantity - 1, maxStock)
@@ -104,6 +106,7 @@ const CartItem = ({ item, onQuantityStep, onRemove }) => {
             <span className="qty-number">{item.quantity}</span>
             <button
               type="button"
+              className="stepper-btn"
               aria-label="Increase quantity"
               onClick={() =>
                 onQuantityStep(prod._id, item.quantity + 1, maxStock)

@@ -80,7 +80,7 @@ const Register = () => {
 
           <form className="auth-form" onSubmit={handleSubmit} noValidate>
             <div className="auth-input-group">
-              <label htmlFor="username">Full Name</label>
+              <label htmlFor="username" className="auth-label">Full Name</label>
               <input
                 id="username"
                 type="text"
@@ -90,7 +90,7 @@ const Register = () => {
                   setUsername(e.target.value);
                   if (fieldErrors.username) setFieldErrors((prev) => ({ ...prev, username: "" }));
                 }}
-                className={fieldErrors.username ? "input--error" : ""}
+                className={`auth-input ${fieldErrors.username ? "input--error" : ""}`}
               />
               {fieldErrors.username && (
                 <span className="field-error-text">{fieldErrors.username}</span>
@@ -98,7 +98,7 @@ const Register = () => {
             </div>
 
             <div className="auth-input-group">
-              <label htmlFor="register-email">Email Address</label>
+              <label htmlFor="register-email" className="auth-label">Email Address</label>
               <input
                 id="register-email"
                 type="email"
@@ -108,7 +108,7 @@ const Register = () => {
                   setEmail(e.target.value);
                   if (fieldErrors.email) setFieldErrors((prev) => ({ ...prev, email: "" }));
                 }}
-                className={fieldErrors.email ? "input--error" : ""}
+                className={`auth-input ${fieldErrors.email ? "input--error" : ""}`}
               />
               {fieldErrors.email && (
                 <span className="field-error-text">{fieldErrors.email}</span>
@@ -117,7 +117,7 @@ const Register = () => {
 
             <div className="auth-input-group">
               <div className="auth-label-row">
-                <label htmlFor="register-password">Password</label>
+                <label htmlFor="register-password" className="auth-label">Password</label>
                 <button
                   type="button"
                   className="password-toggle-btn"
@@ -135,7 +135,7 @@ const Register = () => {
                   setPassword(e.target.value);
                   if (fieldErrors.password) setFieldErrors((prev) => ({ ...prev, password: "" }));
                 }}
-                className={fieldErrors.password ? "input--error" : ""}
+                className={`auth-input ${fieldErrors.password ? "input--error" : ""}`}
               />
               {fieldErrors.password && (
                 <span className="field-error-text">{fieldErrors.password}</span>

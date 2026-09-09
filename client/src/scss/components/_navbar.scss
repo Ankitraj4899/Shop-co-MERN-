@@ -29,7 +29,9 @@
 
         .navbar--cross {
             position: absolute;
-            top: 50%;
+            top: 0;
+            bottom: 0;
+            margin: auto 0;
             right: 80px;
             display: flex;
             align-items: center;
@@ -37,7 +39,6 @@
             padding: 0;
             border: none;
             background: transparent;
-            transform: translateY(-50%);
             cursor: pointer;
 
             .cross {
@@ -330,12 +331,10 @@
 @keyframes fadeInDown {
     from {
         opacity: 0;
-        transform: translateY(-8px);
     }
 
     to {
         opacity: 1;
-        transform: translateY(0);
     }
 }
 
@@ -513,14 +512,10 @@
                 align-items: center;
                 justify-content: center;
                 color: $black-color;
-                transition: background 0.2s ease, transform 0.15s ease;
+                transition: background 0.2s ease;
 
                 &:hover {
                     background: #e5e5e5;
-                }
-
-                &:active {
-                    transform: scale(0.92);
                 }
             }
         }
@@ -604,8 +599,9 @@
         .mobile-search-icon {
             position: absolute;
             left: 14px;
-            top: 50%;
-            transform: translateY(-50%);
+            top: 0;
+            bottom: 0;
+            margin: auto 0;
             width: 18px;
             height: 18px;
             opacity: 0.45;
@@ -661,20 +657,18 @@
 @keyframes slideDownSearch {
     from {
         opacity: 0;
-        transform: translateY(-10px);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
     }
 }
 
 @keyframes slideInLeft {
     from {
-        transform: translateX(-100%);
+        opacity: 0;
     }
 
     to {
-        transform: translateX(0);
+        opacity: 1;
     }
 }

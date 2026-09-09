@@ -7,7 +7,7 @@
     background: $color-bg-surface;
     margin-top: 140px;
     padding-top: 140px;
-    padding-bottom: 36px;
+    padding-bottom: $spacing-5xl;
     width: 100%;
 
     @media (max-width: 900px) {
@@ -23,41 +23,44 @@
     .newsletter {
         position: absolute;
         top: -90px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: calc(100% - 32px);
+        left: 16px;
+        right: 16px;
+        margin-left: auto;
+        margin-right: auto;
         max-width: $breakpoint-desktop;
         background: $color-black;
-        border-radius: 20px;
-        padding: 36px 64px;
+        border-radius: $radius-2xl;
+        padding: $spacing-5xl $spacing-7xl;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 32px;
+        gap: $spacing-4xl;
         box-shadow: 0 12px 36px rgba(0, 0, 0, 0.12);
         box-sizing: border-box;
 
         @media (max-width: 900px) {
             flex-direction: column;
-            padding: 32px 24px;
+            padding: $spacing-4xl $spacing-2xl;
             top: -120px;
             align-items: stretch;
             text-align: left;
         }
 
         @media (max-width: 640px) {
-            padding: 24px 18px;
+            padding: $spacing-2xl $spacing-xl;
             top: -140px;
-            border-radius: 16px;
-            gap: 18px;
+            border-radius: $radius-xl;
+            gap: $spacing-xl;
+            left: 12px;
+            right: 12px;
         }
 
-        h2 {
+        .newsletter__heading {
             font-family: $font-family-heading;
             font-size: clamp(28px, 4.5vw, 40px);
-            font-weight: 800;
+            font-weight: $font-weight-extrabold;
             color: $color-white;
-            line-height: 1.05;
+            line-height: $line-height-tight;
             margin: 0;
             max-width: 550px;
             letter-spacing: -0.5px;
@@ -71,7 +74,7 @@
         .newsletter__form {
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: $spacing-base;
             width: 350px;
             flex-shrink: 0;
 
@@ -85,9 +88,10 @@
 
                 .mail-icon {
                     position: absolute;
-                    left: 18px;
-                    top: 50%;
-                    transform: translateY(-50%);
+                    left: $spacing-xl;
+                    top: 0;
+                    bottom: 0;
+                    margin: auto 0;
                     display: flex;
                     align-items: center;
                     justify-content: center;
@@ -95,18 +99,18 @@
                     z-index: 2;
 
                     svg path {
-                        stroke: rgba(0, 0, 0, 0.4);
+                        stroke: $color-text-light;
                     }
                 }
 
-                input {
+                .newsletter__input {
                     width: 100%;
                     height: 48px;
-                    padding: 12px 20px 12px 48px;
-                    border-radius: 62px;
+                    padding: $spacing-md $spacing-xl $spacing-md $spacing-6xl;
+                    border-radius: $radius-pill;
                     border: 1px solid transparent;
                     background: $color-white;
-                    font-size: 14px;
+                    font-size: $font-size-base;
                     font-family: $font-family-body;
                     color: $color-black;
                     outline: none;
@@ -114,7 +118,7 @@
                     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
                     &::placeholder {
-                        color: rgba(0, 0, 0, 0.4);
+                        color: $color-text-light;
                     }
 
                     &:focus {
@@ -124,22 +128,21 @@
                 }
             }
 
-            .button--white {
+            .newsletter__button {
                 width: 100%;
                 height: 48px;
                 background: $color-white;
                 color: $color-black;
                 font-family: $font-family-body;
-                font-size: 14px;
-                font-weight: 700;
-                border-radius: 62px;
+                font-size: $font-size-base;
+                font-weight: $font-weight-bold;
+                border-radius: $radius-pill;
                 border: none;
                 cursor: pointer;
-                transition: background-color 0.2s ease, transform 0.15s ease;
+                transition: background-color 0.2s ease;
 
                 &:hover:not(:disabled) {
-                    background: #f0f0f0;
-                    transform: translateY(-1px);
+                    background: $color-bg-surface;
                 }
 
                 &:disabled {
@@ -149,14 +152,14 @@
             }
 
             .newsletter-feedback {
-                margin: 4px 0 0;
-                font-size: 13px;
-                font-weight: 500;
-                color: #01B763;
+                margin: $spacing-2xs 0 0;
+                font-size: $font-size-sm;
+                font-weight: $font-weight-medium;
+                color: $color-badge-verified;
                 text-align: center;
 
                 &.error {
-                    color: #ff4d4f;
+                    color: $color-error;
                 }
             }
         }
@@ -165,15 +168,15 @@
     .footer__content {
         max-width: $breakpoint-desktop;
         margin: 0 auto;
-        padding: 0 16px 48px;
+        padding: 0 $spacing-lg $spacing-6xl;
         display: grid;
         grid-template-columns: 2.5fr repeat(4, 1fr);
-        gap: 32px;
+        gap: $spacing-4xl;
         border-bottom: 1px solid $color-border-light;
 
         @media (max-width: 900px) {
             grid-template-columns: repeat(2, 1fr);
-            gap: 32px 16px;
+            gap: $spacing-4xl $spacing-lg;
 
             .footer__brand {
                 grid-column: 1 / -1;
@@ -183,55 +186,54 @@
         .footer__brand {
             .logo {
                 font-family: $font-family-heading;
-                font-size: 32px;
-                font-weight: 800;
-                margin: 0 0 16px;
+                font-size: $font-size-5xl;
+                font-weight: $font-weight-extrabold;
+                margin: 0 0 $spacing-lg;
                 color: $color-black;
                 letter-spacing: -0.5px;
             }
 
-            p {
-                font-size: 14px;
-                line-height: 1.6;
+            .footer__brand-text {
+                font-size: $font-size-base;
+                line-height: $line-height-loose;
                 color: $color-text-muted;
-                margin: 0 0 24px;
+                margin: 0 0 $spacing-2xl;
                 max-width: 260px;
             }
 
             .social-links {
                 display: flex;
                 align-items: center;
-                gap: 12px;
+                gap: $spacing-md;
 
-                a {
+                .social-link {
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     width: 32px;
                     height: 32px;
-                    border-radius: 50%;
+                    border-radius: $radius-circle;
                     background: $color-white;
                     border: 1px solid $color-border-light;
                     transition: all 0.2s ease;
 
-                    img {
+                    .social-icon {
                         width: 14px;
                         height: 14px;
                         object-fit: contain;
                         display: block;
                     }
 
-                    &[href*="facebook"] img,
-                    &.facebook img {
+                    &[href*="facebook"] .social-icon,
+                    &.facebook .social-icon {
                         filter: brightness(0);
                     }
 
                     &:hover {
                         background: $color-black;
                         border-color: $color-black;
-                        transform: translateY(-2px);
 
-                        img {
+                        .social-icon {
                             filter: brightness(0) invert(1) !important;
                         }
                     }
@@ -242,27 +244,25 @@
         .footer__column {
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: $spacing-base;
 
-            h3 {
+            .footer__column-heading {
                 font-family: $font-family-body;
-                font-size: 15px;
-                font-weight: 700;
+                font-size: $font-size-md;
+                font-weight: $font-weight-bold;
                 letter-spacing: 2px;
                 color: $color-black;
-                margin: 0 0 6px;
+                margin: 0 0 $spacing-xs;
                 text-transform: uppercase;
             }
 
-            a {
+            .footer__column-link {
                 color: $color-text-muted;
-                font-size: 14px;
+                font-size: $font-size-base;
                 text-decoration: none;
-
 
                 &:hover {
                     color: $color-black;
-                    transform: translateX(2px);
                 }
             }
         }
@@ -270,15 +270,20 @@
 
     .footer__bottom {
         max-width: $breakpoint-desktop;
-        margin: 24px auto 0;
-        padding: 0 16px;
+        margin: $spacing-2xl auto 0;
+        padding: 0 $spacing-lg;
         display: flex;
         align-items: center;
         justify-content: space-between;
         flex-wrap: wrap;
-        gap: 16px;
-        font-size: 14px;
+        gap: $spacing-lg;
+        font-size: $font-size-base;
         color: $color-text-muted;
+
+        .footer__copyright {
+            font-size: $font-size-base;
+            color: $color-text-muted;
+        }
 
         .payment-badges {
             display: flex;
@@ -293,10 +298,10 @@
                 height: 30px;
                 background: $color-white;
                 border: 1px solid $color-border-light;
-                border-radius: 6px;
-                padding: 4px;
+                border-radius: $radius-xs;
+                padding: $spacing-2xs;
 
-                img {
+                .pay-icon {
                     max-width: 100%;
                     max-height: 100%;
                     object-fit: contain;

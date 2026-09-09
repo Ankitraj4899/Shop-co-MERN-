@@ -4,7 +4,7 @@
 
 .hero {
     width: 100%;
-    background-color: $hero-bg-color;
+    background-color: $color-bg-hero;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -24,76 +24,75 @@
         display: flex;
         flex-direction: column;
         box-sizing: border-box;
-        padding: 2.5rem 1rem 0;
+        padding: $spacing-5xl $spacing-lg 0;
         position: relative;
         z-index: 5;
 
         @include respond-to(desktop) {
             width: 55%;
             max-width: 620px;
-            padding: 4.5rem 0 4.5rem clamp(2rem, 6.5vw, 6.25rem);
+            padding: $spacing-6xl 0 $spacing-6xl clamp(2rem, 6.5vw, 6.25rem);
         }
     }
 
     &__heading {
-        font-family: $heading-font-style;
+        font-family: $font-family-heading;
         font-size: 2.25rem;
-        font-weight: 800;
+        font-weight: $font-weight-extrabold;
         padding: 0;
-        margin: 0 0 1rem;
-        line-height: 1.05;
+        margin: 0 0 $spacing-lg;
+        line-height: $line-height-tight;
         color: $color-black;
 
         @include respond-to(desktop) {
             font-size: clamp(2.8rem, 4vw, 4rem);
             line-height: 1.0;
             letter-spacing: -0.02em;
-            margin: 0 0 1.75rem;
+            margin: 0 0 $spacing-3xl;
             max-width: 577px;
         }
     }
 
     &__para {
-        font-size: 0.875rem;
-        font-weight: 400;
-        color: rgba(0, 0, 0, 0.6);
+        font-size: $font-size-base;
+        font-weight: $font-weight-regular;
+        color: $color-text-muted;
         padding: 0;
-        line-height: 1.5;
-        margin: 0 0 1.5rem;
+        line-height: $line-height-relaxed;
+        margin: 0 0 $spacing-2xl;
 
         @include respond-to(desktop) {
-            font-size: 1rem;
-            line-height: 1.5;
+            font-size: $font-size-lg;
+            line-height: $line-height-relaxed;
             max-width: 545px;
-            margin: 0 0 2rem;
+            margin: 0 0 $spacing-4xl;
         }
     }
 
     &__button {
-        color: $white-1;
-        background-color: $black-1;
-        border-radius: 62px;
+        color: $color-text-inverse;
+        background-color: $color-primary;
+        border-radius: $radius-pill;
         height: 52px;
         width: 100%;
         max-width: 100%;
         border: none;
-        margin: 0 0 1.75rem;
-        font-weight: 500;
-        font-size: 16px;
+        margin: 0 0 $spacing-3xl;
+        font-weight: $font-weight-medium;
+        font-size: $font-size-lg;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        transition: background-color 0.2s ease, transform 0.15s ease;
+        transition: background-color 0.2s ease;
 
         &:hover {
-            background-color: #222222;
-            transform: translateY(-1px);
+            background-color: $color-primary-hover;
         }
 
         @include respond-to(desktop) {
             width: 210px;
-            margin: 0 0 2.75rem;
+            margin: 0 0 $spacing-5xl;
         }
     }
 
@@ -102,8 +101,8 @@
         grid-template-columns: repeat(2, 1fr);
         width: 100%;
         padding: 0;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
+        gap: $spacing-lg;
+        margin-bottom: $spacing-2xl;
 
         @include respond-to(desktop) {
             display: flex;
@@ -121,29 +120,29 @@
 
         .text-stat {
             font-size: 1.6rem;
-            font-weight: 700;
+            font-weight: $font-weight-bold;
             margin: 0;
             color: $color-black;
             font-family: $font-family-body;
         }
 
         .para-stat {
-            font-size: 0.75rem;
-            color: rgba(0, 0, 0, 0.6);
-            font-weight: 400;
-            margin: 4px 0 0;
+            font-size: $font-size-xs;
+            color: $color-text-muted;
+            font-weight: $font-weight-regular;
+            margin: $spacing-2xs 0 0;
             white-space: nowrap;
         }
 
         @include respond-to(desktop) {
             .text-stat {
                 font-size: clamp(2rem, 2.5vw, 2.5rem);
-                line-height: 1.2;
+                line-height: $line-height-snug;
             }
 
             .para-stat {
                 font-size: clamp(0.75rem, 1vw, 0.875rem);
-                line-height: 1.35;
+                line-height: $line-height-normal;
             }
         }
     }
@@ -234,19 +233,19 @@
 }
 
 .first-stat-box {
-    border-right: 1px solid rgba(0, 0, 0, 0.1);
+    border-right: 1px solid $color-border-light;
 
     @include respond-to(desktop) {
-        padding-right: 2rem;
+        padding-right: $spacing-4xl;
     }
 }
 
 .second-stat-box {
-    padding-left: 1rem;
+    padding-left: $spacing-lg;
 
     @include respond-to(desktop) {
-        padding: 0 2rem;
-        border-right: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 0 $spacing-4xl;
+        border-right: 1px solid $color-border-light;
     }
 }
 
@@ -260,6 +259,6 @@
         grid-column: auto;
         text-align: left;
         width: auto;
-        padding-left: 2rem;
+        padding-left: $spacing-4xl;
     }
 }

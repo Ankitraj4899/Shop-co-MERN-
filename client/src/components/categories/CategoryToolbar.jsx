@@ -11,7 +11,7 @@ const CategoryToolbar = ({
   return (
     <div className="listing-toolbar">
       <div className="listing-toolbar__left">
-        <h1>{pageTitle}</h1>
+        <h1 className="listing-toolbar__title">{pageTitle}</h1>
         <span className="showing-count">
           Showing {productsCount > 0 ? (page - 1) * 9 + 1 : 0}-
           {Math.min(page * 9, totalProducts)} of {totalProducts} Products
@@ -23,6 +23,7 @@ const CategoryToolbar = ({
           Sort by:
           <select
             id="sort-dropdown"
+            className="sort-select"
             value={sort}
             onChange={(e) => {
               setSort(e.target.value);
@@ -37,7 +38,6 @@ const CategoryToolbar = ({
           </select>
         </label>
 
-        
         <button
           type="button"
           className="mobile-filter-btn"

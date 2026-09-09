@@ -20,8 +20,8 @@ const CartEmptyState = () => {
           <path d="M16 10a4 4 0 0 1-8 0"></path>
         </svg>
       </div>
-      <h2>Your cart is empty</h2>
-      <p>
+      <h2 className="cart-empty-state__title">Your cart is empty</h2>
+      <p className="cart-empty-state__description">
         Looks like you haven't added anything to your cart yet. Discover our latest collections and find clothes that match your style!
       </p>
       <div className="cart-empty-state__actions">
@@ -50,22 +50,22 @@ const CartEmptyState = () => {
         <div className="feature-item">
           <span className="feature-icon">🚚</span>
           <div>
-            <strong>Free Delivery</strong>
-            <p>On all orders above $50</p>
+            <strong className="feature-item__title">Free Delivery</strong>
+            <p className="feature-item__text">On all orders above $50</p>
           </div>
         </div>
         <div className="feature-item">
           <span className="feature-icon">✨</span>
           <div>
-            <strong>100% Authentic</strong>
-            <p>Direct from top brands</p>
+            <strong className="feature-item__title">100% Authentic</strong>
+            <p className="feature-item__text">Direct from top brands</p>
           </div>
         </div>
         <div className="feature-item">
           <span className="feature-icon">🔒</span>
           <div>
-            <strong>Secure Checkout</strong>
-            <p>Protected & encrypted</p>
+            <strong className="feature-item__title">Secure Checkout</strong>
+            <p className="feature-item__text">Protected & encrypted</p>
           </div>
         </div>
       </div>

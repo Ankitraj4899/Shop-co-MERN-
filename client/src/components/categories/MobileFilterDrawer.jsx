@@ -5,7 +5,7 @@ const MobileFilterDrawer = ({ isOpen, onClose, children }) => {
     <div className="mobile-filter-overlay" onClick={onClose}>
       <div className="mobile-filter-drawer" onClick={(e) => e.stopPropagation()}>
         <div className="mobile-drawer__header">
-          <h2>Filters</h2>
+          <h2 className="mobile-drawer__title">Filters</h2>
           <button
             type="button"
             className="close-drawer-btn"

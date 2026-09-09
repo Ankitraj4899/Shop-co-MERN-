@@ -22,7 +22,7 @@ const ProductCard = memo(({ product }) => {
         {isOutOfStock && <span className="card-badge card-badge--out">Out of Stock</span>}
         {isLowStock && <span className="card-badge card-badge--low">Only {product.quantity} left</span>}
       </div>
-      <h3 title={product.name}>{product.name}</h3>
+      <h3 className="product-card__title" title={product.name}>{product.name}</h3>
       <div className="product-card__rating">
         <StarRating rating={ratingValue} size={16} />
         <span className="rating-num">

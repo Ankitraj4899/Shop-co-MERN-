@@ -5,39 +5,40 @@
 .checkout-form-card {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: $spacing-xl;
 
-    h2 {
-        font-size: 20px;
-        font-weight: 700;
+    &__heading {
+        font-size: $font-size-2xl;
+        font-weight: $font-weight-bold;
         margin: 0;
     }
 
     .form-group-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 16px;
+        gap: $spacing-lg;
 
         @media (max-width: 600px) {
             grid-template-columns: 1fr;
         }
     }
 
-    label {
+    .checkout-label {
         display: flex;
         flex-direction: column;
-        gap: 6px;
-        font-size: 14px;
-        font-weight: 600;
+        gap: $spacing-xs;
+        font-size: $font-size-base;
+        font-weight: $font-weight-semibold;
 
-        input,
-        textarea {
-            padding: 14px 18px;
-            border-radius: 14px;
+        .checkout-input,
+        .checkout-textarea {
+            padding: $spacing-base $spacing-xl;
+            border-radius: $radius-lg;
             border: 1px solid $color-border-light;
-            font-size: 14px;
+            font-size: $font-size-base;
             outline: none;
             background: $color-bg-surface;
+            font-family: $font-family-body;
 
             &:focus {
                 border-color: $color-black;
@@ -46,49 +47,53 @@
     }
 
     .payment-heading {
-        margin-top: 12px;
+        margin-top: $spacing-md;
     }
 
     .payment-method-box {
         background: $color-bg-surface;
         border: 1px solid $color-border-light;
-        border-radius: 14px;
-        padding: 16px;
+        border-radius: $radius-lg;
+        padding: $spacing-lg;
 
         .radio-label {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 15px;
-            font-weight: 600;
+            gap: $spacing-md;
+            font-size: $font-size-md;
+            font-weight: $font-weight-semibold;
             cursor: pointer;
 
-            input[type="radio"] {
+            .radio-input {
                 width: 18px;
                 height: 18px;
                 accent-color: $color-black;
+            }
+
+            .radio-text {
+                font-size: $font-size-md;
             }
         }
     }
 
     .button--place-order {
         height: 54px;
-        font-size: 16px;
-        margin-top: 8px;
+        font-size: $font-size-lg;
+        margin-top: $spacing-sm;
     }
 }
 
 .checkout-items-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: $spacing-md;
 
     .checkout-item-row {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: $spacing-md;
 
-        img {
+        .checkout-item-row__image {
             width: 54px;
             height: 54px;
             border-radius: 10px;
@@ -99,27 +104,27 @@
         &__info {
             flex: 1;
 
-            h4 {
-                font-size: 14px;
-                font-weight: 700;
-                margin: 0 0 2px;
+            .checkout-item-row__title {
+                font-size: $font-size-base;
+                font-weight: $font-weight-bold;
+                margin: 0 0 $spacing-3xs;
             }
 
-            small {
-                font-size: 12px;
+            .checkout-item-row__details {
+                font-size: $font-size-sm;
                 color: $color-text-muted;
             }
         }
 
-        strong {
-            font-size: 15px;
+        .checkout-item-row__price {
+            font-size: $font-size-md;
         }
     }
 }
 
 .secure-badge {
     text-align: center;
-    font-size: 12px;
+    font-size: $font-size-sm;
     color: $color-text-muted;
-    margin: 8px 0 0;
+    margin: $spacing-sm 0 0;
 }

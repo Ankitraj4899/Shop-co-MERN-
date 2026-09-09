@@ -42,8 +42,8 @@ const OrderDetails = () => {
       <div className="commerce-page">
         <Navbar />
         <main className="commerce-state commerce-state--error">
-          <h2>Order Not Found</h2>
-          <p>{error || "Unable to locate the specified order."}</p>
+          <h2 className="commerce-state__title">Order Not Found</h2>
+          <p className="commerce-state__text">{error || "Unable to locate the specified order."}</p>
           <Link className="button button--dark" to="/orders">
             Back to Orders
           </Link>
@@ -52,14 +52,13 @@ const OrderDetails = () => {
     );
   }
 
-  const currentStepIndex = statusSteps.indexOf(order.status.toLowerCase());
+  const currentStepIndex = statusSteps.indexOf((order.status || "").toLowerCase());
 
   return (
     <div className="commerce-page">
       <Navbar />
 
       <main className="order-details-container">
-        
         <nav className="breadcrumbs" aria-label="Breadcrumb">
           <Link to="/">Home</Link>
           <span className="breadcrumb-separator">›</span>
@@ -69,18 +68,17 @@ const OrderDetails = () => {
         </nav>
 
         <div className="commerce-heading order-details-heading">
-          <div>
-            <h1>ORDER #{order._id.slice(-8).toUpperCase()}</h1>
+          <div className="order-details-heading__meta">
+            <h1 className="order-details-heading__title">ORDER #{order._id.slice(-8).toUpperCase()}</h1>
             <p className="order-placed-date">
               Placed on {new Date(order.createdAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" })}
             </p>
           </div>
-          <span className={`status-pill status-pill--${order.status}`}>
+          <span className={`status-pill status-pill--${(order.status || "").toLowerCase()}`}>
             {order.status}
           </span>
         </div>
 
-        
         {order.status !== "cancelled" && (
           <div className="order-status-tracker">
             {statusSteps.map((step, idx) => {
@@ -97,13 +95,13 @@ const OrderDetails = () => {
         )}
 
         <div className="order-details-layout">
-          
           <section className="order-details-card items-card">
-            <h2>Items in this Order ({order.items.reduce((acc, i) => acc + i.quantity, 0)})</h2>
+            <h2 className="order-details-card__title">Items in this Order ({order.items.reduce((acc, i) => acc + i.quantity, 0)})</h2>
             <div className="order-items-table">
               {order.items.map((item, idx) => (
                 <div className="order-item-detail-row" key={`detail-${idx}-${item.name}`}>
                   <img
+                    className="order-item-detail-row__thumb"
                     src={item.thumbnailImage || item.product?.thumbnailImage || "/images/products/arrival1.png"}
                     alt={item.name}
                     onError={(e) => {
@@ -111,9 +109,9 @@ const OrderDetails = () => {
                     }}
                   />
                   <div className="order-item-detail-row__info">
-                    <h3>{item.name}</h3>
-                    {item.size && <p>Size: <span>{item.size}</span></p>}
-                    <p>Unit Price: <strong>${item.price}</strong></p>
+                    <h3 className="order-item-detail-row__title">{item.name}</h3>
+                    {item.size && <p className="order-item-detail-row__specs">Size: <span>{item.size}</span></p>}
+                    <p className="order-item-detail-row__specs">Unit Price: <strong>${item.price}</strong></p>
                   </div>
                   <div className="order-item-detail-row__qty">
                     <span>Qty: {item.quantity}</span>
@@ -126,9 +124,8 @@ const OrderDetails = () => {
             </div>
           </section>
 
-          
-            <aside className="order-details-card summary-card">
-            <h2>Delivery Address</h2>
+          <aside className="order-details-card summary-card">
+            <h2 className="order-details-card__title">Delivery Address</h2>
             <div className="shipping-address-box">
               <div className="shipping-address-box__header">
                 <strong>Shipping Destination</strong>
@@ -138,29 +135,29 @@ const OrderDetails = () => {
 
             <hr className="detail-divider" />
 
-            <h2>Payment & Cost Summary</h2>
+            <h2 className="order-details-card__title">Payment & Cost Summary</h2>
             <div className="summary-row">
-              <span>Items Subtotal</span>
-              <strong>${order.subtotal.toFixed(2)}</strong>
+              <span className="summary-row__label">Items Subtotal</span>
+              <strong className="summary-row__value">${order.subtotal.toFixed(2)}</strong>
             </div>
 
             {order.discount > 0 && (
               <div className="summary-row summary-row--discount">
-                <span>Discount {order.couponCode ? `(${order.couponCode.toUpperCase()})` : ""}</span>
+                <span className="summary-row__label">Discount {order.couponCode ? `(${order.couponCode.toUpperCase()})` : ""}</span>
                 <strong className="discount-val">-${order.discount.toFixed(2)}</strong>
               </div>
             )}
 
             <div className="summary-row">
-              <span>Shipping & Handling</span>
-              <strong>${(order.shippingFee || 15).toFixed(2)}</strong>
+              <span className="summary-row__label">Shipping & Handling</span>
+              <strong className="summary-row__value">${(order.shippingFee || 15).toFixed(2)}</strong>
             </div>
 
             <hr className="detail-divider" />
 
             <div className="summary-row summary-row--total">
-              <span>Grand Total</span>
-              <strong>${order.totalPrice.toFixed(2)}</strong>
+              <span className="summary-row__total-label">Grand Total</span>
+              <strong className="summary-row__total-value">${order.totalPrice.toFixed(2)}</strong>
             </div>
 
             <Link to="/categories" className="button button--dark button--continue-shop">

@@ -74,7 +74,7 @@ const Login = () => {
 
           <form className="auth-form" onSubmit={handleSubmit} noValidate>
             <div className="auth-input-group">
-              <label htmlFor="email">Email Address</label>
+              <label htmlFor="email" className="auth-label">Email Address</label>
               <input
                 id="email"
                 type="email"
@@ -84,7 +84,7 @@ const Login = () => {
                   setEmail(e.target.value);
                   if (fieldErrors.email) setFieldErrors((prev) => ({ ...prev, email: "" }));
                 }}
-                className={fieldErrors.email ? "input--error" : ""}
+                className={`auth-input ${fieldErrors.email ? "input--error" : ""}`}
               />
               {fieldErrors.email && (
                 <span className="field-error-text">{fieldErrors.email}</span>
@@ -93,7 +93,7 @@ const Login = () => {
 
             <div className="auth-input-group">
               <div className="auth-label-row">
-                <label htmlFor="password">Password</label>
+                <label htmlFor="password" className="auth-label">Password</label>
                 <button
                   type="button"
                   className="password-toggle-btn"
@@ -111,7 +111,7 @@ const Login = () => {
                   setPassword(e.target.value);
                   if (fieldErrors.password) setFieldErrors((prev) => ({ ...prev, password: "" }));
                 }}
-                className={fieldErrors.password ? "input--error" : ""}
+                className={`auth-input ${fieldErrors.password ? "input--error" : ""}`}
               />
               {fieldErrors.password && (
                 <span className="field-error-text">{fieldErrors.password}</span>

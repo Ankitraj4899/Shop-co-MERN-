@@ -69,7 +69,7 @@ const Footer = () => {
   return (
     <footer className="site-footer">
       <section className="newsletter">
-        <h2>STAY UPTO DATE ABOUT OUR LATEST OFFERS</h2>
+        <h2 className="newsletter__heading">STAY UPTO DATE ABOUT OUR LATEST OFFERS</h2>
         <form className="newsletter__form" onSubmit={handleNewsletterSubmit}>
           <div className="input-with-icon">
             <span className="mail-icon">
@@ -80,6 +80,7 @@ const Footer = () => {
             </span>
             <input
               type="email"
+              className="newsletter__input"
               placeholder="Enter your email address"
               aria-label="Email address"
               value={newsletterEmail}
@@ -87,7 +88,7 @@ const Footer = () => {
               required
             />
           </div>
-          <button className="button button--white" type="submit" disabled={isSending}>
+          <button className="button button--white newsletter__button" type="submit" disabled={isSending}>
             {isSending ? "Sending..." : newsletterSubscribed ? "Subscribed!" : "Subscribe to Newsletter"}
           </button>
           {feedbackMessage && <p className="newsletter-feedback">{feedbackMessage}</p>}
@@ -97,56 +98,56 @@ const Footer = () => {
       <div className="footer__content">
         <div className="footer__brand">
           <h2 className="logo">SHOP.CO</h2>
-          <p>We have clothes that suit your style and which you're proud to wear. From women to men.</p>
+          <p className="footer__brand-text">We have clothes that suit your style and which you're proud to wear. From women to men.</p>
           <div className="social-links">
-            <a href="#twitter" aria-label="Twitter"><img src={x} alt="Twitter" /></a>
-            <a href="#facebook" aria-label="Facebook" className="facebook"><img src={f} alt="Facebook" /></a>
-            <a href="#instagram" aria-label="Instagram"><img src={i} alt="Instagram" /></a>
-            <a href="#github" aria-label="Github"><img src={g} alt="Github" /></a>
+            <a href="#twitter" className="social-link" aria-label="Twitter"><img src={x} alt="Twitter" className="social-icon" /></a>
+            <a href="#facebook" className="social-link facebook" aria-label="Facebook"><img src={f} alt="Facebook" className="social-icon" /></a>
+            <a href="#instagram" className="social-link" aria-label="Instagram"><img src={i} alt="Instagram" className="social-icon" /></a>
+            <a href="#github" className="social-link" aria-label="Github"><img src={g} alt="Github" className="social-icon" /></a>
           </div>
         </div>
 
         <div className="footer__column">
-          <h3>COMPANY</h3>
-          <Link to="/#about">About</Link>
-          <Link to="/#features">Features</Link>
-          <Link to="/#works">Works</Link>
-          <Link to="/#career">Career</Link>
+          <h3 className="footer__column-heading">COMPANY</h3>
+          <Link to="/#about" className="footer__column-link">About</Link>
+          <Link to="/#features" className="footer__column-link">Features</Link>
+          <Link to="/#works" className="footer__column-link">Works</Link>
+          <Link to="/#career" className="footer__column-link">Career</Link>
         </div>
 
         <div className="footer__column">
-          <h3>HELP</h3>
-          <Link to="/#support">Customer Support</Link>
-          <Link to="/#delivery">Delivery Details</Link>
-          <Link to="/#terms">Terms & Conditions</Link>
-          <Link to="/#privacy">Privacy Policy</Link>
+          <h3 className="footer__column-heading">HELP</h3>
+          <Link to="/#support" className="footer__column-link">Customer Support</Link>
+          <Link to="/#delivery" className="footer__column-link">Delivery Details</Link>
+          <Link to="/#terms" className="footer__column-link">Terms & Conditions</Link>
+          <Link to="/#privacy" className="footer__column-link">Privacy Policy</Link>
         </div>
 
         <div className="footer__column">
-          <h3>FAQ</h3>
-          <Link to="/#account">Account</Link>
-          <Link to="/#deliveries">Manage Deliveries</Link>
-          <Link to="/orders">Orders</Link>
-          <Link to="/#payments">Payments</Link>
+          <h3 className="footer__column-heading">FAQ</h3>
+          <Link to="/#account" className="footer__column-link">Account</Link>
+          <Link to="/#deliveries" className="footer__column-link">Manage Deliveries</Link>
+          <Link to="/orders" className="footer__column-link">Orders</Link>
+          <Link to="/#payments" className="footer__column-link">Payments</Link>
         </div>
 
         <div className="footer__column">
-          <h3>RESOURCES</h3>
-          <a href="#ebooks">Free eBooks</a>
-          <a href="#tutorial">Development Tutorial</a>
-          <a href="#blog">How to - Blog</a>
-          <a href="#youtube">Youtube Playlist</a>
+          <h3 className="footer__column-heading">RESOURCES</h3>
+          <a href="#ebooks" className="footer__column-link">Free eBooks</a>
+          <a href="#tutorial" className="footer__column-link">Development Tutorial</a>
+          <a href="#blog" className="footer__column-link">How to - Blog</a>
+          <a href="#youtube" className="footer__column-link">Youtube Playlist</a>
         </div>
       </div>
 
       <div className="footer__bottom">
-        <span>Shop.co © 2000-2026, All Rights Reserved</span>
+        <span className="footer__copyright">Shop.co © 2000-2026, All Rights Reserved</span>
         <div className="payment-badges">
-          <span className="pay-badge"><img src={visa} alt="Visa" /></span>
-          <span className="pay-badge"><img src={paypal} alt="Paypal" /></span>
-          <span className="pay-badge"><img src={mastercard} alt="Mastercard" /></span>
-          <span className="pay-badge"><img src={apple} alt="Apple Pay" /></span>
-          <span className="pay-badge"><img src={gpay} alt="Google Pay" /></span>
+          <span className="pay-badge"><img src={visa} alt="Visa" className="pay-icon" /></span>
+          <span className="pay-badge"><img src={paypal} alt="Paypal" className="pay-icon" /></span>
+          <span className="pay-badge"><img src={mastercard} alt="Mastercard" className="pay-icon" /></span>
+          <span className="pay-badge"><img src={apple} alt="Apple Pay" className="pay-icon" /></span>
+          <span className="pay-badge"><img src={gpay} alt="Google Pay" className="pay-icon" /></span>
         </div>
       </div>
     </footer>

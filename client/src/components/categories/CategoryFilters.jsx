@@ -50,7 +50,7 @@ const CategoryFilters = ({
   return (
     <div className="filter-content">
       <div className="filter-content__header">
-        <h2>Filters</h2>
+        <h2 className="filter-content__heading">Filters</h2>
         <button type="button" className="clear-filter-btn" onClick={onResetFilters}>
           Clear All
         </button>
@@ -58,33 +58,32 @@ const CategoryFilters = ({
 
       <hr className="filter-divider" />
 
-      
       <div className="filter-group">
-        <h3>Category</h3>
+        <h3 className="filter-group__heading">Category</h3>
         <ul className="category-links">
           <li
-            className={!selectedCategory ? "is-active" : ""}
+            className={`category-item ${!selectedCategory ? "is-active" : ""}`}
             onClick={() => {
               setSelectedCategory("");
               setPage(1);
             }}
           >
-            All Categories <span>›</span>
+            All Categories <span className="category-arrow">›</span>
           </li>
           {categories.map((cat) => (
             <li
               key={cat._id}
-              className={
+              className={`category-item ${
                 selectedCategory === cat._id || selectedCategory === cat.name
                   ? "is-active"
                   : ""
-              }
+              }`}
               onClick={() => {
                 setSelectedCategory(cat.name);
                 setPage(1);
               }}
             >
-              {cat.name} <span>›</span>
+              {cat.name} <span className="category-arrow">›</span>
             </li>
           ))}
         </ul>
@@ -92,14 +91,14 @@ const CategoryFilters = ({
 
       <hr className="filter-divider" />
 
-      
       <div className="filter-group">
-        <h3>Price Range</h3>
+        <h3 className="filter-group__heading">Price Range</h3>
         <div className="price-inputs">
           <div className="input-prefix">
-            <span>$</span>
+            <span className="price-currency">$</span>
             <input
               type="number"
+              className="price-input"
               placeholder="Min"
               min="0"
               value={minPrice}
@@ -111,9 +110,10 @@ const CategoryFilters = ({
           </div>
           <span className="price-to">-</span>
           <div className="input-prefix">
-            <span>$</span>
+            <span className="price-currency">$</span>
             <input
               type="number"
+              className="price-input"
               placeholder="Max"
               min="0"
               value={maxPrice}
@@ -128,9 +128,8 @@ const CategoryFilters = ({
 
       <hr className="filter-divider" />
 
-      
       <div className="filter-group">
-        <h3>Colors</h3>
+        <h3 className="filter-group__heading">Colors</h3>
         <div className="color-swatches-grid">
           {availableColors.map((color) => {
             const isSelected = selectedColor === color.name;
@@ -157,9 +156,8 @@ const CategoryFilters = ({
 
       <hr className="filter-divider" />
 
-      
       <div className="filter-group">
-        <h3>Size</h3>
+        <h3 className="filter-group__heading">Size</h3>
         <div className="size-pills-grid">
           {availableSizes.map((size) => {
             const isSelected = selectedSize === size;
@@ -182,20 +180,19 @@ const CategoryFilters = ({
 
       <hr className="filter-divider" />
 
-      
       <div className="filter-group">
-        <h3>Dress Style</h3>
+        <h3 className="filter-group__heading">Dress Style</h3>
         <ul className="category-links">
           {dressStyles.map((style) => (
             <li
               key={style}
-              className={selectedStyle === style ? "is-active" : ""}
+              className={`category-item ${selectedStyle === style ? "is-active" : ""}`}
               onClick={() => {
                 setSelectedStyle(selectedStyle === style ? "" : style);
                 setPage(1);
               }}
             >
-              {style} <span>›</span>
+              {style} <span className="category-arrow">›</span>
             </li>
           ))}
         </ul>
@@ -203,9 +200,8 @@ const CategoryFilters = ({
 
       <hr className="filter-divider" />
 
-      
       <div className="filter-group">
-        <h3>Availability</h3>
+        <h3 className="filter-group__heading">Availability</h3>
         <select
           className="select-input"
           value={availability}
@@ -220,9 +216,8 @@ const CategoryFilters = ({
         </select>
       </div>
 
-      
       <div className="filter-group mobile-filter-sort">
-        <h3>Sort By</h3>
+        <h3 className="filter-group__heading">Sort By</h3>
         <select
           className="select-input"
           value={sort}

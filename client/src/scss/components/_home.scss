@@ -68,7 +68,6 @@
 
         &:hover {
             background: #2b2b2b;
-            transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
         }
 
@@ -224,11 +223,10 @@
             object-fit: contain;
             filter: brightness(0) invert(1);
             opacity: 1;
-            transition: transform 0.2s ease, opacity 0.2s ease;
+            transition: opacity 0.2s ease;
 
             &:hover {
-                transform: scale(1.06);
-                opacity: 0.9;
+                opacity: 0.8;
             }
 
             @media (max-width: 768px) {
