@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
 import Footer from "../components/Footer";
+import { isValidEmail } from "../lib/validation";
 
 const Register = () => {
   const [username, setUsername] = useState("");
@@ -10,18 +11,46 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
   const { register } = useAuth();
 
+  const validate = () => {
+    const errors = {};
+    const nameTrimmed = username.trim();
+    if (!nameTrimmed) {
+      errors.username = "Full Name is required.";
+    } else if (nameTrimmed.length < 3) {
+      errors.username = "Full Name must be at least 3 characters.";
+    }
+
+    if (!email.trim()) {
+      errors.email = "Email address is required.";
+    } else if (!isValidEmail(email)) {
+      errors.email = "Please enter a valid email address.";
+    }
+
+    if (!password) {
+      errors.password = "Password is required.";
+    } else if (password.length < 6) {
+      errors.password = "Password must be at least 6 characters.";
+    }
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validate()) return;
+
     setErrorMsg("");
     setIsSubmitting(true);
 
     try {
-      await register(username, email, password);
+      await register(username.trim(), email.trim(), password);
       navigate("/");
     } catch (err) {
       setErrorMsg(err.message || "Failed to create account");
@@ -39,7 +68,9 @@ const Register = () => {
           <div className="auth-header">
             <div className="auth-brand-logo">SHOP.CO</div>
             <h1 className="auth-title">Create Account</h1>
-            <p className="auth-subtitle">Join SHOP.CO to unlock 20% off your first order & express checkout</p>
+            <p className="auth-subtitle">
+              Join SHOP.CO to unlock 20% off your first order & express checkout
+            </p>
           </div>
 
           <div className="auth-perk-banner">
@@ -58,7 +89,7 @@ const Register = () => {
             </div>
           )}
 
-          <form className="auth-form" onSubmit={handleSubmit}>
+          <form className="auth-form" onSubmit={handleSubmit} noValidate>
             <div className="auth-input-group">
               <label htmlFor="username">Full Name</label>
               <div className="input-with-icon">
@@ -70,11 +101,17 @@ const Register = () => {
                   id="username"
                   type="text"
                   placeholder="e.g. John Doe"
-                  required
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  onChange={(e) => {
+                    setUsername(e.target.value);
+                    if (fieldErrors.username) setFieldErrors((prev) => ({ ...prev, username: "" }));
+                  }}
+                  className={fieldErrors.username ? "input--error" : ""}
                 />
               </div>
+              {fieldErrors.username && (
+                <span className="field-error-text">{fieldErrors.username}</span>
+              )}
             </div>
 
             <div className="auth-input-group">
@@ -88,11 +125,17 @@ const Register = () => {
                   id="register-email"
                   type="email"
                   placeholder="name@example.com"
-                  required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (fieldErrors.email) setFieldErrors((prev) => ({ ...prev, email: "" }));
+                  }}
+                  className={fieldErrors.email ? "input--error" : ""}
                 />
               </div>
+              {fieldErrors.email && (
+                <span className="field-error-text">{fieldErrors.email}</span>
+              )}
             </div>
 
             <div className="auth-input-group">
@@ -105,10 +148,13 @@ const Register = () => {
                 <input
                   id="register-password"
                   type={showPassword ? "text" : "password"}
-                  placeholder="Create a strong password"
-                  required
+                  placeholder="Create a strong password (min. 6 characters)"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (fieldErrors.password) setFieldErrors((prev) => ({ ...prev, password: "" }));
+                  }}
+                  className={fieldErrors.password ? "input--error" : ""}
                 />
                 <button
                   type="button"
@@ -129,6 +175,9 @@ const Register = () => {
                   )}
                 </button>
               </div>
+              {fieldErrors.password && (
+                <span className="field-error-text">{fieldErrors.password}</span>
+              )}
             </div>
 
             <button

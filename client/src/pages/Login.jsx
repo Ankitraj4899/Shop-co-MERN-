@@ -3,25 +3,47 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
 import Footer from "../components/Footer";
+import { isValidEmail } from "../lib/validation";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
 
+  const validate = () => {
+    const errors = {};
+    if (!email.trim()) {
+      errors.email = "Email address is required.";
+    } else if (!isValidEmail(email)) {
+      errors.email = "Please enter a valid email address.";
+    }
+
+    if (!password) {
+      errors.password = "Password is required.";
+    } else if (password.length < 6) {
+      errors.password = "Password must be at least 6 characters.";
+    }
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validate()) return;
+
     setErrorMsg("");
     setIsSubmitting(true);
 
     try {
-      const user = await login(email, password);
+      const user = await login(email.trim(), password);
       const destination = location.state?.from || (user.role === "admin" ? "/admin" : "/");
       navigate(destination);
     } catch (err) {
@@ -35,6 +57,7 @@ const Login = () => {
     setEmail(demoEmail);
     setPassword(demoPassword);
     setErrorMsg("");
+    setFieldErrors({});
   };
 
   return (
@@ -46,10 +69,11 @@ const Login = () => {
           <div className="auth-header">
             <div className="auth-brand-logo">SHOP.CO</div>
             <h1 className="auth-title">Welcome Back</h1>
-            <p className="auth-subtitle">Sign in to your account to manage orders and checkout seamlessly</p>
+            <p className="auth-subtitle">
+              Sign in to your account to manage orders and checkout seamlessly
+            </p>
           </div>
 
-          {/* Quick Demo Login Chips */}
           <div className="auth-demo-chips">
             <span className="demo-chip-label">Quick Fill Demo:</span>
             <div className="demo-chips-group">
@@ -81,7 +105,7 @@ const Login = () => {
             </div>
           )}
 
-          <form className="auth-form" onSubmit={handleSubmit}>
+          <form className="auth-form" onSubmit={handleSubmit} noValidate>
             <div className="auth-input-group">
               <label htmlFor="email">Email Address</label>
               <div className="input-with-icon">
@@ -93,11 +117,17 @@ const Login = () => {
                   id="email"
                   type="email"
                   placeholder="name@example.com"
-                  required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (fieldErrors.email) setFieldErrors((prev) => ({ ...prev, email: "" }));
+                  }}
+                  className={fieldErrors.email ? "input--error" : ""}
                 />
               </div>
+              {fieldErrors.email && (
+                <span className="field-error-text">{fieldErrors.email}</span>
+              )}
             </div>
 
             <div className="auth-input-group">
@@ -111,9 +141,12 @@ const Login = () => {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
-                  required
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (fieldErrors.password) setFieldErrors((prev) => ({ ...prev, password: "" }));
+                  }}
+                  className={fieldErrors.password ? "input--error" : ""}
                 />
                 <button
                   type="button"
@@ -134,6 +167,9 @@ const Login = () => {
                   )}
                 </button>
               </div>
+              {fieldErrors.password && (
+                <span className="field-error-text">{fieldErrors.password}</span>
+              )}
             </div>
 
             <button

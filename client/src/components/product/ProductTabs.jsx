@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import StarRating from "../StarRating";
 
 const ProductTabs = ({
@@ -7,6 +8,18 @@ const ProductTabs = ({
   product,
   onOpenReviewModal,
 }) => {
+  const reviewsScrollRef = useRef(null);
+
+  const scrollReviews = (direction) => {
+    if (reviewsScrollRef.current) {
+      const scrollAmount = direction === "left" ? -360 : 360;
+      reviewsScrollRef.current.scrollBy({
+        left: scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <div className="product-tabs-wrapper">
       <div className="product-tabs__nav">
@@ -33,7 +46,6 @@ const ProductTabs = ({
         </button>
       </div>
 
-      {/* Tab Content: Rating & Reviews */}
       {activeTab === "reviews" && (
         <div className="product-tab-pane">
           <div className="reviews-header">
@@ -42,6 +54,26 @@ const ProductTabs = ({
             </h3>
 
             <div className="reviews-actions">
+              {reviewsList.length > 2 && (
+                <div className="reviews-nav-arrows">
+                  <button
+                    type="button"
+                    className="reviews-arrow-btn"
+                    onClick={() => scrollReviews("left")}
+                    aria-label="Previous reviews"
+                  >
+                    ←
+                  </button>
+                  <button
+                    type="button"
+                    className="reviews-arrow-btn"
+                    onClick={() => scrollReviews("right")}
+                    aria-label="Next reviews"
+                  >
+                    →
+                  </button>
+                </div>
+              )}
               <button
                 type="button"
                 className="button button--dark button--write-review"
@@ -57,7 +89,7 @@ const ProductTabs = ({
               No reviews yet. Be the first to review this product!
             </p>
           ) : (
-            <div className="reviews-grid">
+            <div className="reviews-grid reviews-grid--horizontal" ref={reviewsScrollRef}>
               {reviewsList.map((rev, i) => (
                 <div key={i} className="review-card">
                   <StarRating rating={rev.rating} size={16} />
@@ -82,7 +114,6 @@ const ProductTabs = ({
         </div>
       )}
 
-      {/* Tab Content: Product Details */}
       {activeTab === "details" && (
         <div className="product-spec-card">
           <h3>Product Specifications</h3>
@@ -109,7 +140,6 @@ const ProductTabs = ({
         </div>
       )}
 
-      {/* Tab Content: FAQs */}
       {activeTab === "faqs" && (
         <div className="product-faq-card">
           <div className="faq-item">

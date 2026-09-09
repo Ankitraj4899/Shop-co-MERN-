@@ -5,6 +5,7 @@ const AdminCategoryModal = ({
   editingCategoryId,
   categoryForm,
   onInputChange,
+  formErrors = {},
 }) => {
   if (!isOpen) return null;
 
@@ -18,7 +19,7 @@ const AdminCategoryModal = ({
           </button>
         </div>
 
-        <form className="admin-modal-form" onSubmit={onSubmit}>
+        <form className="admin-modal-form" onSubmit={onSubmit} noValidate>
           <label>
             Category Name
             <input
@@ -26,8 +27,11 @@ const AdminCategoryModal = ({
               value={categoryForm.name}
               onChange={onInputChange}
               placeholder="e.g. Jackets & Outerwear"
-              required
+              className={formErrors.name ? "input--error" : ""}
             />
+            {formErrors.name && (
+              <span className="field-error-text">{formErrors.name}</span>
+            )}
           </label>
 
           <label>
@@ -38,7 +42,11 @@ const AdminCategoryModal = ({
               value={categoryForm.description}
               onChange={onInputChange}
               placeholder="Describe items in this category..."
+              className={formErrors.description ? "input--error" : ""}
             />
+            {formErrors.description && (
+              <span className="field-error-text">{formErrors.description}</span>
+            )}
           </label>
 
           <div className="modal-actions-row">

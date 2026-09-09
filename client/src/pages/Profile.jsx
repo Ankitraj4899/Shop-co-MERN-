@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { getOrders } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
+import { isValidPhone } from "../lib/validation";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const Profile = () => {
     phone: "",
     address: "",
   });
+  const [fieldErrors, setFieldErrors] = useState({});
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
@@ -37,19 +39,49 @@ const Profile = () => {
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    if (fieldErrors[e.target.name]) {
+      setFieldErrors((prev) => ({ ...prev, [e.target.name]: "" }));
+    }
+  };
+
+  const validate = () => {
+    const errors = {};
+    const nameTrimmed = form.username.trim();
+    if (!nameTrimmed) {
+      errors.username = "Full name is required.";
+    } else if (nameTrimmed.length < 3) {
+      errors.username = "Full name must be at least 3 characters.";
+    }
+
+    if (form.phone.trim() && !isValidPhone(form.phone.trim())) {
+      errors.phone = "Please enter a valid phone number.";
+    }
+
+    if (form.address.trim() && form.address.trim().length < 5) {
+      errors.address = "Address must be at least 5 characters.";
+    }
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validate()) return;
+
     setError("");
     setMessage("");
     setIsUpdating(true);
     try {
-      await updateUserProfile(form);
+      await updateUserProfile({
+        username: form.username.trim(),
+        phone: form.phone.trim(),
+        address: form.address.trim(),
+      });
       setMessage("Profile updated successfully!");
       setTimeout(() => setMessage(""), 3000);
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Failed to update profile");
     } finally {
       setIsUpdating(false);
     }
@@ -78,7 +110,6 @@ const Profile = () => {
       <Navbar />
 
       <main className="profile-page-container">
-        {/* Breadcrumbs */}
         <nav className="breadcrumbs" aria-label="Breadcrumb">
           <Link to="/">Home</Link>
           <span className="breadcrumb-separator">›</span>
@@ -90,8 +121,7 @@ const Profile = () => {
         </div>
 
         <div className="profile-layout">
-          {/* Profile Details Form */}
-          <form className="profile-card profile-form" onSubmit={handleSubmit}>
+          <form className="profile-card profile-form" onSubmit={handleSubmit} noValidate>
             <div className="profile-card__header">
               <h2>Personal Information</h2>
               <span className={`badge ${isAdmin ? "badge--admin" : "badge--user"}`}>
@@ -105,8 +135,11 @@ const Profile = () => {
                 name="username"
                 value={form.username}
                 onChange={handleChange}
-                required
+                className={fieldErrors.username ? "input--error" : ""}
               />
+              {fieldErrors.username && (
+                <span className="field-error-text">{fieldErrors.username}</span>
+              )}
             </label>
 
             <label>
@@ -122,7 +155,11 @@ const Profile = () => {
                 value={form.phone}
                 onChange={handleChange}
                 placeholder="+1 555-0144"
+                className={fieldErrors.phone ? "input--error" : ""}
               />
+              {fieldErrors.phone && (
+                <span className="field-error-text">{fieldErrors.phone}</span>
+              )}
             </label>
 
             <label>
@@ -133,7 +170,11 @@ const Profile = () => {
                 onChange={handleChange}
                 rows="4"
                 placeholder="Enter street, city, state, and postal code"
+                className={fieldErrors.address ? "input--error" : ""}
               />
+              {fieldErrors.address && (
+                <span className="field-error-text">{fieldErrors.address}</span>
+              )}
             </label>
 
             {message && <p className="success-message">{message}</p>}
@@ -149,7 +190,6 @@ const Profile = () => {
             </div>
           </form>
 
-          {/* Quick Order History Overview */}
           <section className="profile-card profile-orders-card">
             <div className="profile-card__header">
               <h2>Recent Orders</h2>
@@ -163,7 +203,13 @@ const Profile = () => {
                 <Link to={`/orders/${order._id}`} className="profile-order-row" key={order._id}>
                   <div>
                     <strong>Order #{order._id.slice(-8).toUpperCase()}</strong>
-                    <small>{new Date(order.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</small>
+                    <small>
+                      {new Date(order.createdAt).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </small>
                   </div>
                   <div className="profile-order-row__right">
                     <span className={`status-pill status-pill--${order.status}`}>

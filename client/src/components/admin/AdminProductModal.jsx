@@ -6,6 +6,7 @@ const AdminProductModal = ({
   productForm,
   onInputChange,
   categories,
+  formErrors = {},
 }) => {
   if (!isOpen) return null;
 
@@ -22,7 +23,7 @@ const AdminProductModal = ({
           </button>
         </div>
 
-        <form className="admin-modal-form" onSubmit={onSubmit}>
+        <form className="admin-modal-form" onSubmit={onSubmit} noValidate>
           <div className="form-row-2col">
             <label>
               Product Name
@@ -31,8 +32,11 @@ const AdminProductModal = ({
                 value={productForm.name}
                 onChange={onInputChange}
                 placeholder="e.g. Graphic T-shirt"
-                required
+                className={formErrors.name ? "input--error" : ""}
               />
+              {formErrors.name && (
+                <span className="field-error-text">{formErrors.name}</span>
+              )}
             </label>
 
             <label>
@@ -41,7 +45,7 @@ const AdminProductModal = ({
                 name="category"
                 value={productForm.category}
                 onChange={onInputChange}
-                required
+                className={formErrors.category ? "input--error" : ""}
               >
                 <option value="">Select Category</option>
                 {categories.map((c) => (
@@ -50,6 +54,9 @@ const AdminProductModal = ({
                   </option>
                 ))}
               </select>
+              {formErrors.category && (
+                <span className="field-error-text">{formErrors.category}</span>
+              )}
             </label>
           </div>
 
@@ -60,9 +67,12 @@ const AdminProductModal = ({
               rows="3"
               value={productForm.description}
               onChange={onInputChange}
-              placeholder="Detailed product information..."
-              required
+              placeholder="Detailed product information (at least 10 characters)..."
+              className={formErrors.description ? "input--error" : ""}
             />
+            {formErrors.description && (
+              <span className="field-error-text">{formErrors.description}</span>
+            )}
           </label>
 
           <div className="form-row-3col">
@@ -76,8 +86,11 @@ const AdminProductModal = ({
                 value={productForm.price}
                 onChange={onInputChange}
                 placeholder="120.00"
-                required
+                className={formErrors.price ? "input--error" : ""}
               />
+              {formErrors.price && (
+                <span className="field-error-text">{formErrors.price}</span>
+              )}
             </label>
 
             <label>
@@ -90,7 +103,11 @@ const AdminProductModal = ({
                 value={productForm.originalPrice}
                 onChange={onInputChange}
                 placeholder="150.00 (Optional)"
+                className={formErrors.originalPrice ? "input--error" : ""}
               />
+              {formErrors.originalPrice && (
+                <span className="field-error-text">{formErrors.originalPrice}</span>
+              )}
             </label>
 
             <label>
@@ -103,7 +120,11 @@ const AdminProductModal = ({
                 value={productForm.discount}
                 onChange={onInputChange}
                 placeholder="20 (Optional)"
+                className={formErrors.discount ? "input--error" : ""}
               />
+              {formErrors.discount && (
+                <span className="field-error-text">{formErrors.discount}</span>
+              )}
             </label>
           </div>
 
@@ -114,12 +135,17 @@ const AdminProductModal = ({
                 name="quantity"
                 type="number"
                 min="0"
+                step="1"
                 value={productForm.quantity}
                 onChange={onInputChange}
                 placeholder="e.g. 25"
-                required
+                className={formErrors.quantity ? "input--error" : ""}
               />
-              <small className="help-text">≤ 5 triggers low stock warning</small>
+              {formErrors.quantity ? (
+                <span className="field-error-text">{formErrors.quantity}</span>
+              ) : (
+                <small className="help-text">≤ 5 triggers low stock warning</small>
+              )}
             </label>
 
             <label>
@@ -156,8 +182,11 @@ const AdminProductModal = ({
               value={productForm.thumbnailImage}
               onChange={onInputChange}
               placeholder="e.g. /images/products/arrival1.png or https://..."
-              required
+              className={formErrors.thumbnailImage ? "input--error" : ""}
             />
+            {formErrors.thumbnailImage && (
+              <span className="field-error-text">{formErrors.thumbnailImage}</span>
+            )}
           </label>
 
           <label>

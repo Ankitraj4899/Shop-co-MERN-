@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import ProductCard from "../components/ProductCard";
@@ -18,40 +18,40 @@ const Home = () => {
   const [testimonialIndex, setTestimonialIndex] = useState(0);
 
   useEffect(() => {
-    let isCurrent = true;
+    let active = true;
     Promise.all([
       getProducts("page=1&limit=4&sort=newest"),
       getProducts("page=1&limit=4&sort=popular"),
     ])
       .then(([newRes, topRes]) => {
-        if (!isCurrent) return;
+        if (!active) return;
         setNewArrivals(newRes.results?.results || []);
         setTopSelling(topRes.results?.results || []);
         setError("");
       })
       .catch((err) => {
-        if (isCurrent) setError(err.message);
+        if (active) setError(err.message || "Failed to load products");
       })
       .finally(() => {
-        if (isCurrent) setIsLoading(false);
+        if (active) setIsLoading(false);
       });
 
     return () => {
-      isCurrent = false;
+      active = false;
     };
   }, []);
 
-  const handlePrevTestimonial = useCallback(() => {
+  const handlePrevTestimonial = () => {
     setTestimonialIndex((prev) =>
       prev === 0 ? testimonialsList.length - 3 : prev - 1
     );
-  }, []);
+  };
 
-  const handleNextTestimonial = useCallback(() => {
+  const handleNextTestimonial = () => {
     setTestimonialIndex((prev) =>
       prev >= testimonialsList.length - 3 ? 0 : prev + 1
     );
-  }, []);
+  };
 
   return (
     <div className="home-page">
@@ -61,13 +61,11 @@ const Home = () => {
         <HeroSection />
         <BrandsStrip />
 
-        {/* Error / Loading States */}
         {error && <p className="catalog-message catalog-message--error">{error}</p>}
         {isLoading && (
           <p className="catalog-message">Loading fresh arrivals & bestsellers...</p>
         )}
 
-        {/* NEW ARRIVALS Section */}
         <section className="product-section" id="new-arrivals">
           <div className="section-heading text-center">
             <h2>NEW ARRIVALS</h2>
@@ -86,7 +84,6 @@ const Home = () => {
 
         <div className="section-divider" />
 
-        {/* TOP SELLING Section */}
         <section className="product-section" id="on-sale">
           <div className="section-heading text-center">
             <h2>TOP SELLING</h2>

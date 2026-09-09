@@ -51,7 +51,7 @@ const Cart = () => {
     try {
       await updateQuantity(productId, newQty);
     } catch (err) {
-      setErrorMessage(err.message);
+      setErrorMessage(err.message || "Failed to update quantity");
     }
   };
 
@@ -60,18 +60,17 @@ const Cart = () => {
     try {
       await removeItem(productId);
     } catch (err) {
-      setErrorMessage(err.message);
+      setErrorMessage(err.message || "Failed to remove item");
     }
   };
 
   const handleClear = async () => {
-    if (window.confirm("Are you sure you want to clear your entire cart?")) {
-      setErrorMessage("");
-      try {
-        await clearCart();
-      } catch (err) {
-        setErrorMessage(err.message);
-      }
+    if (!window.confirm("Are you sure you want to clear your entire cart?")) return;
+    setErrorMessage("");
+    try {
+      await clearCart();
+    } catch (err) {
+      setErrorMessage(err.message || "Failed to clear cart");
     }
   };
 
@@ -80,7 +79,6 @@ const Cart = () => {
       <Navbar />
 
       <main className="cart-page-container">
-        {/* Breadcrumb */}
         <nav className="breadcrumbs" aria-label="Breadcrumb">
           <Link to="/">Home</Link>
           <span className="breadcrumb-separator">›</span>
@@ -92,7 +90,6 @@ const Cart = () => {
         </div>
 
         {isLoading && <p className="commerce-state">Loading your shopping cart...</p>}
-
         {errorMessage && <p className="error-message cart-alert">{errorMessage}</p>}
         {feedback && <p className="success-message cart-alert">{feedback}</p>}
 
@@ -100,7 +97,6 @@ const Cart = () => {
 
         {!isLoading && items.length > 0 && (
           <div className="cart-layout">
-            {/* Left Items Section */}
             <section className="cart-items-container">
               {items.map((item) => (
                 <CartItem
@@ -118,7 +114,6 @@ const Cart = () => {
               </div>
             </section>
 
-            {/* Right Order Summary Section */}
             <CartSummary
               subtotal={subtotal}
               deliveryFee={deliveryFee}

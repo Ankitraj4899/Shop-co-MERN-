@@ -15,6 +15,7 @@ import {
   deleteCategory,
   updateOrderStatus,
 } from "../lib/api";
+import { isValidUrlOrPath } from "../lib/validation";
 
 import AdminOverviewTab from "../components/admin/AdminOverviewTab";
 import AdminProductsTab from "../components/admin/AdminProductsTab";
@@ -24,7 +25,7 @@ import AdminProductModal from "../components/admin/AdminProductModal";
 import AdminCategoryModal from "../components/admin/AdminCategoryModal";
 import AdminOrderDetailsModal from "../components/admin/AdminOrderDetailsModal";
 
-const initialProductForm = {
+const emptyProductForm = {
   name: "",
   description: "",
   price: "",
@@ -38,29 +39,35 @@ const initialProductForm = {
   status: "active",
 };
 
+const emptyCategoryForm = {
+  name: "",
+  description: "",
+};
+
 const Admin = () => {
-  const [currentTab, setCurrentTab] = useState("overview"); // "overview", "products", "categories", "orders"
+  const [currentTab, setCurrentTab] = useState("overview");
 
   const [stats, setStats] = useState(null);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [orders, setOrders] = useState([]);
 
-  const [productForm, setProductForm] = useState(initialProductForm);
+  const [productForm, setProductForm] = useState(emptyProductForm);
+  const [productErrors, setProductErrors] = useState({});
   const [editingProductId, setEditingProductId] = useState(null);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
 
-  const [categoryForm, setCategoryForm] = useState({ name: "", description: "" });
+  const [categoryForm, setCategoryForm] = useState(emptyCategoryForm);
+  const [categoryErrors, setCategoryErrors] = useState({});
   const [editingCategoryId, setEditingCategoryId] = useState(null);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
 
-  const [selectedOrderDetails, setSelectedOrderDetails] = useState(null);
-
+  const [selectedOrder, setSelectedOrder] = useState(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
-  const loadAllAdminData = useCallback(async () => {
+  const loadData = useCallback(async () => {
     setIsLoading(true);
     setError("");
     try {
@@ -75,24 +82,27 @@ const Admin = () => {
       setCategories(catRes.categories || []);
       setOrders(ordRes.results?.results || ordRes.orders || []);
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Failed to load admin data");
     } finally {
       setIsLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    loadAllAdminData();
-  }, [loadAllAdminData]);
+    loadData();
+  }, [loadData]);
 
-  // Product Form Field Handlers
-  const handleProductInputChange = (e) => {
+  const handleProductChange = (e) => {
     const { name, value } = e.target;
     setProductForm((prev) => ({ ...prev, [name]: value }));
+    if (productErrors[name]) {
+      setProductErrors((prev) => ({ ...prev, [name]: "" }));
+    }
   };
 
   const handleOpenAddProduct = () => {
-    setProductForm(initialProductForm);
+    setProductForm(emptyProductForm);
+    setProductErrors({});
     setEditingProductId(null);
     setIsProductModalOpen(true);
     setMessage("");
@@ -101,15 +111,15 @@ const Admin = () => {
 
   const handleOpenEditProduct = (prod) => {
     setEditingProductId(prod._id);
+    setProductErrors({});
     setProductForm({
       name: prod.name || "",
       description: prod.description || "",
-      price: prod.price !== undefined ? String(prod.price) : "",
-      originalPrice:
-        prod.originalPrice !== undefined ? String(prod.originalPrice) : "",
-      discount: prod.discount !== undefined ? String(prod.discount) : "",
+      price: prod.price ?? "",
+      originalPrice: prod.originalPrice ?? "",
+      discount: prod.discount ?? "",
       category: prod.category?._id || prod.category || "",
-      quantity: prod.quantity !== undefined ? String(prod.quantity) : "",
+      quantity: prod.quantity ?? "",
       style: prod.style || "Casual",
       thumbnailImage: prod.thumbnailImage || "",
       galleryImages: (prod.galleryImages || []).join(", "),
@@ -120,33 +130,85 @@ const Admin = () => {
     setError("");
   };
 
+  const validateProductForm = () => {
+    const errors = {};
+    const trimmedName = productForm.name.trim();
+    if (!trimmedName) {
+      errors.name = "Product name is required.";
+    } else if (trimmedName.length < 3) {
+      errors.name = "Product name must be at least 3 characters.";
+    }
+
+    if (!productForm.category) {
+      errors.category = "Please select a category.";
+    }
+
+    const trimmedDesc = productForm.description.trim();
+    if (!trimmedDesc) {
+      errors.description = "Description is required.";
+    } else if (trimmedDesc.length < 10) {
+      errors.description = "Description must be at least 10 characters.";
+    }
+
+    const priceNum = Number(productForm.price);
+    if (productForm.price === "" || isNaN(priceNum) || priceNum <= 0) {
+      errors.price = "Enter a valid positive price.";
+    }
+
+    if (productForm.originalPrice !== "") {
+      const origPriceNum = Number(productForm.originalPrice);
+      if (isNaN(origPriceNum) || origPriceNum < priceNum) {
+        errors.originalPrice = "Original price must be equal to or greater than price.";
+      }
+    }
+
+    if (productForm.discount !== "") {
+      const discNum = Number(productForm.discount);
+      if (isNaN(discNum) || discNum < 0 || discNum > 100) {
+        errors.discount = "Discount must be between 0% and 100%.";
+      }
+    }
+
+    const qtyNum = Number(productForm.quantity);
+    if (productForm.quantity === "" || isNaN(qtyNum) || !Number.isInteger(qtyNum) || qtyNum < 0) {
+      errors.quantity = "Enter a valid non-negative integer for stock quantity.";
+    }
+
+    const thumb = productForm.thumbnailImage.trim();
+    if (!thumb) {
+      errors.thumbnailImage = "Thumbnail image URL or path is required.";
+    } else if (!isValidUrlOrPath(thumb)) {
+      errors.thumbnailImage = "Enter a valid URL or path (e.g. /images/... or https://...).";
+    }
+
+    setProductErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleSaveProduct = async (e) => {
     e.preventDefault();
+    if (!validateProductForm()) return;
+
     setError("");
     setMessage("");
 
-    try {
-      const payload = {
-        name: productForm.name.trim(),
-        description: productForm.description.trim(),
-        price: Number(productForm.price),
-        originalPrice: productForm.originalPrice
-          ? Number(productForm.originalPrice)
-          : null,
-        discount: productForm.discount ? Number(productForm.discount) : 0,
-        category: productForm.category,
-        quantity: Number(productForm.quantity),
-        style: productForm.style,
-        status: productForm.status,
-        thumbnailImage: productForm.thumbnailImage.trim(),
-        galleryImages: productForm.galleryImages
-          ? productForm.galleryImages
-              .split(",")
-              .map((s) => s.trim())
-              .filter(Boolean)
-          : [],
-      };
+    const payload = {
+      name: productForm.name.trim(),
+      description: productForm.description.trim(),
+      price: Number(productForm.price),
+      originalPrice: productForm.originalPrice ? Number(productForm.originalPrice) : null,
+      discount: productForm.discount ? Number(productForm.discount) : 0,
+      category: productForm.category,
+      quantity: Number(productForm.quantity),
+      style: productForm.style,
+      status: productForm.status,
+      thumbnailImage: productForm.thumbnailImage.trim(),
+      galleryImages: productForm.galleryImages
+        ? productForm.galleryImages.split(",").map((s) => s.trim()).filter(Boolean)
+        : [],
+    };
 
+    try {
       if (editingProductId) {
         await updateProduct(editingProductId, payload);
         setMessage("Product updated successfully!");
@@ -157,33 +219,36 @@ const Admin = () => {
 
       setIsProductModalOpen(false);
       setEditingProductId(null);
-      setProductForm(initialProductForm);
-      await loadAllAdminData();
+      setProductForm(emptyProductForm);
+      setProductErrors({});
+      await loadData();
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Failed to save product");
     }
   };
 
   const handleDeleteProduct = async (id, name) => {
-    if (window.confirm(`Are you sure you want to delete "${name}"?`)) {
-      try {
-        await deleteProduct(id);
-        setMessage(`Deleted product: ${name}`);
-        await loadAllAdminData();
-      } catch (err) {
-        setError(err.message);
-      }
+    if (!window.confirm(`Are you sure you want to delete "${name}"?`)) return;
+    try {
+      await deleteProduct(id);
+      setMessage(`Deleted product: ${name}`);
+      await loadData();
+    } catch (err) {
+      setError(err.message || "Failed to delete product");
     }
   };
 
-  // Category Form Field Handlers
-  const handleCategoryInputChange = (e) => {
+  const handleCategoryChange = (e) => {
     const { name, value } = e.target;
     setCategoryForm((prev) => ({ ...prev, [name]: value }));
+    if (categoryErrors[name]) {
+      setCategoryErrors((prev) => ({ ...prev, [name]: "" }));
+    }
   };
 
   const handleOpenAddCategory = () => {
-    setCategoryForm({ name: "", description: "" });
+    setCategoryForm(emptyCategoryForm);
+    setCategoryErrors({});
     setEditingCategoryId(null);
     setIsCategoryModalOpen(true);
     setMessage("");
@@ -192,55 +257,79 @@ const Admin = () => {
 
   const handleOpenEditCategory = (cat) => {
     setEditingCategoryId(cat._id);
-    setCategoryForm({ name: cat.name || "", description: cat.description || "" });
+    setCategoryErrors({});
+    setCategoryForm({
+      name: cat.name || "",
+      description: cat.description || "",
+    });
     setIsCategoryModalOpen(true);
     setMessage("");
     setError("");
   };
 
+  const validateCategoryForm = () => {
+    const errors = {};
+    const trimmedName = categoryForm.name.trim();
+    if (!trimmedName) {
+      errors.name = "Category name is required.";
+    } else if (trimmedName.length < 2) {
+      errors.name = "Category name must be at least 2 characters.";
+    }
+
+    setCategoryErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleSaveCategory = async (e) => {
     e.preventDefault();
+    if (!validateCategoryForm()) return;
+
     setError("");
     setMessage("");
 
     try {
       if (editingCategoryId) {
-        await updateCategory(editingCategoryId, categoryForm);
+        await updateCategory(editingCategoryId, {
+          name: categoryForm.name.trim(),
+          description: categoryForm.description.trim(),
+        });
         setMessage("Category updated successfully!");
       } else {
-        await createCategory(categoryForm);
+        await createCategory({
+          name: categoryForm.name.trim(),
+          description: categoryForm.description.trim(),
+        });
         setMessage("New category created successfully!");
       }
 
       setIsCategoryModalOpen(false);
       setEditingCategoryId(null);
-      setCategoryForm({ name: "", description: "" });
-      await loadAllAdminData();
+      setCategoryForm(emptyCategoryForm);
+      setCategoryErrors({});
+      await loadData();
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Failed to save category");
     }
   };
 
   const handleDeleteCategory = async (id, name) => {
-    if (window.confirm(`Are you sure you want to delete category "${name}"?`)) {
-      try {
-        await deleteCategory(id);
-        setMessage(`Deleted category: ${name}`);
-        await loadAllAdminData();
-      } catch (err) {
-        setError(err.message);
-      }
+    if (!window.confirm(`Are you sure you want to delete category "${name}"?`)) return;
+    try {
+      await deleteCategory(id);
+      setMessage(`Deleted category: ${name}`);
+      await loadData();
+    } catch (err) {
+      setError(err.message || "Failed to delete category");
     }
   };
 
-  // Order Status Update
   const handleUpdateOrderStatus = async (orderId, newStatus) => {
     try {
       await updateOrderStatus(orderId, newStatus);
       setMessage(`Order status updated to "${newStatus}"`);
-      await loadAllAdminData();
+      await loadData();
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Failed to update order status");
     }
   };
 
@@ -264,7 +353,6 @@ const Admin = () => {
           </Link>
         </div>
 
-        {/* Admin Navigation Tabs */}
         <nav className="admin-nav-tabs">
           <button
             type="button"
@@ -296,14 +384,12 @@ const Admin = () => {
           </button>
         </nav>
 
-        {/* Global Feedback Messages */}
         {message && <p className="success-message admin-alert">{message}</p>}
         {error && <p className="error-message admin-alert">{error}</p>}
         {isLoading && (
           <p className="commerce-state">Loading administration records...</p>
         )}
 
-        {/* 1. OVERVIEW / DASHBOARD TAB */}
         {!isLoading && currentTab === "overview" && (
           <AdminOverviewTab
             stats={stats}
@@ -313,7 +399,6 @@ const Admin = () => {
           />
         )}
 
-        {/* 2. PRODUCTS MANAGEMENT TAB */}
         {!isLoading && currentTab === "products" && (
           <AdminProductsTab
             products={products}
@@ -323,7 +408,6 @@ const Admin = () => {
           />
         )}
 
-        {/* 3. CATEGORIES MANAGEMENT TAB */}
         {!isLoading && currentTab === "categories" && (
           <AdminCategoriesTab
             categories={categories}
@@ -334,41 +418,39 @@ const Admin = () => {
           />
         )}
 
-        {/* 4. ORDERS MANAGEMENT TAB */}
         {!isLoading && currentTab === "orders" && (
           <AdminOrdersTab
             orders={orders}
             onUpdateOrderStatus={handleUpdateOrderStatus}
-            onSelectOrderDetails={setSelectedOrderDetails}
+            onSelectOrderDetails={setSelectedOrder}
           />
         )}
       </main>
 
-      {/* PRODUCT CREATE/EDIT MODAL */}
       <AdminProductModal
         isOpen={isProductModalOpen}
         onClose={() => setIsProductModalOpen(false)}
         onSubmit={handleSaveProduct}
         editingProductId={editingProductId}
         productForm={productForm}
-        onInputChange={handleProductInputChange}
+        onInputChange={handleProductChange}
         categories={categories}
+        formErrors={productErrors}
       />
 
-      {/* CATEGORY CREATE/EDIT MODAL */}
       <AdminCategoryModal
         isOpen={isCategoryModalOpen}
         onClose={() => setIsCategoryModalOpen(false)}
         onSubmit={handleSaveCategory}
         editingCategoryId={editingCategoryId}
         categoryForm={categoryForm}
-        onInputChange={handleCategoryInputChange}
+        onInputChange={handleCategoryChange}
+        formErrors={categoryErrors}
       />
 
-      {/* ORDER ITEMS DETAIL POPUP MODAL */}
       <AdminOrderDetailsModal
-        order={selectedOrderDetails}
-        onClose={() => setSelectedOrderDetails(null)}
+        order={selectedOrder}
+        onClose={() => setSelectedOrder(null)}
       />
 
       <Footer />

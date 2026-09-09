@@ -12,6 +12,14 @@ import ProductInfo from "../components/product/ProductInfo";
 import ProductTabs from "../components/product/ProductTabs";
 import ReviewModal from "../components/product/ReviewModal";
 
+const fallbackColors = [
+  { name: "Olive", hex: "#4F533E" },
+  { name: "Forest", hex: "#314F4A" },
+  { name: "Navy", hex: "#31344F" },
+];
+
+const fallbackSizes = ["Small", "Medium", "Large", "X-Large"];
+
 const Product = () => {
   const { productId } = useParams();
   const { addItemToCart } = useCart();
@@ -30,13 +38,17 @@ const Product = () => {
   const [isAdding, setIsAdding] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
-  // Review modal state
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewComment, setReviewComment] = useState("");
   const [reviewerName, setReviewerName] = useState("");
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [reviewError, setReviewError] = useState("");
+
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(""), 4000);
+  };
 
   const fetchProductData = useCallback(async () => {
     setIsLoading(true);
@@ -45,22 +57,17 @@ const Product = () => {
       const data = await getProduct(productId);
       const prod = data.product || data.results || data;
       setProduct(prod);
+
       if (prod) {
         const primaryImg =
           prod.thumbnailImage || (prod.galleryImages && prod.galleryImages[0]) || "";
         setSelectedImage(primaryImg);
-        if (prod.colors && prod.colors.length > 0) {
-          setSelectedColor(prod.colors[0]);
-        }
-        if (prod.variants && prod.variants.length > 0) {
-          setSelectedSize(prod.variants[0].size || "Medium");
-        }
+        if (prod.colors?.length) setSelectedColor(prod.colors[0]);
+        if (prod.variants?.length) setSelectedSize(prod.variants[0].size || "Medium");
       }
 
-      // Fetch related products (fetch up to 10 to ensure 4 distinct items after filtering out current product)
-      const relData = await getProducts(`limit=10`);
-      const allRel =
-        relData.results?.results || relData.products || relData.results || [];
+      const relData = await getProducts("limit=10");
+      const allRel = relData.results?.results || relData.products || relData.results || [];
       setRelatedProducts(allRel.filter((p) => p._id !== productId).slice(0, 4));
     } catch (err) {
       setError(err.message || "Failed to load product details.");
@@ -77,20 +84,15 @@ const Product = () => {
   const handleAddToCart = async () => {
     if (!product) return;
     if (!isAuthenticated) {
-      setToastMessage("Please log in to add items to your cart.");
-      setTimeout(() => setToastMessage(""), 4000);
+      showToast("Please log in to add items to your cart.");
       return;
     }
     setIsAdding(true);
     try {
       await addItemToCart(product._id, quantity, selectedSize);
-      setToastMessage(
-        `Added ${quantity} x ${product.name} (${selectedSize}) to your cart!`
-      );
-      setTimeout(() => setToastMessage(""), 4000);
+      showToast(`Added ${quantity} x ${product.name} (${selectedSize}) to your cart!`);
     } catch (err) {
-      setToastMessage(err.message || "Could not add item to cart.");
-      setTimeout(() => setToastMessage(""), 4000);
+      showToast(err.message || "Could not add item to cart.");
     } finally {
       setIsAdding(false);
     }
@@ -102,6 +104,7 @@ const Product = () => {
       setReviewError("Please write a review comment.");
       return;
     }
+
     setIsSubmittingReview(true);
     setReviewError("");
     try {
@@ -113,9 +116,8 @@ const Product = () => {
       setShowReviewModal(false);
       setReviewComment("");
       setReviewerName("");
-      setToastMessage("Thank you! Your review has been published.");
-      setTimeout(() => setToastMessage(""), 4000);
-      fetchProductData(); // Refresh reviews
+      showToast("Thank you! Your review has been published.");
+      fetchProductData();
     } catch (err) {
       setReviewError(err.message || "Failed to submit review.");
     } finally {
@@ -154,28 +156,16 @@ const Product = () => {
     ...(product.galleryImages || []),
   ].filter(Boolean);
 
-  const colorsList =
-    product.colors && product.colors.length > 0
-      ? product.colors
-      : [
-          { name: "Olive", hex: "#4F533E" },
-          { name: "Forest", hex: "#314F4A" },
-          { name: "Navy", hex: "#31344F" },
-        ];
-
-  const sizesList =
-    product.variants && product.variants.length > 0
-      ? product.variants.map((v) => v.size)
-      : ["Small", "Medium", "Large", "X-Large"];
-
-  const reviewsList = product.reviews || [];
+  const colorsList = product.colors?.length ? product.colors : fallbackColors;
+  const sizesList = product.variants?.length
+    ? product.variants.map((v) => v.size)
+    : fallbackSizes;
 
   return (
     <div className="commerce-page">
       <Navbar />
 
       <main className="product-page-container">
-        {/* Toast Feedback */}
         {toastMessage && (
           <div
             style={{
@@ -196,7 +186,6 @@ const Product = () => {
           </div>
         )}
 
-        {/* Breadcrumb Navigation */}
         <nav className="breadcrumbs" aria-label="Breadcrumb">
           <Link to="/">Home</Link>
           <span className="breadcrumb-separator">&gt;</span>
@@ -207,7 +196,6 @@ const Product = () => {
           <span>{product.name}</span>
         </nav>
 
-        {/* Product Details Section */}
         <div className="product-detail">
           <ProductGallery
             product={product}
@@ -231,16 +219,14 @@ const Product = () => {
           />
         </div>
 
-        {/* Product Tabs */}
         <ProductTabs
           activeTab={activeTab}
           setActiveTab={setActiveTab}
-          reviewsList={reviewsList}
+          reviewsList={product.reviews || []}
           product={product}
           onOpenReviewModal={() => setShowReviewModal(true)}
         />
 
-        {/* You Might Also Like Section */}
         {relatedProducts.length > 0 && (
           <section className="product-section">
             <div className="section-heading text-center">
@@ -255,7 +241,6 @@ const Product = () => {
         )}
       </main>
 
-      {/* Review Modal */}
       <ReviewModal
         isOpen={showReviewModal}
         onClose={() => setShowReviewModal(false)}

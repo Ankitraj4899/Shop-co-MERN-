@@ -5,9 +5,10 @@ const ShippingForm = ({
   isSubmitting,
   estimatedTotal,
   error,
+  formErrors = {},
 }) => {
   return (
-    <form className="checkout-form-card" onSubmit={onSubmit}>
+    <form className="checkout-form-card" onSubmit={onSubmit} noValidate>
       <h2>1. Shipping Information</h2>
 
       <div className="form-group-grid">
@@ -19,8 +20,11 @@ const ShippingForm = ({
             value={shippingForm.fullName}
             onChange={onInputChange}
             placeholder="Recipient's name"
-            required
+            className={formErrors.fullName ? "input--error" : ""}
           />
+          {formErrors.fullName && (
+            <span className="field-error-text">{formErrors.fullName}</span>
+          )}
         </label>
 
         <label>
@@ -31,8 +35,11 @@ const ShippingForm = ({
             value={shippingForm.phone}
             onChange={onInputChange}
             placeholder="+1 555-0100"
-            required
+            className={formErrors.phone ? "input--error" : ""}
           />
+          {formErrors.phone && (
+            <span className="field-error-text">{formErrors.phone}</span>
+          )}
         </label>
       </div>
 
@@ -44,8 +51,11 @@ const ShippingForm = ({
           value={shippingForm.address}
           onChange={onInputChange}
           placeholder="Apartment, suite, unit, building, or street address"
-          required
+          className={formErrors.address ? "input--error" : ""}
         />
+        {formErrors.address && (
+          <span className="field-error-text">{formErrors.address}</span>
+        )}
       </label>
 
       <div className="form-group-grid">
@@ -57,8 +67,11 @@ const ShippingForm = ({
             value={shippingForm.city}
             onChange={onInputChange}
             placeholder="New York"
-            required
+            className={formErrors.city ? "input--error" : ""}
           />
+          {formErrors.city && (
+            <span className="field-error-text">{formErrors.city}</span>
+          )}
         </label>
 
         <label>
@@ -69,8 +82,11 @@ const ShippingForm = ({
             value={shippingForm.postalCode}
             onChange={onInputChange}
             placeholder="10001"
-            required
+            className={formErrors.postalCode ? "input--error" : ""}
           />
+          {formErrors.postalCode && (
+            <span className="field-error-text">{formErrors.postalCode}</span>
+          )}
         </label>
       </div>
 

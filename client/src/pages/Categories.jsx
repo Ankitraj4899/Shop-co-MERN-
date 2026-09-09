@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -17,7 +17,6 @@ const Categories = () => {
   const [products, setProducts] = useState([]);
   const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 });
 
-  // Filter States
   const [searchInput, setSearchInput] = useState(() => searchParams.get("search") || "");
   const [search, setSearch] = useState(() => searchParams.get("search") || "");
   const [selectedCategory, setSelectedCategory] = useState(() => searchParams.get("category") || "");
@@ -34,14 +33,12 @@ const Categories = () => {
   const [error, setError] = useState("");
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
-  // Load categories from MongoDB
   useEffect(() => {
     getCategories()
       .then((data) => setCategories(data.categories || []))
       .catch(() => setCategories([]));
   }, []);
 
-  // Sync URL query params with state
   useEffect(() => {
     const urlSearch = searchParams.get("search");
     if (urlSearch !== null && urlSearch !== searchInput) {
@@ -61,7 +58,6 @@ const Categories = () => {
     }
   }, [searchParams]);
 
-  // Debounced search input handler
   useEffect(() => {
     const timer = setTimeout(() => {
       if (searchInput !== search) {
@@ -72,7 +68,6 @@ const Categories = () => {
     return () => clearTimeout(timer);
   }, [searchInput, search]);
 
-  // Build query parameters
   const query = useMemo(() => {
     const params = new URLSearchParams({ page: String(page), limit: "9", sort });
     if (search.trim()) params.set("search", search.trim());
@@ -97,39 +92,32 @@ const Categories = () => {
     sort,
   ]);
 
-  // Fetch products from backend
   useEffect(() => {
-    let isCurrent = true;
+    let active = true;
     setIsLoading(true);
 
     getProducts(query)
       .then((data) => {
-        if (!isCurrent) return;
+        if (!active) return;
         setProducts(data.results?.results || []);
         setPagination(
-          data.results || {
-            page: 1,
-            totalPages: 1,
-            total: 0,
-            hasNext: false,
-            hasPrevious: false,
-          }
+          data.results || { page: 1, totalPages: 1, total: 0, hasNext: false, hasPrevious: false }
         );
         setError("");
       })
       .catch((err) => {
-        if (isCurrent) setError(err.message);
+        if (active) setError(err.message || "Failed to load products");
       })
       .finally(() => {
-        if (isCurrent) setIsLoading(false);
+        if (active) setIsLoading(false);
       });
 
     return () => {
-      isCurrent = false;
+      active = false;
     };
   }, [query]);
 
-  const handleResetFilters = useCallback(() => {
+  const handleResetFilters = () => {
     setSearchInput("");
     setSearch("");
     setSelectedCategory("");
@@ -142,10 +130,9 @@ const Categories = () => {
     setSort("newest");
     setPage(1);
     setSearchParams({});
-  }, [setSearchParams]);
+  };
 
-  // Dynamic header title
-  const pageTitle = useMemo(() => {
+  const getPageTitle = () => {
     if (search.trim()) return `Search results for "${search.trim()}"`;
     if (selectedCategory) {
       const found = categories.find(
@@ -157,7 +144,9 @@ const Categories = () => {
     }
     if (selectedStyle) return `${selectedStyle} Style`;
     return "All Products";
-  }, [search, selectedCategory, selectedStyle, categories]);
+  };
+
+  const pageTitle = getPageTitle();
 
   const filterProps = {
     categories,
@@ -186,7 +175,6 @@ const Categories = () => {
       <Navbar />
 
       <main className="listing-page">
-        {/* Breadcrumb */}
         <nav className="breadcrumbs" aria-label="Breadcrumb">
           <Link to="/">Home</Link>
           <span className="breadcrumb-separator">›</span>
@@ -194,12 +182,10 @@ const Categories = () => {
         </nav>
 
         <div className="listing-layout">
-          {/* Desktop Filter Sidebar */}
           <aside className="filters-panel desktop-only">
             <CategoryFilters {...filterProps} />
           </aside>
 
-          {/* Right Product Grid Section */}
           <section className="listing-results">
             <CategoryToolbar
               pageTitle={pageTitle}
@@ -212,7 +198,6 @@ const Categories = () => {
               onOpenMobileFilter={() => setIsMobileFilterOpen(true)}
             />
 
-            {/* Product Grid & State Handling */}
             <CategoryProductGrid
               isLoading={isLoading}
               error={error}
@@ -220,7 +205,6 @@ const Categories = () => {
               onResetFilters={handleResetFilters}
             />
 
-            {/* Pagination Component */}
             <CategoryPagination
               pagination={pagination}
               page={page}
@@ -230,7 +214,6 @@ const Categories = () => {
         </div>
       </main>
 
-      {/* Mobile Filter Drawer */}
       <MobileFilterDrawer
         isOpen={isMobileFilterOpen}
         onClose={() => setIsMobileFilterOpen(false)}

@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 const ReviewModal = ({
   isOpen,
   onClose,
@@ -11,7 +13,34 @@ const ReviewModal = ({
   setReviewComment,
   isSubmittingReview,
 }) => {
+  const [localErrors, setLocalErrors] = useState({});
+
   if (!isOpen) return null;
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    const errors = {};
+    if (!reviewerName.trim()) {
+      errors.name = "Please enter your name.";
+    } else if (reviewerName.trim().length < 2) {
+      errors.name = "Name must be at least 2 characters.";
+    }
+
+    if (!reviewRating || reviewRating < 1 || reviewRating > 5) {
+      errors.rating = "Please choose a rating from 1 to 5.";
+    }
+
+    if (!reviewComment.trim()) {
+      errors.comment = "Please write a review comment.";
+    } else if (reviewComment.trim().length < 5) {
+      errors.comment = "Review comment must be at least 5 characters.";
+    }
+
+    setLocalErrors(errors);
+    if (Object.keys(errors).length === 0) {
+      onSubmit(e);
+    }
+  };
 
   return (
     <div className="review-modal-overlay" onClick={onClose}>
@@ -30,17 +59,22 @@ const ReviewModal = ({
 
         {reviewError && <div className="review-modal-error">{reviewError}</div>}
 
-        <form onSubmit={onSubmit} className="review-modal-form">
+        <form onSubmit={handleFormSubmit} className="review-modal-form" noValidate>
           <div className="form-group">
             <label>Your Name</label>
             <input
               type="text"
               placeholder="e.g. Alex M."
               value={reviewerName}
-              onChange={(e) => setReviewerName(e.target.value)}
-              className="modal-input"
-              required
+              onChange={(e) => {
+                setReviewerName(e.target.value);
+                if (localErrors.name) setLocalErrors((prev) => ({ ...prev, name: "" }));
+              }}
+              className={`modal-input ${localErrors.name ? "input--error" : ""}`}
             />
+            {localErrors.name && (
+              <span className="field-error-text">{localErrors.name}</span>
+            )}
           </div>
 
           <div className="form-group">
@@ -51,7 +85,10 @@ const ReviewModal = ({
                   key={star}
                   type="button"
                   className={`star-pick-btn ${reviewRating >= star ? "is-filled" : ""}`}
-                  onClick={() => setReviewRating(star)}
+                  onClick={() => {
+                    setReviewRating(star);
+                    if (localErrors.rating) setLocalErrors((prev) => ({ ...prev, rating: "" }));
+                  }}
                 >
                   ★
                 </button>
@@ -64,18 +101,26 @@ const ReviewModal = ({
                 {reviewRating === 1 && "1 Star - Terrible"}
               </span>
             </div>
+            {localErrors.rating && (
+              <span className="field-error-text">{localErrors.rating}</span>
+            )}
           </div>
 
           <div className="form-group">
             <label>Review Comment</label>
             <textarea
               rows={4}
-              placeholder="Share details about the quality, fit, and design..."
+              placeholder="Share details about the quality, fit, and design (min. 5 characters)..."
               value={reviewComment}
-              onChange={(e) => setReviewComment(e.target.value)}
-              className="modal-textarea"
-              required
+              onChange={(e) => {
+                setReviewComment(e.target.value);
+                if (localErrors.comment) setLocalErrors((prev) => ({ ...prev, comment: "" }));
+              }}
+              className={`modal-textarea ${localErrors.comment ? "input--error" : ""}`}
             />
+            {localErrors.comment && (
+              <span className="field-error-text">{localErrors.comment}</span>
+            )}
           </div>
 
           <div className="modal-actions">
