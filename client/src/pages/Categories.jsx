@@ -17,7 +17,6 @@ const Categories = () => {
   const [products, setProducts] = useState([]);
   const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 });
 
-  const [searchInput, setSearchInput] = useState(() => searchParams.get("search") || "");
   const [search, setSearch] = useState(() => searchParams.get("search") || "");
   const [selectedCategory, setSelectedCategory] = useState(() => searchParams.get("category") || "");
   const [selectedStyle, setSelectedStyle] = useState(() => searchParams.get("style") || "");
@@ -40,33 +39,22 @@ const Categories = () => {
   }, []);
 
   useEffect(() => {
-    const urlSearch = searchParams.get("search");
-    if (urlSearch !== null && urlSearch !== searchInput) {
-      setSearchInput(urlSearch);
+    const urlSearch = searchParams.get("search") || "";
+    if (urlSearch !== search) {
       setSearch(urlSearch);
       setPage(1);
     }
-    const urlCat = searchParams.get("category");
-    if (urlCat !== null && urlCat !== selectedCategory) {
+    const urlCat = searchParams.get("category") || "";
+    if (urlCat !== selectedCategory) {
       setSelectedCategory(urlCat);
       setPage(1);
     }
-    const urlStyle = searchParams.get("style");
-    if (urlStyle !== null && urlStyle !== selectedStyle) {
+    const urlStyle = searchParams.get("style") || "";
+    if (urlStyle !== selectedStyle) {
       setSelectedStyle(urlStyle);
       setPage(1);
     }
   }, [searchParams]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (searchInput !== search) {
-        setSearch(searchInput);
-        setPage(1);
-      }
-    }, 350);
-    return () => clearTimeout(timer);
-  }, [searchInput, search]);
 
   const query = useMemo(() => {
     const params = new URLSearchParams({ page: String(page), limit: "9", sort });
@@ -118,7 +106,6 @@ const Categories = () => {
   }, [query]);
 
   const handleResetFilters = () => {
-    setSearchInput("");
     setSearch("");
     setSelectedCategory("");
     setSelectedStyle("");

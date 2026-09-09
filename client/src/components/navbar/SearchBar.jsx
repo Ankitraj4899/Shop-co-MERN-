@@ -14,6 +14,7 @@ const SearchBar = ({ searchTerm, setSearchTerm, onSearch, onTriggerSearch }) => 
         type="search"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
+        onInput={(e) => setSearchTerm(e.target.value)}
         onKeyDown={onSearch}
         placeholder="Search for products..."
         className="navbar__search"

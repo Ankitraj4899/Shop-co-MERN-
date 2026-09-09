@@ -1,10 +1,11 @@
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import cart from "../assets/icons/cart.svg";
 import search from "../assets/icons/search.svg";
 import hamburger from "../assets/icons/hamburger.svg";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
+import { useDebounce } from "../hooks/useDebounce";
 
 import TopBanner from "./navbar/TopBanner";
 import SearchBar from "./navbar/SearchBar";
@@ -14,11 +15,15 @@ import MobileDrawer from "./navbar/MobileDrawer";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
   const { cartCount } = useCart();
 
   const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
+  const debouncedSearchTerm = useDebounce(searchTerm, 400);
+  const isFirstRender = useRef(true);
+
   const [showBanner, setShowBanner] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -29,8 +34,33 @@ const Navbar = () => {
   const shopDropdownRef = useRef(null);
 
   useEffect(() => {
-    setSearchTerm(searchParams.get("search") || "");
+    const urlQuery = searchParams.get("search") || "";
+    if (urlQuery !== searchTerm) {
+      setSearchTerm(urlQuery);
+    }
   }, [searchParams]);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    const trimmed = debouncedSearchTerm.trim();
+    const currentParam = searchParams.get("search") || "";
+
+    if (trimmed !== currentParam) {
+      if (location.pathname === "/categories") {
+        if (trimmed) {
+          navigate(`/categories?search=${encodeURIComponent(trimmed)}`, { replace: true });
+        } else {
+          navigate("/categories", { replace: true });
+        }
+      } else if (trimmed.length >= 2) {
+        navigate(`/categories?search=${encodeURIComponent(trimmed)}`);
+      }
+    }
+  }, [debouncedSearchTerm]);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -51,6 +81,9 @@ const Navbar = () => {
       if (query) {
         navigate(`/categories?search=${encodeURIComponent(query)}`);
         setIsMobileSearchOpen(false);
+      } else if (location.pathname === "/categories") {
+        navigate("/categories");
+        setIsMobileSearchOpen(false);
       }
     }
   };
@@ -59,6 +92,9 @@ const Navbar = () => {
     const query = searchTerm.trim();
     if (query) {
       navigate(`/categories?search=${encodeURIComponent(query)}`);
+      setIsMobileSearchOpen(false);
+    } else if (location.pathname === "/categories") {
+      navigate("/categories");
       setIsMobileSearchOpen(false);
     }
   };
