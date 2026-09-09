@@ -49,11 +49,11 @@ const ProductTabs = ({
       {activeTab === "reviews" && (
         <div className="product-tab-pane">
           <div className="reviews-header">
-            <h3 className="reviews-title">
-              All Reviews <span className="reviews-count">({reviewsList.length})</span>
-            </h3>
+            <div className="reviews-header__top">
+              <h3 className="reviews-title">
+                All Reviews <span className="reviews-count">({reviewsList.length})</span>
+              </h3>
 
-            <div className="reviews-actions">
               {reviewsList.length > 2 && (
                 <div className="reviews-nav-arrows">
                   <button
@@ -74,6 +74,9 @@ const ProductTabs = ({
                   </button>
                 </div>
               )}
+            </div>
+
+            <div className="reviews-actions">
               <button
                 type="button"
                 className="button button--dark button--write-review"

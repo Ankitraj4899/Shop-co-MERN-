@@ -23,6 +23,7 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isShopDropdownOpen, setIsShopDropdownOpen] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
 
   const userMenuRef = useRef(null);
   const shopDropdownRef = useRef(null);
@@ -47,13 +48,23 @@ const Navbar = () => {
   const handleSearch = (event) => {
     if (event.key === "Enter") {
       const query = searchTerm.trim();
-      navigate(query ? `/categories?search=${encodeURIComponent(query)}` : "/categories");
+      if (query) {
+        navigate(`/categories?search=${encodeURIComponent(query)}`);
+        setIsMobileSearchOpen(false);
+      }
     }
   };
 
   const triggerSearch = () => {
     const query = searchTerm.trim();
-    navigate(query ? `/categories?search=${encodeURIComponent(query)}` : "/categories");
+    if (query) {
+      navigate(`/categories?search=${encodeURIComponent(query)}`);
+      setIsMobileSearchOpen(false);
+    }
+  };
+
+  const toggleMobileSearch = () => {
+    setIsMobileSearchOpen((prev) => !prev);
   };
 
   const handleLogout = async () => {
@@ -129,8 +140,8 @@ const Navbar = () => {
             <button
               className="navbar__icon search-img"
               type="button"
-              aria-label="Search"
-              onClick={triggerSearch}
+              aria-label="Toggle search"
+              onClick={toggleMobileSearch}
             >
               <img src={search} className="img" alt="search" />
             </button>
@@ -156,6 +167,37 @@ const Navbar = () => {
             />
           </div>
         </div>
+
+        {/* Mobile Expandable Search Bar */}
+        {isMobileSearchOpen && (
+          <div className="mobile-search-bar">
+            <div className="mobile-search-bar__inner">
+              <img
+                src={search}
+                alt=""
+                className="mobile-search-icon"
+                onClick={triggerSearch}
+              />
+              <input
+                type="search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={handleSearch}
+                placeholder="Search for products..."
+                className="mobile-search-input"
+                autoFocus
+              />
+              <button
+                type="button"
+                className="mobile-search-close"
+                onClick={() => setIsMobileSearchOpen(false)}
+                aria-label="Close search"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       <MobileDrawer
