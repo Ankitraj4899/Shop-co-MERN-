@@ -34,7 +34,7 @@ const UserMenu = ({
               <div className="user-dropdown__header">
                 <strong>{user?.username}</strong>
                 <small>{user?.email}</small>
-                <span className={`badge ${isAdmin ? "badge--admin" : "badge--user"}`}>
+                <span className="user-dropdown__role">
                   {isAdmin ? "Admin" : "Customer"}
                 </span>
               </div>

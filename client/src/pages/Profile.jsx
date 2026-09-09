@@ -116,66 +116,104 @@ const Profile = () => {
           <span>My Profile</span>
         </nav>
 
-        <div className="commerce-heading">
-          <h1>MY PROFILE</h1>
+        <div className="profile-hero-card">
+          <div className="profile-hero-card__identity">
+            <div className="profile-avatar">
+              <span>{user.username ? user.username.charAt(0).toUpperCase() : "U"}</span>
+            </div>
+            <div className="profile-user-info">
+              <div className="profile-user-info__header">
+                <h1>{user.username || "Shopper"}</h1>
+                <span className={`badge ${isAdmin ? "badge--admin" : "badge--user"}`}>
+                  {isAdmin ? "Administrator" : "Verified Member"}
+                </span>
+              </div>
+              <p className="profile-user-email">{user.email}</p>
+            </div>
+          </div>
+
+          <div className="profile-hero-card__stats">
+            <div className="profile-stat-item">
+              <span className="profile-stat-item__label">Total Orders</span>
+              <span className="profile-stat-item__value">{orders.length}</span>
+            </div>
+            <div className="profile-stat-item">
+              <span className="profile-stat-item__label">Account Tier</span>
+              <span className="profile-stat-item__value">{isAdmin ? "Admin" : "Standard"}</span>
+            </div>
+            <div className="profile-stat-item">
+              <span className="profile-stat-item__label">Shipping Address</span>
+              <span className="profile-stat-item__value">{form.address ? "Saved" : "Pending"}</span>
+            </div>
+          </div>
         </div>
 
         <div className="profile-layout">
           <form className="profile-card profile-form" onSubmit={handleSubmit} noValidate>
             <div className="profile-card__header">
-              <h2>Personal Information</h2>
-              <span className={`badge ${isAdmin ? "badge--admin" : "badge--user"}`}>
-                {isAdmin ? "Administrator" : "Customer Account"}
-              </span>
+              <div>
+                <h2>Personal Details</h2>
+                <p className="profile-card__subtitle">Manage your account information and shipping destination</p>
+              </div>
             </div>
 
-            <label>
-              Full Name
-              <input
-                name="username"
-                value={form.username}
-                onChange={handleChange}
-                className={fieldErrors.username ? "input--error" : ""}
-              />
-              {fieldErrors.username && (
-                <span className="field-error-text">{fieldErrors.username}</span>
-              )}
-            </label>
+            <div className="form-field-group">
+              <label>
+                <span className="field-label-text">
+                  Full Name
+                </span>
+                <input
+                  name="username"
+                  value={form.username}
+                  onChange={handleChange}
+                  placeholder="Your full name"
+                  className={fieldErrors.username ? "input--error" : ""}
+                />
+                {fieldErrors.username && (
+                  <span className="field-error-text">{fieldErrors.username}</span>
+                )}
+              </label>
 
-            <label>
-              Email Address (Read-only)
-              <input value={user.email} disabled className="input--disabled" />
-              <small className="help-text">Email cannot be changed.</small>
-            </label>
+              <label>
+                <span className="field-label-text">
+                  Email Address <span className="read-only-tag">(Read-only)</span>
+                </span>
+                <input value={user.email} disabled className="input--disabled" />
+              </label>
 
-            <label>
-              Phone Number
-              <input
-                name="phone"
-                value={form.phone}
-                onChange={handleChange}
-                placeholder="+1 555-0144"
-                className={fieldErrors.phone ? "input--error" : ""}
-              />
-              {fieldErrors.phone && (
-                <span className="field-error-text">{fieldErrors.phone}</span>
-              )}
-            </label>
+              <label>
+                <span className="field-label-text">
+                  Phone Number
+                </span>
+                <input
+                  name="phone"
+                  value={form.phone}
+                  onChange={handleChange}
+                  placeholder="+1 (555) 000-0000"
+                  className={fieldErrors.phone ? "input--error" : ""}
+                />
+                {fieldErrors.phone && (
+                  <span className="field-error-text">{fieldErrors.phone}</span>
+                )}
+              </label>
 
-            <label>
-              Default Shipping Address
-              <textarea
-                name="address"
-                value={form.address}
-                onChange={handleChange}
-                rows="4"
-                placeholder="Enter street, city, state, and postal code"
-                className={fieldErrors.address ? "input--error" : ""}
-              />
-              {fieldErrors.address && (
-                <span className="field-error-text">{fieldErrors.address}</span>
-              )}
-            </label>
+              <label>
+                <span className="field-label-text">
+                  Default Shipping Address
+                </span>
+                <textarea
+                  name="address"
+                  value={form.address}
+                  onChange={handleChange}
+                  rows="3"
+                  placeholder="Street address, City, State, Postal code"
+                  className={fieldErrors.address ? "input--error" : ""}
+                />
+                {fieldErrors.address && (
+                  <span className="field-error-text">{fieldErrors.address}</span>
+                )}
+              </label>
+            </div>
 
             {message && <p className="success-message">{message}</p>}
             {error && <p className="error-message">{error}</p>}
@@ -190,46 +228,77 @@ const Profile = () => {
             </div>
           </form>
 
-          <section className="profile-card profile-orders-card">
-            <div className="profile-card__header">
-              <h2>Recent Orders</h2>
-              <Link to="/orders" className="view-all-link">
-                View All ({orders.length}) →
-              </Link>
-            </div>
-
-            <div className="profile-orders-list">
-              {orders.slice(0, 4).map((order) => (
-                <Link to={`/orders/${order._id}`} className="profile-order-row" key={order._id}>
-                  <div>
-                    <strong>Order #{order._id.slice(-8).toUpperCase()}</strong>
-                    <small>
-                      {new Date(order.createdAt).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                    </small>
-                  </div>
-                  <div className="profile-order-row__right">
-                    <span className={`status-pill status-pill--${order.status}`}>
-                      {order.status}
-                    </span>
-                    <strong>${order.totalPrice.toFixed(2)}</strong>
-                  </div>
-                </Link>
-              ))}
-
-              {!orders.length && (
-                <div className="empty-orders-note">
-                  <p>You haven't placed any orders yet.</p>
-                  <Link className="button button--dark" to="/categories">
-                    Browse Storefront
-                  </Link>
+          <div className="profile-side-column">
+            <section className="profile-card profile-orders-card">
+              <div className="profile-card__header">
+                <div>
+                  <h2>Recent Orders</h2>
+                  <p className="profile-card__subtitle">Track and view your latest purchases</p>
                 </div>
-              )}
-            </div>
-          </section>
+                <Link to="/orders" className="view-all-link">
+                  View All ({orders.length}) →
+                </Link>
+              </div>
+
+              <div className="profile-orders-list">
+                {orders.slice(0, 4).map((order) => (
+                  <Link to={`/orders/${order._id}`} className="profile-order-row" key={order._id}>
+                    <div className="profile-order-row__left">
+                      <div>
+                        <strong>Order #{order._id.slice(-8).toUpperCase()}</strong>
+                        <small>
+                          {new Date(order.createdAt).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })}
+                        </small>
+                      </div>
+                    </div>
+                    <div className="profile-order-row__right">
+                      <span className={`status-pill status-pill--${order.status}`}>
+                        {order.status}
+                      </span>
+                      <strong className="order-price">${order.totalPrice.toFixed(2)}</strong>
+                    </div>
+                  </Link>
+                ))}
+
+                {!orders.length && (
+                  <div className="empty-orders-note">
+                    <p>You haven't placed any orders yet.</p>
+                    <Link className="button button--dark" to="/categories">
+                      Explore Collection
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </section>
+
+            <section className="profile-perks-card">
+              <h3>Member Privileges</h3>
+              <div className="perks-grid">
+                <div className="perk-item">
+                  <div>
+                    <strong>Express Delivery</strong>
+                    <small>Fast track priority shipping on all orders</small>
+                  </div>
+                </div>
+                <div className="perk-item">
+                  <div>
+                    <strong>Buyer Protection</strong>
+                    <small>100% money back guarantee & easy 30-day returns</small>
+                  </div>
+                </div>
+                <div className="perk-item">
+                  <div>
+                    <strong>Exclusive Drops</strong>
+                    <small>Early VIP access to new seasonal collections</small>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
         </div>
       </main>
       <Footer />

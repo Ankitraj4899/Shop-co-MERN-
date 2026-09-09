@@ -7,13 +7,125 @@
     margin: 0 auto;
     padding: 24px 16px 80px;
 
+    .profile-hero-card {
+        background: #000000;
+        color: $color-white;
+        border-radius: 20px;
+        padding: 28px 32px;
+        margin-bottom: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+
+        @media (max-width: 900px) {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 24px 20px;
+            gap: 20px;
+        }
+
+        &__identity {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+
+            .profile-avatar {
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                background: #222222;
+                border: 2px solid rgba(255, 255, 255, 0.2);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: $font-family-heading;
+                font-size: 24px;
+                font-weight: 800;
+                color: $color-white;
+                flex-shrink: 0;
+            }
+
+            .profile-user-info {
+                &__header {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    flex-wrap: wrap;
+
+                    h1 {
+                        font-family: $font-family-body;
+                        font-size: clamp(20px, 3vw, 24px);
+                        font-weight: 800;
+                        margin: 0;
+                        color: $color-white;
+                    }
+                }
+
+                .profile-user-email {
+                    margin: 4px 0 0;
+                    font-size: 14px;
+                    color: rgba(255, 255, 255, 0.65);
+                }
+            }
+        }
+
+        &__stats {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+
+            @media (max-width: 900px) {
+                width: 100%;
+                justify-content: space-between;
+                gap: 10px;
+                border-top: 1px solid rgba(255, 255, 255, 0.12);
+                padding-top: 16px;
+            }
+
+            .profile-stat-item {
+                background: rgba(255, 255, 255, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 14px;
+                padding: 10px 18px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                min-width: 90px;
+
+                @media (max-width: 600px) {
+                    min-width: auto;
+                    flex: 1;
+                    padding: 8px 6px;
+                }
+
+                &__label {
+                    font-size: 11px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    color: rgba(255, 255, 255, 0.6);
+                    margin-bottom: 2px;
+                    font-weight: 600;
+                    text-align: center;
+                }
+
+                &__value {
+                    font-size: 16px;
+                    font-weight: 800;
+                    color: $color-white;
+                    font-family: $font-family-body;
+                }
+            }
+        }
+    }
+
     .profile-layout {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1.15fr 0.85fr;
         gap: 28px;
         align-items: flex-start;
 
-        @media (max-width: 900px) {
+        @media (max-width: 960px) {
             grid-template-columns: 1fr;
         }
     }
@@ -23,8 +135,7 @@
     background: $color-white;
     border: 1px solid $color-border-light;
     border-radius: 20px;
-    padding: 32px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    padding: 28px;
 
     @media (max-width: 600px) {
         padding: 20px 16px;
@@ -34,190 +145,320 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 24px;
-        padding-bottom: 16px;
+        margin-bottom: 20px;
+        padding-bottom: 14px;
         border-bottom: 1px solid $color-border-light;
 
         h2 {
             font-family: $font-family-body;
-            font-size: 20px;
-            font-weight: 700;
+            font-size: 19px;
+            font-weight: 800;
             margin: 0;
             color: $color-black;
+        }
+
+        .profile-card__subtitle {
+            margin: 4px 0 0;
+            font-size: 13px;
+            color: $color-text-muted;
+            font-weight: 400;
+        }
+
+        .view-all-link {
+            font-size: 13px;
+            font-weight: 700;
+            color: $color-black;
+            text-decoration: none;
+            white-space: nowrap;
+
+            &:hover {
+                text-decoration: underline;
+            }
         }
     }
 
     &.profile-form {
-        display: flex;
-        flex-direction: column;
-        gap: 18px;
+        .form-field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
 
         label {
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            color: $color-black;
+            gap: 6px;
+
+            .field-label-text {
+                font-size: 13px;
+                font-weight: 700;
+                color: #222222;
+
+                .read-only-tag {
+                    font-size: 11px;
+                    color: $color-text-muted;
+                    font-weight: 400;
+                }
+            }
 
             input,
             textarea {
-                padding: 14px 18px;
-                border-radius: 14px;
+                padding: 12px 16px;
+                border-radius: 12px;
                 border: 1px solid $color-border-light;
                 font-size: 14px;
                 font-family: $font-family-body;
-                background: $color-bg-surface;
+                background: #fbfbfb;
+                color: $color-black;
                 outline: none;
-                transition: border-color 0.2s ease, box-shadow 0.2s ease;
+                box-sizing: border-box;
+                width: 100%;
 
                 &:focus {
                     border-color: $color-black;
                     background: $color-white;
-                    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
                 }
 
                 &.input--disabled {
-                    background: #f5f5f5;
-                    color: $color-text-muted;
+                    background: #f0f0f0;
+                    color: rgba(0, 0, 0, 0.5);
                     cursor: not-allowed;
                 }
             }
 
-            .help-text {
-                font-size: 12px;
-                color: $color-text-muted;
-                font-weight: 400;
+            textarea {
+                resize: vertical;
+                min-height: 80px;
+                line-height: 1.5;
             }
+        }
+
+        .success-message {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin: 16px 0 0;
+            border: 1px solid rgba(6, 95, 70, 0.2);
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin: 16px 0 0;
+            border: 1px solid rgba(153, 27, 27, 0.2);
         }
 
         .profile-actions {
             display: flex;
+            align-items: center;
             gap: 12px;
-            margin-top: 12px;
+            margin-top: 24px;
+            padding-top: 18px;
+            border-top: 1px solid $color-border-light;
 
             button {
-                flex: 1;
                 height: 48px;
                 border-radius: 62px;
                 font-size: 14px;
                 font-weight: 700;
                 cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
             }
 
             .button--dark {
+                flex: 1.5;
                 background: $color-black;
                 color: $color-white;
-                border: none;
+                border: 1px solid $color-black;
 
-                &:hover {
-                    background: #333;
+                &:hover:not(:disabled) {
+                    background: #262626;
+                    border-color: #262626;
+                }
+
+                &:disabled {
+                    opacity: 0.6;
+                    cursor: not-allowed;
                 }
             }
 
             .button--outline {
+                flex: 1;
                 background: transparent;
                 border: 1px solid $color-border-light;
-                color: $color-black;
+                color: #555555;
 
                 &:hover {
-                    background: #f8f8f8;
-                    border-color: $color-black;
+                    background: #f5f5f5;
+                    color: $color-black;
                 }
             }
         }
     }
+}
 
-    .profile-orders-list {
+.profile-side-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.profile-orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .profile-order-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 16px;
+        border: 1px solid $color-border-light;
+        border-radius: 14px;
+        text-decoration: none;
+        color: inherit;
+        background: #fafafa;
+
+        &:hover {
+            background: #f0f0f0;
+            border-color: rgba(0, 0, 0, 0.25);
+        }
+
+        &__left {
+            strong {
+                display: block;
+                font-size: 14px;
+                font-weight: 700;
+                color: $color-black;
+            }
+
+            small {
+                font-size: 12px;
+                color: $color-text-muted;
+                margin-top: 2px;
+                display: block;
+            }
+        }
+
+        &__right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+
+            .order-price {
+                font-size: 14px;
+                font-weight: 800;
+                color: $color-black;
+            }
+        }
+    }
+
+    .empty-orders-note {
+        text-align: center;
+        padding: 32px 16px;
+        background: #fafafa;
+        border-radius: 14px;
+        border: 1px dashed $color-border-light;
+
+        p {
+            color: $color-text-muted;
+            margin: 0 0 14px;
+            font-size: 14px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 24px;
+            border-radius: 62px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+        }
+    }
+}
+
+.profile-perks-card {
+    background: #f7f7f7;
+    border: 1px solid $color-border-light;
+    border-radius: 18px;
+    padding: 20px;
+
+    h3 {
+        font-family: $font-family-body;
+        font-size: 14px;
+        font-weight: 800;
+        margin: 0 0 14px;
+        color: $color-black;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .perks-grid {
         display: flex;
         flex-direction: column;
         gap: 12px;
 
-        .profile-order-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 20px;
-            border: 1px solid $color-border-light;
-            border-radius: 14px;
-            text-decoration: none;
-            color: inherit;
-            transition: all 0.2s ease;
-
-            &:hover {
-                background: $color-bg-surface;
-                border-color: rgba(0, 0, 0, 0.2);
-                transform: translateY(-1px);
-            }
-
-            div strong {
+        .perk-item {
+            strong {
                 display: block;
-                font-size: 14px;
+                font-size: 13px;
+                font-weight: 700;
                 color: $color-black;
             }
 
-            div small {
+            small {
+                display: block;
                 font-size: 12px;
                 color: $color-text-muted;
-            }
-
-            &__right {
-                display: flex;
-                align-items: center;
-                gap: 14px;
-            }
-        }
-
-        .empty-orders-note {
-            text-align: center;
-            padding: 32px 16px;
-
-            p {
-                color: $color-text-muted;
-                margin-bottom: 16px;
-                font-size: 14px;
-            }
-
-            .button {
-                display: inline-block;
-                padding: 12px 28px;
-                border-radius: 62px;
-                text-decoration: none;
+                margin-top: 2px;
+                line-height: 1.4;
             }
         }
     }
 }
 
 .status-pill {
-    padding: 4px 12px;
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
     border-radius: 62px;
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 11px;
+    font-weight: 700;
     text-transform: capitalize;
 
     &--Pending {
-        background: #FFF3CD;
-        color: #856404;
+        background: #fef3c7;
+        color: #92400e;
     }
 
     &--Processing {
-        background: #CCE5FF;
-        color: #004085;
+        background: #dbeafe;
+        color: #1e40af;
     }
 
     &--Shipped {
-        background: #E2E3E5;
-        color: #383D41;
+        background: #f3e8ff;
+        color: #6b21a8;
     }
 
     &--Delivered {
-        background: #D4EDDA;
-        color: #155724;
+        background: #d1fae5;
+        color: #065f46;
     }
 
     &--Cancelled {
-        background: #F8D7DA;
-        color: #721C24;
+        background: #fee2e2;
+        color: #991b1b;
     }
 }
 
@@ -227,14 +468,14 @@
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 
-    &--admin {
-        background: #000;
-        color: #fff;
-    }
-
+    &--admin,
     &--user {
-        background: #f0f0f0;
-        color: #333;
+        background: rgba(255, 255, 255, 0.15);
+        color: #ffffff;
     }
 }
