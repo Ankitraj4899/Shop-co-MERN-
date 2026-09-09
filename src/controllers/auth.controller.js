@@ -39,18 +39,16 @@ export async function registerController(req, res) {
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
             secure: false,
-            sameSite: "strict",
-            maxAge: 15 * 60 * 1000
+            sameSite: "lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
         res.cookie("refreshToken", refreshToken, {
-            //means client side js can not access the data stored in cookie
             httpOnly: true,
             secure: false,
-            sameSite: "strict",
+            sameSite: "lax",
             maxAge: 7 * 24 * 60 * 60 * 1000
         })
-
 
         res.status(201).json({
             message: "user registered successfully",
@@ -93,7 +91,6 @@ export async function loginController(req, res) {
             });
         }
 
-
         const refreshToken = jwt.sign({
             id: user._id,
             role: user.role
@@ -105,23 +102,20 @@ export async function loginController(req, res) {
             id: user._id,
             role: user.role
         }, config.JWT_SECRET, {
-            expiresIn: "15m",
+            expiresIn: "7d",
         })
-
 
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
             secure: false,
-            sameSite: "strict",
-            maxAge: 15 * 60 * 1000
+            sameSite: "lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
-
         res.cookie("refreshToken", refreshToken, {
-            //means client side js can not access the data stored in cookie. only the server can receive and process it during HTTP requests.
             httpOnly: true,
             secure: false,
-            sameSite: "strict",
+            sameSite: "lax",
             maxAge: 7 * 24 * 60 * 60 * 1000
         })
 
@@ -201,7 +195,6 @@ export async function updateProfileController(req, res) {
     }
 }
 
-
 // Generating a new Refreshing token
 export async function refreshTokenController(req, res) {
     try {
@@ -217,9 +210,8 @@ export async function refreshTokenController(req, res) {
             id: decoded.id,
             role: decoded.role
         }, config.JWT_SECRET, {
-            expiresIn: "15m",
+            expiresIn: "7d",
         })
-
 
         const newRefreshToken = jwt.sign({
             id: decoded.id,
@@ -227,16 +219,21 @@ export async function refreshTokenController(req, res) {
         }, config.JWT_SECRET, {
             expiresIn: "7d",
         })
-        //Storing the new refresh token in the cookie to add an extra layer of security
-        res.cookie("refreshToken", newRefreshToken, {
-            //means client side js can not access the data stored in cookie
+
+        res.cookie("accessToken", accessToken, {
             httpOnly: true,
-            // browser will send the cookie only over HTTPS.
             secure: false,
-            // sameSite controls whether the browser sends your cookie when the request comes from another website.     
-            sameSite: "strict",
+            sameSite: "lax",
             maxAge: 7 * 24 * 60 * 60 * 1000
-        })
+        });
+
+        res.cookie("refreshToken", newRefreshToken, {
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        });
+
         return res.status(200).json({
             message: "access token refreshed successfully",
             token: accessToken
@@ -255,13 +252,13 @@ export async function logoutController(req, res) {
         res.clearCookie("accessToken", {
             httpOnly: true,
             secure: false,
-            sameSite: "strict",
+            sameSite: "lax",
         });
 
         res.clearCookie("refreshToken", {
             httpOnly: true,
             secure: false,
-            sameSite: "strict",
+            sameSite: "lax",
         });
 
         return res.status(200).json({

@@ -127,7 +127,7 @@ const Home = () => {
         <section className="hero">
           <div className="hero__container">
             <div className="hero__content">
-              <h1>FIND CLOTHES THAT MATCHES YOUR STYLE</h1>
+              <h1>FIND CLOTHES THAT MATCH YOUR STYLE</h1>
               <p className="hero__description">
                 Browse through our diverse range of meticulously crafted garments, designed to bring out your individuality and cater to your sense of style.
               </p>
@@ -139,11 +139,13 @@ const Home = () => {
                   <strong>200+</strong>
                   <span>International Brands</span>
                 </div>
+                <div className="stat-divider" />
                 <div className="stat-item">
                   <strong>2,000+</strong>
                   <span>High-Quality Products</span>
                 </div>
-                <div className="stat-item">
+                <div className="stat-divider" />
+                <div className="stat-item stat-item--last">
                   <strong>30,000+</strong>
                   <span>Happy Customers</span>
                 </div>
@@ -152,15 +154,19 @@ const Home = () => {
 
             <div className="hero__image-wrap">
               <img className="hero__image" src={heroImage} alt="Models wearing SHOP.CO apparel" />
-              <div className="hero__star hero__star--big">✦</div>
-              <div className="hero__star hero__star--small">✦</div>
+              <svg className="hero__star hero__star--big" viewBox="0 0 56 56" fill="currentColor">
+                <path d="M28 0C28 15.464 15.464 28 0 28C15.464 28 28 40.536 28 56C28 40.536 40.536 28 56 28C40.536 28 28 15.464 28 0Z" />
+              </svg>
+              <svg className="hero__star hero__star--small" viewBox="0 0 56 56" fill="currentColor">
+                <path d="M28 0C28 15.464 15.464 28 0 28C15.464 28 28 40.536 28 56C28 40.536 40.536 28 56 28C40.536 28 28 15.464 28 0Z" />
+              </svg>
             </div>
           </div>
         </section>
 
         {/* Brands Ribbon */}
-        <section className="brand-strip" id="brands" aria-label="Featured brands">
-          <div className="brand-strip__inner">
+        <section className="brands-strip" id="brands" aria-label="Featured brands">
+          <div className="brands-container">
             {brands.map((b) => (
               <img key={b.name} src={b.img} alt={b.name} className="brand-logo" />
             ))}
@@ -213,21 +219,17 @@ const Home = () => {
           <div className="style-grid">
             <div className="style-row">
               <Link to="/categories?style=Casual" className="style-card style-card--casual" aria-label="Casual dress style">
-                <span className="style-title">Casual</span>
                 <img src={casualImage} alt="Casual style" />
               </Link>
               <Link to="/categories?style=Formal" className="style-card style-card--formal" aria-label="Formal dress style">
-                <span className="style-title">Formal</span>
                 <img src={formalImage} alt="Formal style" />
               </Link>
             </div>
             <div className="style-row">
               <Link to="/categories?style=Party" className="style-card style-card--party" aria-label="Party dress style">
-                <span className="style-title">Party</span>
                 <img src={partyImage} alt="Party style" />
               </Link>
               <Link to="/categories?style=Gym" className="style-card style-card--gym" aria-label="Gym dress style">
-                <span className="style-title">Gym</span>
                 <img src={gymImage} alt="Gym style" />
               </Link>
             </div>

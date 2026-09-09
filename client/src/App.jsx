@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react"
 import { Route, Routes } from "react-router-dom"
 import ProtectedRoute from "./components/ProtectedRoute"
+import ScrollToTop from "./components/ScrollToTop"
 import "./App.css"
 
 const Home = lazy(() => import("./pages/Home.jsx"))
@@ -17,6 +18,7 @@ const Admin = lazy(() => import("./pages/Admin.jsx"))
 
 const App = () => (
   <Suspense fallback={<main className="commerce-state">Loading page...</main>}>
+    <ScrollToTop />
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/categories" element={<Categories />} />

@@ -1,5 +1,16 @@
 const API_URL = `${window.location.protocol}//${window.location.hostname}:3000/api`;
 
+let savedToken = localStorage.getItem("shopco_token") || "";
+
+export function setToken(token) {
+    savedToken = token || "";
+    if (token) {
+        localStorage.setItem("shopco_token", token);
+    } else {
+        localStorage.removeItem("shopco_token");
+    }
+}
+
 async function parseResponse(response) {
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
@@ -9,13 +20,16 @@ async function parseResponse(response) {
 }
 
 export async function apiRequest(path, options = {}, canRefresh = true) {
+    const headers = {
+        "Content-Type": "application/json",
+        ...(savedToken ? { Authorization: `Bearer ${savedToken}` } : {}),
+        ...(options.headers || {}),
+    };
+
     const response = await fetch(`${API_URL}${path}`, {
         ...options,
         credentials: "include",
-        headers: {
-            "Content-Type": "application/json",
-            ...(options.headers || {}),
-        },
+        headers,
     });
 
     if (response.status === 401 && canRefresh && path !== "/auth/refresh") {
@@ -25,6 +39,10 @@ export async function apiRequest(path, options = {}, canRefresh = true) {
         });
 
         if (refreshed.ok) {
+            const refreshData = await refreshed.json().catch(() => ({}));
+            if (refreshData.token) {
+                setToken(refreshData.token);
+            }
             return apiRequest(path, options, false);
         }
     }
@@ -65,17 +83,35 @@ export const getOrders = () => apiRequest("/orders/myorders");
 
 export const getOrder = (id) => apiRequest(`/orders/myorders/${id}`);
 
-export const login = (email, password) => apiRequest("/auth/login", {
-    method: "POST",
-    body: JSON.stringify({ email, password }),
-}, false);
+export const login = async (email, password) => {
+    const data = await apiRequest("/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+    }, false);
+    if (data.token) {
+        setToken(data.token);
+    }
+    return data;
+};
 
-export const register = (username, email, password) => apiRequest("/auth/register", {
-    method: "POST",
-    body: JSON.stringify({ username, email, password }),
-}, false);
+export const register = async (username, email, password) => {
+    const data = await apiRequest("/auth/register", {
+        method: "POST",
+        body: JSON.stringify({ username, email, password }),
+    }, false);
+    if (data.token) {
+        setToken(data.token);
+    }
+    return data;
+};
 
-export const logout = () => apiRequest("/auth/logout", { method: "POST" }, false);
+export const logout = async () => {
+    try {
+        await apiRequest("/auth/logout", { method: "POST" }, false);
+    } finally {
+        setToken("");
+    }
+};
 
 export const getMe = () => apiRequest("/auth/get-me");
 

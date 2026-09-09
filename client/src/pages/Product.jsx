@@ -52,9 +52,9 @@ const Product = () => {
         }
       }
 
-      // Fetch related products
-      const relData = await getProducts(`limit=4`);
-      const allRel = relData.products || relData.results || [];
+      // Fetch related products (fetch up to 10 to ensure 4 distinct items after filtering out current product)
+      const relData = await getProducts(`limit=10`);
+      const allRel = relData.results?.results || relData.products || relData.results || [];
       setRelatedProducts(allRel.filter((p) => p._id !== productId).slice(0, 4));
     } catch (err) {
       setError(err.message || "Failed to load product details.");
@@ -328,59 +328,25 @@ const Product = () => {
         </div>
 
         {/* Product Tabs: Rating & Reviews, Product Details, FAQs */}
-        <div style={{ marginTop: "64px" }}>
-          <div
-            style={{
-              display: "flex",
-              borderBottom: "1px solid #e5e5e5",
-              justifyContent: "space-around",
-              marginBottom: "32px",
-            }}
-          >
+        <div className="product-tabs-wrapper">
+          <div className="product-tabs__nav">
             <button
               type="button"
-              style={{
-                padding: "16px 24px",
-                border: "none",
-                background: "none",
-                fontSize: "18px",
-                fontWeight: activeTab === "details" ? "700" : "400",
-                color: activeTab === "details" ? "#000" : "#666",
-                borderBottom: activeTab === "details" ? "2px solid #000" : "none",
-                cursor: "pointer",
-              }}
+              className={`product-tab-btn ${activeTab === "details" ? "is-active" : ""}`}
               onClick={() => setActiveTab("details")}
             >
               Product Details
             </button>
             <button
               type="button"
-              style={{
-                padding: "16px 24px",
-                border: "none",
-                background: "none",
-                fontSize: "18px",
-                fontWeight: activeTab === "reviews" ? "700" : "400",
-                color: activeTab === "reviews" ? "#000" : "#666",
-                borderBottom: activeTab === "reviews" ? "2px solid #000" : "none",
-                cursor: "pointer",
-              }}
+              className={`product-tab-btn ${activeTab === "reviews" ? "is-active" : ""}`}
               onClick={() => setActiveTab("reviews")}
             >
               Rating & Reviews ({reviewsList.length})
             </button>
             <button
               type="button"
-              style={{
-                padding: "16px 24px",
-                border: "none",
-                background: "none",
-                fontSize: "18px",
-                fontWeight: activeTab === "faqs" ? "700" : "400",
-                color: activeTab === "faqs" ? "#000" : "#666",
-                borderBottom: activeTab === "faqs" ? "2px solid #000" : "none",
-                cursor: "pointer",
-              }}
+              className={`product-tab-btn ${activeTab === "faqs" ? "is-active" : ""}`}
               onClick={() => setActiveTab("faqs")}
             >
               FAQs
@@ -389,26 +355,16 @@ const Product = () => {
 
           {/* Tab Content: Rating & Reviews */}
           {activeTab === "reviews" && (
-            <div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                  gap: "16px",
-                  marginBottom: "24px",
-                }}
-              >
-                <h3 style={{ fontSize: "20px", fontWeight: "700", margin: 0 }}>
-                  All Reviews <span style={{ fontSize: "14px", color: "#888", fontWeight: "400" }}>({reviewsList.length})</span>
+            <div className="product-tab-pane">
+              <div className="reviews-header">
+                <h3 className="reviews-title">
+                  All Reviews <span className="reviews-count">({reviewsList.length})</span>
                 </h3>
 
-                <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                <div className="reviews-actions">
                   <button
                     type="button"
-                    className="button button--dark"
-                    style={{ padding: "10px 20px", fontSize: "14px" }}
+                    className="button button--dark button--write-review"
                     onClick={() => setShowReviewModal(true)}
                   >
                     Write a Review
@@ -417,41 +373,27 @@ const Product = () => {
               </div>
 
               {reviewsList.length === 0 ? (
-                <p style={{ color: "#666", textAlign: "center", padding: "40px 0" }}>
+                <p className="no-reviews-msg">
                   No reviews yet. Be the first to review this product!
                 </p>
               ) : (
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
-                    gap: "20px",
-                  }}
-                >
+                <div className="reviews-grid">
                   {reviewsList.map((rev, i) => (
-                    <div
-                      key={i}
-                      style={{
-                        background: "#fff",
-                        border: "1px solid #e5e5e5",
-                        borderRadius: "20px",
-                        padding: "24px",
-                      }}
-                    >
+                    <div key={i} className="review-card">
                       <StarRating rating={rev.rating} size={16} />
-                      <div style={{ display: "flex", alignItems: "center", gap: "6px", margin: "12px 0 8px" }}>
-                        <strong style={{ fontSize: "16px" }}>{rev.name || "Customer"}</strong>
+                      <div className="review-author-row">
+                        <strong>{rev.name || "Customer"}</strong>
                         {rev.verified !== false && (
-                          <span style={{ color: "#01B763", fontSize: "14px" }} title="Verified Purchase">
+                          <span className="verified-badge" title="Verified Purchase">
                             ✓
                           </span>
                         )}
                       </div>
-                      <p style={{ color: "#666", fontSize: "14px", lineHeight: "1.5", margin: 0 }}>
+                      <p className="review-comment-text">
                         "{rev.comment}"
                       </p>
                       {rev.createdAt && (
-                        <div style={{ marginTop: "16px", fontSize: "12px", color: "#999" }}>
+                        <div className="review-date">
                           Posted on {new Date(rev.createdAt).toLocaleDateString()}
                         </div>
                       )}
@@ -464,9 +406,9 @@ const Product = () => {
 
           {/* Tab Content: Product Details */}
           {activeTab === "details" && (
-            <div style={{ background: "#fff", border: "1px solid #e5e5e5", borderRadius: "20px", padding: "32px" }}>
-              <h3 style={{ marginTop: 0 }}>Product Specifications</h3>
-              <ul style={{ lineHeight: "1.8", color: "#444" }}>
+            <div className="product-spec-card">
+              <h3>Product Specifications</h3>
+              <ul>
                 <li><strong>Material:</strong> 100% Premium Combed Cotton</li>
                 <li><strong>Weight:</strong> 220 GSM Heavyweight Fabric</li>
                 <li><strong>Fit Type:</strong> Relaxed Oversized Fit</li>
@@ -479,22 +421,22 @@ const Product = () => {
 
           {/* Tab Content: FAQs */}
           {activeTab === "faqs" && (
-            <div style={{ background: "#fff", border: "1px solid #e5e5e5", borderRadius: "20px", padding: "32px" }}>
-              <div style={{ marginBottom: "20px" }}>
-                <h4 style={{ margin: "0 0 8px", fontSize: "16px" }}>What is the estimated delivery time?</h4>
-                <p style={{ margin: 0, color: "#666", fontSize: "14px" }}>
+            <div className="product-faq-card">
+              <div className="faq-item">
+                <h4>What is the estimated delivery time?</h4>
+                <p>
                   Orders are processed within 1-2 business days and shipped via express delivery (3-5 business days).
                 </p>
               </div>
-              <div style={{ marginBottom: "20px" }}>
-                <h4 style={{ margin: "0 0 8px", fontSize: "16px" }}>What is your return policy?</h4>
-                <p style={{ margin: 0, color: "#666", fontSize: "14px" }}>
+              <div className="faq-item">
+                <h4>What is your return policy?</h4>
+                <p>
                   We offer a 30-day hassle-free return and exchange policy for unworn items with original tags.
                 </p>
               </div>
-              <div>
-                <h4 style={{ margin: "0 0 8px", fontSize: "16px" }}>How do I choose the correct size?</h4>
-                <p style={{ margin: 0, color: "#666", fontSize: "14px" }}>
+              <div className="faq-item">
+                <h4>How do I choose the correct size?</h4>
+                <p>
                   Refer to our size pills above. For an oversized fit, select your standard size; for a fitted look, choose one size smaller.
                 </p>
               </div>
@@ -504,8 +446,8 @@ const Product = () => {
 
         {/* You Might Also Like Section */}
         {relatedProducts.length > 0 && (
-          <section className="product-section" style={{ marginTop: "80px" }}>
-            <div className="section-heading">
+          <section className="product-section">
+            <div className="section-heading text-center">
               <h2>YOU MIGHT ALSO LIKE</h2>
             </div>
             <div className="product-grid">
@@ -519,118 +461,86 @@ const Product = () => {
 
       {/* Review Modal */}
       {showReviewModal && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            backgroundColor: "rgba(0,0,0,0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 10000,
-            padding: "16px",
-          }}
-        >
-          <div
-            style={{
-              background: "#fff",
-              borderRadius: "20px",
-              padding: "32px",
-              maxWidth: "500px",
-              width: "100%",
-              boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
-            }}
-          >
-            <h3 style={{ margin: "0 0 16px", fontSize: "22px", fontWeight: "700" }}>Write a Review</h3>
+        <div className="review-modal-overlay" onClick={() => setShowReviewModal(false)}>
+          <div className="review-modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="review-modal__header">
+              <h3>Write a Review</h3>
+              <button
+                type="button"
+                className="close-modal-btn"
+                onClick={() => setShowReviewModal(false)}
+                aria-label="Close review modal"
+              >
+                ✕
+              </button>
+            </div>
 
             {reviewError && (
-              <div style={{ color: "#d9534f", marginBottom: "12px", fontSize: "14px" }}>
+              <div className="review-modal-error">
                 {reviewError}
               </div>
             )}
 
-            <form onSubmit={handleReviewSubmit}>
-              <div style={{ marginBottom: "16px" }}>
-                <label style={{ display: "block", marginBottom: "6px", fontWeight: "600", fontSize: "14px" }}>
-                  Your Name
-                </label>
+            <form onSubmit={handleReviewSubmit} className="review-modal-form">
+              <div className="form-group">
+                <label>Your Name</label>
                 <input
                   type="text"
                   placeholder="e.g. Alex M."
                   value={reviewerName}
                   onChange={(e) => setReviewerName(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "12px",
-                    borderRadius: "12px",
-                    border: "1px solid #ccc",
-                    fontSize: "14px",
-                    boxSizing: "border-box",
-                  }}
+                  className="modal-input"
+                  required
                 />
               </div>
 
-              <div style={{ marginBottom: "16px" }}>
-                <label style={{ display: "block", marginBottom: "6px", fontWeight: "600", fontSize: "14px" }}>
-                  Rating (1 - 5 Stars)
-                </label>
-                <select
-                  value={reviewRating}
-                  onChange={(e) => setReviewRating(Number(e.target.value))}
-                  style={{
-                    width: "100%",
-                    padding: "12px",
-                    borderRadius: "12px",
-                    border: "1px solid #ccc",
-                    fontSize: "14px",
-                    boxSizing: "border-box",
-                  }}
-                >
-                  <option value={5}>5 Stars - Excellent</option>
-                  <option value={4}>4 Stars - Very Good</option>
-                  <option value={3}>3 Stars - Average</option>
-                  <option value={2}>2 Stars - Poor</option>
-                  <option value={1}>1 Star - Terrible</option>
-                </select>
+              <div className="form-group">
+                <label>Rating</label>
+                <div className="interactive-star-picker">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      className={`star-pick-btn ${reviewRating >= star ? "is-filled" : ""}`}
+                      onClick={() => setReviewRating(star)}
+                    >
+                      ★
+                    </button>
+                  ))}
+                  <span className="star-pick-label">
+                    {reviewRating === 5 && "5 Stars - Excellent"}
+                    {reviewRating === 4 && "4 Stars - Very Good"}
+                    {reviewRating === 3 && "3 Stars - Average"}
+                    {reviewRating === 2 && "2 Stars - Poor"}
+                    {reviewRating === 1 && "1 Star - Terrible"}
+                  </span>
+                </div>
               </div>
 
-              <div style={{ marginBottom: "20px" }}>
-                <label style={{ display: "block", marginBottom: "6px", fontWeight: "600", fontSize: "14px" }}>
-                  Review Comment
-                </label>
+              <div className="form-group">
+                <label>Review Comment</label>
                 <textarea
                   rows={4}
                   placeholder="Share details about the quality, fit, and design..."
                   value={reviewComment}
                   onChange={(e) => setReviewComment(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "12px",
-                    borderRadius: "12px",
-                    border: "1px solid #ccc",
-                    fontSize: "14px",
-                    boxSizing: "border-box",
-                  }}
+                  className="modal-textarea"
+                  required
                 />
               </div>
 
-              <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
+              <div className="modal-actions">
                 <button
                   type="button"
-                  className="button button--outline"
+                  className="button button--outline modal-cancel-btn"
                   onClick={() => setShowReviewModal(false)}
-                  style={{ padding: "10px 20px" }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="button button--dark"
+                  className="button button--dark modal-submit-btn"
                   disabled={isSubmittingReview}
-                  style={{ padding: "10px 20px" }}
                 >
                   {isSubmittingReview ? "Submitting..." : "Submit Review"}
                 </button>

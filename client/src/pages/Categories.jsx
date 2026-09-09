@@ -349,6 +349,25 @@ const Categories = () => {
         </select>
       </div>
 
+      {/* Sort By (Accessible in Mobile Drawer) */}
+      <div className="filter-group mobile-filter-sort">
+        <h3>Sort By</h3>
+        <select
+          className="select-input"
+          value={sort}
+          onChange={(e) => {
+            setSort(e.target.value);
+            setPage(1);
+          }}
+        >
+          <option value="popular">Most Popular</option>
+          <option value="low">Price: Low to High</option>
+          <option value="high">Price: High to Low</option>
+          <option value="newest">Newest Arrivals</option>
+          <option value="name">Name</option>
+        </select>
+      </div>
+
       <button
         type="button"
         className="button button--dark button--apply-filter"
@@ -466,7 +485,10 @@ const Categories = () => {
                   type="button"
                   className="pagination__nav-btn"
                   disabled={!pagination.hasPrevious}
-                  onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+                  onClick={() => {
+                    setPage((prev) => Math.max(1, prev - 1));
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
                 >
                   ← Previous
                 </button>
@@ -482,7 +504,10 @@ const Categories = () => {
                         key={`page-${btn}`}
                         type="button"
                         className={`pagination__num-btn ${pagination.page === btn ? "is-active" : ""}`}
-                        onClick={() => setPage(btn)}
+                        onClick={() => {
+                          setPage(btn);
+                          window.scrollTo({ top: 0, behavior: "smooth" });
+                        }}
                       >
                         {btn}
                       </button>
@@ -494,7 +519,10 @@ const Categories = () => {
                   type="button"
                   className="pagination__nav-btn"
                   disabled={!pagination.hasNext}
-                  onClick={() => setPage((prev) => prev + 1)}
+                  onClick={() => {
+                    setPage((prev) => prev + 1);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
                 >
                   Next →
                 </button>

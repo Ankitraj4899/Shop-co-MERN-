@@ -7,6 +7,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext.jsx'
 import { CartProvider } from './context/CartContext.jsx'
 
+// SHOP.CO React Application Entrypoint
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <StrictMode>
