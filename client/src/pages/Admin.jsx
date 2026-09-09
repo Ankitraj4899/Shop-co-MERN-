@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -15,6 +15,14 @@ import {
   deleteCategory,
   updateOrderStatus,
 } from "../lib/api";
+
+import AdminOverviewTab from "../components/admin/AdminOverviewTab";
+import AdminProductsTab from "../components/admin/AdminProductsTab";
+import AdminCategoriesTab from "../components/admin/AdminCategoriesTab";
+import AdminOrdersTab from "../components/admin/AdminOrdersTab";
+import AdminProductModal from "../components/admin/AdminProductModal";
+import AdminCategoryModal from "../components/admin/AdminCategoryModal";
+import AdminOrderDetailsModal from "../components/admin/AdminOrderDetailsModal";
 
 const initialProductForm = {
   name: "",
@@ -97,7 +105,8 @@ const Admin = () => {
       name: prod.name || "",
       description: prod.description || "",
       price: prod.price !== undefined ? String(prod.price) : "",
-      originalPrice: prod.originalPrice !== undefined ? String(prod.originalPrice) : "",
+      originalPrice:
+        prod.originalPrice !== undefined ? String(prod.originalPrice) : "",
       discount: prod.discount !== undefined ? String(prod.discount) : "",
       category: prod.category?._id || prod.category || "",
       quantity: prod.quantity !== undefined ? String(prod.quantity) : "",
@@ -121,7 +130,9 @@ const Admin = () => {
         name: productForm.name.trim(),
         description: productForm.description.trim(),
         price: Number(productForm.price),
-        originalPrice: productForm.originalPrice ? Number(productForm.originalPrice) : null,
+        originalPrice: productForm.originalPrice
+          ? Number(productForm.originalPrice)
+          : null,
         discount: productForm.discount ? Number(productForm.discount) : 0,
         category: productForm.category,
         quantity: Number(productForm.quantity),
@@ -129,7 +140,10 @@ const Admin = () => {
         status: productForm.status,
         thumbnailImage: productForm.thumbnailImage.trim(),
         galleryImages: productForm.galleryImages
-          ? productForm.galleryImages.split(",").map((s) => s.trim()).filter(Boolean)
+          ? productForm.galleryImages
+              .split(",")
+              .map((s) => s.trim())
+              .filter(Boolean)
           : [],
       };
 
@@ -159,18 +173,6 @@ const Admin = () => {
       } catch (err) {
         setError(err.message);
       }
-    }
-  };
-
-  const handleQuickStockUpdate = async (prod, newQty) => {
-    const qty = parseInt(newQty);
-    if (isNaN(qty) || qty < 0) return;
-    try {
-      await updateProduct(prod._id, { quantity: qty });
-      setMessage(`Stock for "${prod.name}" updated to ${qty}`);
-      await loadAllAdminData();
-    } catch (err) {
-      setError(err.message);
     }
   };
 
@@ -297,701 +299,77 @@ const Admin = () => {
         {/* Global Feedback Messages */}
         {message && <p className="success-message admin-alert">{message}</p>}
         {error && <p className="error-message admin-alert">{error}</p>}
-        {isLoading && <p className="commerce-state">Loading administration records...</p>}
+        {isLoading && (
+          <p className="commerce-state">Loading administration records...</p>
+        )}
 
         {/* 1. OVERVIEW / DASHBOARD TAB */}
-        {!isLoading && currentTab === "overview" && stats && (
-          <section className="admin-dashboard-section">
-            <div className="dashboard-metric-cards-grid">
-              <div className="metric-card">
-                <span className="metric-card__icon">👕</span>
-                <div className="metric-card__info">
-                  <span className="metric-card__label">Total Products</span>
-                  <strong className="metric-card__value">{stats.products}</strong>
-                </div>
-              </div>
-
-              <div className="metric-card">
-                <span className="metric-card__icon">📁</span>
-                <div className="metric-card__info">
-                  <span className="metric-card__label">Categories</span>
-                  <strong className="metric-card__value">{stats.categories}</strong>
-                </div>
-              </div>
-
-              <div className="metric-card">
-                <span className="metric-card__icon">👥</span>
-                <div className="metric-card__info">
-                  <span className="metric-card__label">Registered Users</span>
-                  <strong className="metric-card__value">{stats.users}</strong>
-                </div>
-              </div>
-
-              <div className="metric-card">
-                <span className="metric-card__icon">📦</span>
-                <div className="metric-card__info">
-                  <span className="metric-card__label">Total Orders</span>
-                  <strong className="metric-card__value">{stats.orders}</strong>
-                </div>
-              </div>
-
-              <div className="metric-card metric-card--warning">
-                <span className="metric-card__icon">⚠</span>
-                <div className="metric-card__info">
-                  <span className="metric-card__label">Low Stock (≤ 5 units)</span>
-                  <strong className="metric-card__value">{stats.lowStock}</strong>
-                </div>
-              </div>
-
-              <div className="metric-card metric-card--danger">
-                <span className="metric-card__icon">✕</span>
-                <div className="metric-card__info">
-                  <span className="metric-card__label">Out of Stock (0 units)</span>
-                  <strong className="metric-card__value">{stats.outOfStock}</strong>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Summary Tables */}
-            <div className="dashboard-split-grid">
-              <div className="dashboard-subcard">
-                <h3>Low Stock & Out-of-Stock Alert</h3>
-                <div className="admin-table-scroll">
-                  <table className="admin-data-table">
-                    <thead>
-                      <tr>
-                        <th>Product</th>
-                        <th>Price</th>
-                        <th>Stock Status</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {products
-                        .filter((p) => p.quantity <= 5)
-                        .slice(0, 6)
-                        .map((p) => (
-                          <tr key={`alert-${p._id}`}>
-                            <td>
-                              <strong>{p.name}</strong>
-                            </td>
-                            <td>${p.price}</td>
-                            <td>
-                              <span
-                                className={`stock-status-pill ${
-                                  p.quantity === 0
-                                    ? "stock-status-pill--out"
-                                    : "stock-status-pill--low"
-                                }`}
-                              >
-                                {p.quantity === 0 ? "Out of Stock" : `Low: ${p.quantity} left`}
-                              </span>
-                            </td>
-                            <td>
-                              <button
-                                type="button"
-                                className="action-btn action-btn--edit"
-                                onClick={() => handleOpenEditProduct(p)}
-                              >
-                                Update Stock
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      {!products.some((p) => p.quantity <= 5) && (
-                        <tr>
-                          <td colSpan="4" className="text-center">
-                            All products have sufficient inventory level (&gt; 5).
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div className="dashboard-subcard">
-                <h3>Latest Customer Orders</h3>
-                <div className="admin-table-scroll">
-                  <table className="admin-data-table">
-                    <thead>
-                      <tr>
-                        <th>Order</th>
-                        <th>Customer</th>
-                        <th>Total</th>
-                        <th>Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {orders.slice(0, 5).map((ord) => (
-                        <tr key={`dash-ord-${ord._id}`}>
-                          <td>#{ord._id.slice(-6).toUpperCase()}</td>
-                          <td>{ord.user?.email || ord.user?.username || "Guest"}</td>
-                          <td>${ord.totalPrice.toFixed(2)}</td>
-                          <td>
-                            <span className={`status-pill status-pill--${ord.status}`}>
-                              {ord.status}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                      {!orders.length && (
-                        <tr>
-                          <td colSpan="4" className="text-center">
-                            No orders placed yet.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </section>
+        {!isLoading && currentTab === "overview" && (
+          <AdminOverviewTab
+            stats={stats}
+            products={products}
+            orders={orders}
+            onOpenEditProduct={handleOpenEditProduct}
+          />
         )}
 
         {/* 2. PRODUCTS MANAGEMENT TAB */}
         {!isLoading && currentTab === "products" && (
-          <section className="admin-section">
-            <div className="admin-section-toolbar">
-              <h2>Inventory & Product Catalog</h2>
-              <button
-                type="button"
-                className="button button--dark button--add"
-                onClick={handleOpenAddProduct}
-              >
-                + Add New Product
-              </button>
-            </div>
-
-            <div className="admin-table-scroll">
-              <table className="admin-data-table">
-                <thead>
-                  <tr>
-                    <th>Image</th>
-                    <th>Product Name</th>
-                    <th>Category</th>
-                    <th>Dress Style</th>
-                    <th>Price</th>
-                    <th>Stock Level</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {products.map((p) => {
-                    const isOut = p.quantity === 0;
-                    const isLow = p.quantity > 0 && p.quantity <= 5;
-                    return (
-                      <tr key={p._id}>
-                        <td>
-                          <img
-                            src={p.thumbnailImage}
-                            alt={p.name}
-                            className="admin-thumb"
-                            onError={(e) => {
-                              e.target.src =
-                                "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=100&q=80";
-                            }}
-                          />
-                        </td>
-                        <td>
-                          <strong>{p.name}</strong>
-                          {p.originalPrice && (
-                            <small className="discount-tag"> (-{p.discount}%)</small>
-                          )}
-                        </td>
-                        <td>{p.category?.name || "Uncategorized"}</td>
-                        <td>{p.style || "Casual"}</td>
-                        <td>${p.price}</td>
-                        <td>
-                          <div className="stock-control-cell">
-                            <span
-                              className={`stock-indicator-dot ${
-                                isOut
-                                  ? "dot--out"
-                                  : isLow
-                                  ? "dot--low"
-                                  : "dot--in"
-                              }`}
-                            />
-                            <strong>{p.quantity} units</strong>
-                            {isOut && <span className="tag-out">OUT</span>}
-                            {isLow && <span className="tag-low">LOW</span>}
-                          </div>
-                        </td>
-                        <td>
-                          <span className={`status-badge status-badge--${p.status}`}>
-                            {p.status}
-                          </span>
-                        </td>
-                        <td>
-                          <div className="action-buttons-group">
-                            <button
-                              type="button"
-                              className="action-btn action-btn--edit"
-                              onClick={() => handleOpenEditProduct(p)}
-                            >
-                              Edit
-                            </button>
-                            <button
-                              type="button"
-                              className="action-btn action-btn--delete"
-                              onClick={() => handleDeleteProduct(p._id, p.name)}
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </section>
+          <AdminProductsTab
+            products={products}
+            onOpenAddProduct={handleOpenAddProduct}
+            onOpenEditProduct={handleOpenEditProduct}
+            onDeleteProduct={handleDeleteProduct}
+          />
         )}
 
         {/* 3. CATEGORIES MANAGEMENT TAB */}
         {!isLoading && currentTab === "categories" && (
-          <section className="admin-section">
-            <div className="admin-section-toolbar">
-              <h2>Product Categories</h2>
-              <button
-                type="button"
-                className="button button--dark button--add"
-                onClick={handleOpenAddCategory}
-              >
-                + Add New Category
-              </button>
-            </div>
-
-            <div className="admin-table-scroll">
-              <table className="admin-data-table">
-                <thead>
-                  <tr>
-                    <th>Category Name</th>
-                    <th>Description</th>
-                    <th>Assigned Products</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {categories.map((cat) => {
-                    const assignedCount = products.filter(
-                      (p) => (p.category?._id || p.category) === cat._id
-                    ).length;
-                    return (
-                      <tr key={cat._id}>
-                        <td>
-                          <strong>{cat.name}</strong>
-                        </td>
-                        <td>{cat.description || "No description provided."}</td>
-                        <td>
-                          <span className="badge badge--neutral">{assignedCount} items</span>
-                        </td>
-                        <td>
-                          <div className="action-buttons-group">
-                            <button
-                              type="button"
-                              className="action-btn action-btn--edit"
-                              onClick={() => handleOpenEditCategory(cat)}
-                            >
-                              Edit
-                            </button>
-                            <button
-                              type="button"
-                              className="action-btn action-btn--delete"
-                              onClick={() => handleDeleteCategory(cat._id, cat.name)}
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </section>
+          <AdminCategoriesTab
+            categories={categories}
+            products={products}
+            onOpenAddCategory={handleOpenAddCategory}
+            onOpenEditCategory={handleOpenEditCategory}
+            onDeleteCategory={handleDeleteCategory}
+          />
         )}
 
         {/* 4. ORDERS MANAGEMENT TAB */}
         {!isLoading && currentTab === "orders" && (
-          <section className="admin-section">
-            <div className="admin-section-toolbar">
-              <h2>Customer Orders & Fulfillment</h2>
-            </div>
-
-            <div className="admin-table-scroll">
-              <table className="admin-data-table">
-                <thead>
-                  <tr>
-                    <th>Order ID</th>
-                    <th>Date</th>
-                    <th>Customer</th>
-                    <th>Items</th>
-                    <th>Total</th>
-                    <th>Status Update</th>
-                    <th>Details</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {orders.map((ord) => (
-                    <tr key={ord._id}>
-                      <td>
-                        <strong>#{ord._id.slice(-8).toUpperCase()}</strong>
-                      </td>
-                      <td>{new Date(ord.createdAt).toLocaleDateString()}</td>
-                      <td>
-                        <div>
-                          <strong>{ord.user?.username || "Customer"}</strong>
-                          <small className="block-muted">{ord.user?.email}</small>
-                        </div>
-                      </td>
-                      <td>{ord.items?.length || 0} product(s)</td>
-                      <td>
-                        <strong>${ord.totalPrice.toFixed(2)}</strong>
-                      </td>
-                      <td>
-                        <select
-                          className="order-status-select"
-                          value={ord.status}
-                          onChange={(e) => handleUpdateOrderStatus(ord._id, e.target.value)}
-                        >
-                          <option value="pending">Pending</option>
-                          <option value="confirmed">Confirmed</option>
-                          <option value="shipped">Shipped</option>
-                          <option value="delivered">Delivered</option>
-                          <option value="cancelled">Cancelled</option>
-                        </select>
-                      </td>
-                      <td>
-                        <button
-                          type="button"
-                          className="action-btn action-btn--view"
-                          onClick={() => setSelectedOrderDetails(ord)}
-                        >
-                          View Items
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                  {!orders.length && (
-                    <tr>
-                      <td colSpan="7" className="text-center">
-                        No orders currently placed in database.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </section>
+          <AdminOrdersTab
+            orders={orders}
+            onUpdateOrderStatus={handleUpdateOrderStatus}
+            onSelectOrderDetails={setSelectedOrderDetails}
+          />
         )}
       </main>
 
       {/* PRODUCT CREATE/EDIT MODAL */}
-      {isProductModalOpen && (
-        <div className="modal-overlay" onClick={() => setIsProductModalOpen(false)}>
-          <div className="modal-dialog modal-dialog--wide" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>{editingProductId ? "Edit Product" : "Create New Product"}</h2>
-              <button
-                type="button"
-                onClick={() => setIsProductModalOpen(false)}
-                aria-label="Close modal"
-              >
-                ✕
-              </button>
-            </div>
-
-            <form className="admin-modal-form" onSubmit={handleSaveProduct}>
-              <div className="form-row-2col">
-                <label>
-                  Product Name
-                  <input
-                    name="name"
-                    value={productForm.name}
-                    onChange={handleProductInputChange}
-                    placeholder="e.g. Graphic T-shirt"
-                    required
-                  />
-                </label>
-
-                <label>
-                  Category
-                  <select
-                    name="category"
-                    value={productForm.category}
-                    onChange={handleProductInputChange}
-                    required
-                  >
-                    <option value="">Select Category</option>
-                    {categories.map((c) => (
-                      <option value={c._id} key={c._id}>
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-
-              <label>
-                Description
-                <textarea
-                  name="description"
-                  rows="3"
-                  value={productForm.description}
-                  onChange={handleProductInputChange}
-                  placeholder="Detailed product information..."
-                  required
-                />
-              </label>
-
-              <div className="form-row-3col">
-                <label>
-                  Price ($)
-                  <input
-                    name="price"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={productForm.price}
-                    onChange={handleProductInputChange}
-                    placeholder="120.00"
-                    required
-                  />
-                </label>
-
-                <label>
-                  Original Price ($)
-                  <input
-                    name="originalPrice"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={productForm.originalPrice}
-                    onChange={handleProductInputChange}
-                    placeholder="150.00 (Optional)"
-                  />
-                </label>
-
-                <label>
-                  Discount (%)
-                  <input
-                    name="discount"
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={productForm.discount}
-                    onChange={handleProductInputChange}
-                    placeholder="20 (Optional)"
-                  />
-                </label>
-              </div>
-
-              <div className="form-row-3col">
-                <label>
-                  Stock Quantity
-                  <input
-                    name="quantity"
-                    type="number"
-                    min="0"
-                    value={productForm.quantity}
-                    onChange={handleProductInputChange}
-                    placeholder="e.g. 25"
-                    required
-                  />
-                  <small className="help-text">≤ 5 triggers low stock warning</small>
-                </label>
-
-                <label>
-                  Dress Style
-                  <select
-                    name="style"
-                    value={productForm.style}
-                    onChange={handleProductInputChange}
-                  >
-                    <option value="Casual">Casual</option>
-                    <option value="Formal">Formal</option>
-                    <option value="Party">Party</option>
-                    <option value="Gym">Gym</option>
-                  </select>
-                </label>
-
-                <label>
-                  Product Status
-                  <select
-                    name="status"
-                    value={productForm.status}
-                    onChange={handleProductInputChange}
-                  >
-                    <option value="active">Active (Visible)</option>
-                    <option value="inactive">Inactive (Hidden)</option>
-                  </select>
-                </label>
-              </div>
-
-              <label>
-                Thumbnail Image URL / Path
-                <input
-                  name="thumbnailImage"
-                  value={productForm.thumbnailImage}
-                  onChange={handleProductInputChange}
-                  placeholder="e.g. /images/products/arrival1.png or https://..."
-                  required
-                />
-              </label>
-
-              <label>
-                Gallery Images (Comma separated URLs)
-                <input
-                  name="galleryImages"
-                  value={productForm.galleryImages}
-                  onChange={handleProductInputChange}
-                  placeholder="/images/products/arrival1.png, /images/products/arrival4.png"
-                />
-              </label>
-
-              <div className="modal-actions-row">
-                <button
-                  type="button"
-                  className="button button--outline"
-                  onClick={() => setIsProductModalOpen(false)}
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="button button--dark">
-                  {editingProductId ? "Update Product" : "Save Product"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <AdminProductModal
+        isOpen={isProductModalOpen}
+        onClose={() => setIsProductModalOpen(false)}
+        onSubmit={handleSaveProduct}
+        editingProductId={editingProductId}
+        productForm={productForm}
+        onInputChange={handleProductInputChange}
+        categories={categories}
+      />
 
       {/* CATEGORY CREATE/EDIT MODAL */}
-      {isCategoryModalOpen && (
-        <div className="modal-overlay" onClick={() => setIsCategoryModalOpen(false)}>
-          <div className="modal-dialog" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>{editingCategoryId ? "Edit Category" : "Add New Category"}</h2>
-              <button
-                type="button"
-                onClick={() => setIsCategoryModalOpen(false)}
-                aria-label="Close modal"
-              >
-                ✕
-              </button>
-            </div>
-
-            <form className="admin-modal-form" onSubmit={handleSaveCategory}>
-              <label>
-                Category Name
-                <input
-                  name="name"
-                  value={categoryForm.name}
-                  onChange={handleCategoryInputChange}
-                  placeholder="e.g. Jackets & Outerwear"
-                  required
-                />
-              </label>
-
-              <label>
-                Category Description
-                <textarea
-                  name="description"
-                  rows="3"
-                  value={categoryForm.description}
-                  onChange={handleCategoryInputChange}
-                  placeholder="Describe items in this category..."
-                />
-              </label>
-
-              <div className="modal-actions-row">
-                <button
-                  type="button"
-                  className="button button--outline"
-                  onClick={() => setIsCategoryModalOpen(false)}
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="button button--dark">
-                  {editingCategoryId ? "Update Category" : "Create Category"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <AdminCategoryModal
+        isOpen={isCategoryModalOpen}
+        onClose={() => setIsCategoryModalOpen(false)}
+        onSubmit={handleSaveCategory}
+        editingCategoryId={editingCategoryId}
+        categoryForm={categoryForm}
+        onInputChange={handleCategoryInputChange}
+      />
 
       {/* ORDER ITEMS DETAIL POPUP MODAL */}
-      {selectedOrderDetails && (
-        <div className="modal-overlay" onClick={() => setSelectedOrderDetails(null)}>
-          <div className="modal-dialog modal-dialog--wide" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>Order Details #{selectedOrderDetails._id.slice(-8).toUpperCase()}</h2>
-              <button
-                type="button"
-                onClick={() => setSelectedOrderDetails(null)}
-                aria-label="Close modal"
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="admin-order-modal-body">
-              <div className="order-customer-info-box">
-                <p><strong>Customer:</strong> {selectedOrderDetails.user?.username} ({selectedOrderDetails.user?.email})</p>
-                <p><strong>Shipping Address:</strong> {selectedOrderDetails.shippingAddress}</p>
-                <p><strong>Status:</strong> <span className={`status-pill status-pill--${selectedOrderDetails.status}`}>{selectedOrderDetails.status}</span></p>
-              </div>
-
-              <h3>Purchased Line Items</h3>
-              <div className="admin-order-items-list">
-                {selectedOrderDetails.items?.map((item, idx) => (
-                  <div className="admin-order-item-row" key={`ord-item-${idx}`}>
-                    <img
-                      src={item.thumbnailImage || item.product?.thumbnailImage || "/images/products/arrival1.png"}
-                      alt={item.name}
-                      onError={(e) => {
-                        e.target.src = "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=80&q=80";
-                      }}
-                    />
-                    <div>
-                      <strong>{item.name}</strong>
-                      <small>{item.size ? `Size: ${item.size} · ` : ""}Quantity: {item.quantity}</small>
-                    </div>
-                    <strong>${(item.price * item.quantity).toFixed(2)}</strong>
-                  </div>
-                ))}
-              </div>
-
-              <hr />
-              <div className="summary-row">
-                <span>Subtotal</span>
-                <strong>${selectedOrderDetails.subtotal?.toFixed(2)}</strong>
-              </div>
-              {selectedOrderDetails.discount > 0 && (
-                <div className="summary-row summary-row--discount">
-                  <span>Discount</span>
-                  <strong className="discount-val">-${selectedOrderDetails.discount?.toFixed(2)}</strong>
-                </div>
-              )}
-              <div className="summary-row">
-                <span>Shipping Fee</span>
-                <strong>${(selectedOrderDetails.shippingFee || 15).toFixed(2)}</strong>
-              </div>
-              <div className="summary-row summary-row--total">
-                <span>Total Amount Paid</span>
-                <strong>${selectedOrderDetails.totalPrice?.toFixed(2)}</strong>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <AdminOrderDetailsModal
+        order={selectedOrderDetails}
+        onClose={() => setSelectedOrderDetails(null)}
+      />
 
       <Footer />
     </div>

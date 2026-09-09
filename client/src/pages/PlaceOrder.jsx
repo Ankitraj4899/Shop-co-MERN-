@@ -6,6 +6,9 @@ import { createOrder, getCart } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 
+import ShippingForm from "../components/checkout/ShippingForm";
+import CheckoutSummary from "../components/checkout/CheckoutSummary";
+
 const PlaceOrder = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -44,7 +47,10 @@ const PlaceOrder = () => {
   }, [navigate]);
 
   const subtotal = useMemo(() => {
-    return cartItems.reduce((acc, item) => acc + (item.product?.price || 0) * item.quantity, 0);
+    return cartItems.reduce(
+      (acc, item) => acc + (item.product?.price || 0) * item.quantity,
+      0
+    );
   }, [cartItems]);
 
   const discountRate = useMemo(() => {
@@ -77,7 +83,9 @@ const PlaceOrder = () => {
       shippingForm.address,
       shippingForm.city,
       shippingForm.postalCode,
-    ].filter(Boolean).join(", ");
+    ]
+      .filter(Boolean)
+      .join(", ");
 
     setIsSubmitting(true);
     try {
@@ -129,144 +137,24 @@ const PlaceOrder = () => {
 
         {!isLoading && cartItems.length > 0 && (
           <div className="checkout-layout">
-            {/* Left: Shipping Form */}
-            <form className="checkout-form-card" onSubmit={handleSubmitOrder}>
-              <h2>1. Shipping Information</h2>
+            <ShippingForm
+              shippingForm={shippingForm}
+              onInputChange={handleInputChange}
+              onSubmit={handleSubmitOrder}
+              isSubmitting={isSubmitting}
+              estimatedTotal={estimatedTotal}
+              error={error}
+            />
 
-              <div className="form-group-grid">
-                <label>
-                  Full Name
-                  <input
-                    type="text"
-                    name="fullName"
-                    value={shippingForm.fullName}
-                    onChange={handleInputChange}
-                    placeholder="Recipient's name"
-                    required
-                  />
-                </label>
-
-                <label>
-                  Phone Number
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={shippingForm.phone}
-                    onChange={handleInputChange}
-                    placeholder="+1 555-0100"
-                    required
-                  />
-                </label>
-              </div>
-
-              <label>
-                Street Address
-                <textarea
-                  name="address"
-                  rows="3"
-                  value={shippingForm.address}
-                  onChange={handleInputChange}
-                  placeholder="Apartment, suite, unit, building, or street address"
-                  required
-                />
-              </label>
-
-              <div className="form-group-grid">
-                <label>
-                  City
-                  <input
-                    type="text"
-                    name="city"
-                    value={shippingForm.city}
-                    onChange={handleInputChange}
-                    placeholder="New York"
-                    required
-                  />
-                </label>
-
-                <label>
-                  Postal Code
-                  <input
-                    type="text"
-                    name="postalCode"
-                    value={shippingForm.postalCode}
-                    onChange={handleInputChange}
-                    placeholder="10001"
-                    required
-                  />
-                </label>
-              </div>
-
-              <h2 className="payment-heading">2. Payment Method</h2>
-              <div className="payment-method-box">
-                <label className="radio-label">
-                  <input type="radio" name="payment" defaultChecked />
-                  <span>Cash on Delivery (Standard Secure Delivery)</span>
-                </label>
-              </div>
-
-              {error && <p className="error-message">{error}</p>}
-
-              <button
-                type="submit"
-                className="button button--dark button--place-order"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Placing Order..." : `Pay $${estimatedTotal.toFixed(2)} & Place Order`}
-              </button>
-            </form>
-
-            {/* Right: Order Breakdown Summary */}
-            <aside className="order-summary-card">
-              <h2>Order Summary</h2>
-
-              <div className="checkout-items-list">
-                {cartItems.map((item) => (
-                  <div className="checkout-item-row" key={`${item.product?._id}-${item.size}`}>
-                    <img
-                      src={item.product?.thumbnailImage}
-                      alt={item.product?.name}
-                      onError={(e) => {
-                        e.target.src = "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=100&q=80";
-                      }}
-                    />
-                    <div className="checkout-item-row__info">
-                      <h4>{item.product?.name}</h4>
-                      <small>Qty: {item.quantity} {item.size ? `· Size: ${item.size}` : ""}</small>
-                    </div>
-                    <strong>${((item.product?.price || 0) * item.quantity).toFixed(2)}</strong>
-                  </div>
-                ))}
-              </div>
-
-              <hr className="summary-divider" />
-
-              <div className="summary-row">
-                <span>Subtotal</span>
-                <strong>${subtotal.toFixed(2)}</strong>
-              </div>
-
-              {discount > 0 && (
-                <div className="summary-row summary-row--discount">
-                  <span>Discount ({couponCode.toUpperCase()})</span>
-                  <strong className="discount-val">-${discount.toFixed(2)}</strong>
-                </div>
-              )}
-
-              <div className="summary-row">
-                <span>Delivery Fee</span>
-                <strong>${deliveryFee.toFixed(2)}</strong>
-              </div>
-
-              <hr className="summary-divider" />
-
-              <div className="summary-row summary-row--total">
-                <span>Total Amount</span>
-                <strong>${estimatedTotal.toFixed(2)}</strong>
-              </div>
-
-              <p className="secure-badge">🔒 Encrypted Server-side Price & Stock Validation</p>
-            </aside>
+            <CheckoutSummary
+              cartItems={cartItems}
+              subtotal={subtotal}
+              discount={discount}
+              discountRate={discountRate}
+              couponCode={couponCode}
+              deliveryFee={deliveryFee}
+              estimatedTotal={estimatedTotal}
+            />
           </div>
         )}
       </main>

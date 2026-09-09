@@ -1,36 +1,14 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import ProductCard from "../components/ProductCard";
 import Footer from "../components/Footer";
 import { getCategories, getProducts } from "../lib/api";
 
-const availableColors = [
-  { name: "Green", hex: "#00C12B" },
-  { name: "Red", hex: "#F50606" },
-  { name: "Yellow", hex: "#F5DD06" },
-  { name: "Orange", hex: "#F57906" },
-  { name: "Cyan", hex: "#06CAF5" },
-  { name: "Blue", hex: "#063AF5" },
-  { name: "Purple", hex: "#7D06F5" },
-  { name: "Pink", hex: "#F506A4" },
-  { name: "White", hex: "#FFFFFF" },
-  { name: "Black", hex: "#000000" },
-];
-
-const availableSizes = [
-  "XX-Small",
-  "X-Small",
-  "Small",
-  "Medium",
-  "Large",
-  "X-Large",
-  "2X-Large",
-  "3X-Large",
-  "4X-Large",
-];
-
-const dressStyles = ["Casual", "Formal", "Party", "Gym"];
+import CategoryFilters from "../components/categories/CategoryFilters";
+import CategoryToolbar from "../components/categories/CategoryToolbar";
+import CategoryProductGrid from "../components/categories/CategoryProductGrid";
+import CategoryPagination from "../components/categories/CategoryPagination";
+import MobileFilterDrawer from "../components/categories/MobileFilterDrawer";
 
 const Categories = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -106,7 +84,18 @@ const Categories = () => {
     if (maxPrice) params.set("maxPrice", maxPrice);
     if (availability) params.set("availability", availability);
     return params.toString();
-  }, [page, search, selectedCategory, selectedStyle, selectedColor, selectedSize, minPrice, maxPrice, availability, sort]);
+  }, [
+    page,
+    search,
+    selectedCategory,
+    selectedStyle,
+    selectedColor,
+    selectedSize,
+    minPrice,
+    maxPrice,
+    availability,
+    sort,
+  ]);
 
   // Fetch products from backend
   useEffect(() => {
@@ -159,224 +148,38 @@ const Categories = () => {
   const pageTitle = useMemo(() => {
     if (search.trim()) return `Search results for "${search.trim()}"`;
     if (selectedCategory) {
-      const found = categories.find((c) => c._id === selectedCategory || c.name.toLowerCase() === selectedCategory.toLowerCase());
+      const found = categories.find(
+        (c) =>
+          c._id === selectedCategory ||
+          c.name.toLowerCase() === selectedCategory.toLowerCase()
+      );
       return found ? found.name : selectedCategory;
     }
     if (selectedStyle) return `${selectedStyle} Style`;
     return "All Products";
   }, [search, selectedCategory, selectedStyle, categories]);
 
-  // Pagination buttons array
-  const pageButtons = useMemo(() => {
-    const total = pagination.totalPages || 1;
-    const current = pagination.page || 1;
-    const buttons = [];
-
-    for (let i = 1; i <= total; i++) {
-      if (i === 1 || i === total || (i >= current - 1 && i <= current + 1)) {
-        buttons.push(i);
-      } else if (buttons[buttons.length - 1] !== "...") {
-        buttons.push("...");
-      }
-    }
-    return buttons;
-  }, [pagination.totalPages, pagination.page]);
-
-  const filterSidebarContent = (
-    <div className="filter-content">
-      <div className="filter-content__header">
-        <h2>Filters</h2>
-        <button type="button" className="clear-filter-btn" onClick={handleResetFilters}>
-          Clear All
-        </button>
-      </div>
-
-      <hr className="filter-divider" />
-
-      {/* Category List */}
-      <div className="filter-group">
-        <h3>Category</h3>
-        <ul className="category-links">
-          <li
-            className={!selectedCategory ? "is-active" : ""}
-            onClick={() => {
-              setSelectedCategory("");
-              setPage(1);
-            }}
-          >
-            All Categories <span>›</span>
-          </li>
-          {categories.map((cat) => (
-            <li
-              key={cat._id}
-              className={selectedCategory === cat._id || selectedCategory === cat.name ? "is-active" : ""}
-              onClick={() => {
-                setSelectedCategory(cat.name);
-                setPage(1);
-              }}
-            >
-              {cat.name} <span>›</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <hr className="filter-divider" />
-
-      {/* Price Range */}
-      <div className="filter-group">
-        <h3>Price Range</h3>
-        <div className="price-inputs">
-          <div className="input-prefix">
-            <span>$</span>
-            <input
-              type="number"
-              placeholder="Min"
-              min="0"
-              value={minPrice}
-              onChange={(e) => {
-                setMinPrice(e.target.value);
-                setPage(1);
-              }}
-            />
-          </div>
-          <span className="price-to">-</span>
-          <div className="input-prefix">
-            <span>$</span>
-            <input
-              type="number"
-              placeholder="Max"
-              min="0"
-              value={maxPrice}
-              onChange={(e) => {
-                setMaxPrice(e.target.value);
-                setPage(1);
-              }}
-            />
-          </div>
-        </div>
-      </div>
-
-      <hr className="filter-divider" />
-
-      {/* Colors Palette */}
-      <div className="filter-group">
-        <h3>Colors</h3>
-        <div className="color-swatches-grid">
-          {availableColors.map((color) => {
-            const isSelected = selectedColor === color.name;
-            return (
-              <button
-                type="button"
-                key={color.name}
-                className={`color-swatch ${isSelected ? "is-selected" : ""} ${color.name === "White" ? "color-swatch--white" : ""}`}
-                style={{ backgroundColor: color.hex }}
-                title={color.name}
-                onClick={() => {
-                  setSelectedColor(isSelected ? "" : color.name);
-                  setPage(1);
-                }}
-              >
-                {isSelected && <span className="swatch-check">✓</span>}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      <hr className="filter-divider" />
-
-      {/* Size Pills */}
-      <div className="filter-group">
-        <h3>Size</h3>
-        <div className="size-pills-grid">
-          {availableSizes.map((size) => {
-            const isSelected = selectedSize === size;
-            return (
-              <button
-                type="button"
-                key={size}
-                className={`size-pill ${isSelected ? "is-selected" : ""}`}
-                onClick={() => {
-                  setSelectedSize(isSelected ? "" : size);
-                  setPage(1);
-                }}
-              >
-                {size}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      <hr className="filter-divider" />
-
-      {/* Dress Style */}
-      <div className="filter-group">
-        <h3>Dress Style</h3>
-        <ul className="category-links">
-          {dressStyles.map((style) => (
-            <li
-              key={style}
-              className={selectedStyle === style ? "is-active" : ""}
-              onClick={() => {
-                setSelectedStyle(selectedStyle === style ? "" : style);
-                setPage(1);
-              }}
-            >
-              {style} <span>›</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <hr className="filter-divider" />
-
-      {/* Availability */}
-      <div className="filter-group">
-        <h3>Availability</h3>
-        <select
-          className="select-input"
-          value={availability}
-          onChange={(e) => {
-            setAvailability(e.target.value);
-            setPage(1);
-          }}
-        >
-          <option value="">All Stock</option>
-          <option value="in-stock">In Stock Only</option>
-          <option value="out-of-stock">Out of Stock</option>
-        </select>
-      </div>
-
-      {/* Sort By (Accessible in Mobile Drawer) */}
-      <div className="filter-group mobile-filter-sort">
-        <h3>Sort By</h3>
-        <select
-          className="select-input"
-          value={sort}
-          onChange={(e) => {
-            setSort(e.target.value);
-            setPage(1);
-          }}
-        >
-          <option value="popular">Most Popular</option>
-          <option value="low">Price: Low to High</option>
-          <option value="high">Price: High to Low</option>
-          <option value="newest">Newest Arrivals</option>
-          <option value="name">Name</option>
-        </select>
-      </div>
-
-      <button
-        type="button"
-        className="button button--dark button--apply-filter"
-        onClick={() => setIsMobileFilterOpen(false)}
-      >
-        Apply Filter
-      </button>
-    </div>
-  );
+  const filterProps = {
+    categories,
+    selectedCategory,
+    setSelectedCategory,
+    minPrice,
+    setMinPrice,
+    maxPrice,
+    setMaxPrice,
+    selectedColor,
+    setSelectedColor,
+    selectedSize,
+    setSelectedSize,
+    selectedStyle,
+    setSelectedStyle,
+    availability,
+    setAvailability,
+    sort,
+    setSort,
+    setPage,
+    onResetFilters: handleResetFilters,
+  };
 
   return (
     <div className="commerce-page">
@@ -393,164 +196,51 @@ const Categories = () => {
         <div className="listing-layout">
           {/* Desktop Filter Sidebar */}
           <aside className="filters-panel desktop-only">
-            {filterSidebarContent}
+            <CategoryFilters {...filterProps} />
           </aside>
 
           {/* Right Product Grid Section */}
           <section className="listing-results">
-            <div className="listing-toolbar">
-              <div className="listing-toolbar__left">
-                <h1>{pageTitle}</h1>
-                <span className="showing-count">
-                  Showing {products.length > 0 ? (page - 1) * 9 + 1 : 0}-
-                  {Math.min(page * 9, pagination.total)} of {pagination.total} Products
-                </span>
-              </div>
+            <CategoryToolbar
+              pageTitle={pageTitle}
+              productsCount={products.length}
+              page={page}
+              totalProducts={pagination.total}
+              sort={sort}
+              setSort={setSort}
+              setPage={setPage}
+              onOpenMobileFilter={() => setIsMobileFilterOpen(true)}
+            />
 
-              <div className="listing-toolbar__right">
-                <label className="sort-label desktop-only" htmlFor="sort-dropdown">
-                  Sort by:
-                  <select
-                    id="sort-dropdown"
-                    value={sort}
-                    onChange={(e) => {
-                      setSort(e.target.value);
-                      setPage(1);
-                    }}
-                  >
-                    <option value="popular">Most Popular</option>
-                    <option value="low">Price: Low to High</option>
-                    <option value="high">Price: High to Low</option>
-                    <option value="newest">Newest Arrivals</option>
-                    <option value="name">Name</option>
-                  </select>
-                </label>
-
-                {/* Mobile Filter Trigger Button (Circular sliders icon matching Figma) */}
-                <button
-                  type="button"
-                  className="mobile-filter-btn"
-                  onClick={() => setIsMobileFilterOpen(true)}
-                  aria-label="Open filter panel"
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="4" y1="21" x2="4" y2="14" />
-                    <line x1="4" y1="10" x2="4" y2="3" />
-                    <line x1="12" y1="21" x2="12" y2="12" />
-                    <line x1="12" y1="8" x2="12" y2="3" />
-                    <line x1="20" y1="21" x2="20" y2="16" />
-                    <line x1="20" y1="12" x2="20" y2="3" />
-                    <line x1="1" y1="14" x2="7" y2="14" />
-                    <line x1="9" y1="8" x2="15" y2="8" />
-                    <line x1="17" y1="16" x2="23" y2="16" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            {/* Error & Loading States */}
-            {isLoading && <p className="commerce-state">Loading products...</p>}
-            {error && <p className="error-message">{error}</p>}
-            {!isLoading && !error && products.length === 0 && (
-              <div className="empty-catalog-state">
-                <div className="empty-catalog-state__icon-wrap">
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M8 8L14 14" stroke="#ff3333" strokeWidth="2" strokeLinecap="round"/>
-                  </svg>
-                </div>
-                <h2 className="empty-catalog-state__title">No Matching Products Found</h2>
-                <p className="empty-catalog-state__text">
-                  We couldn't find any products matching your selected search query or active filters. Try adjusting your price range, color, or clearing filters.
-                </p>
-                <button type="button" className="button button--dark empty-catalog-state__btn" onClick={handleResetFilters}>
-                  Clear All Filters
-                </button>
-              </div>
-            )}
-
-            {/* Products Grid */}
-            {!isLoading && !error && products.length > 0 && (
-              <div className="listing-grid">
-                {products.map((product) => (
-                  <ProductCard key={product._id} product={product} />
-                ))}
-              </div>
-            )}
+            {/* Product Grid & State Handling */}
+            <CategoryProductGrid
+              isLoading={isLoading}
+              error={error}
+              products={products}
+              onResetFilters={handleResetFilters}
+            />
 
             {/* Pagination Component */}
-            {pagination.totalPages > 1 && (
-              <div className="pagination">
-                <button
-                  type="button"
-                  className="pagination__nav-btn"
-                  disabled={!pagination.hasPrevious}
-                  onClick={() => {
-                    setPage((prev) => Math.max(1, prev - 1));
-                    window.scrollTo({ top: 0, behavior: "smooth" });
-                  }}
-                >
-                  ← Previous
-                </button>
-
-                <div className="pagination__numbers">
-                  {pageButtons.map((btn, index) =>
-                    btn === "..." ? (
-                      <span key={`ellipsis-${index}`} className="pagination__dots">
-                        ...
-                      </span>
-                    ) : (
-                      <button
-                        key={`page-${btn}`}
-                        type="button"
-                        className={`pagination__num-btn ${pagination.page === btn ? "is-active" : ""}`}
-                        onClick={() => {
-                          setPage(btn);
-                          window.scrollTo({ top: 0, behavior: "smooth" });
-                        }}
-                      >
-                        {btn}
-                      </button>
-                    )
-                  )}
-                </div>
-
-                <button
-                  type="button"
-                  className="pagination__nav-btn"
-                  disabled={!pagination.hasNext}
-                  onClick={() => {
-                    setPage((prev) => prev + 1);
-                    window.scrollTo({ top: 0, behavior: "smooth" });
-                  }}
-                >
-                  Next →
-                </button>
-              </div>
-            )}
+            <CategoryPagination
+              pagination={pagination}
+              page={page}
+              setPage={setPage}
+            />
           </section>
         </div>
       </main>
 
-      {/* Mobile Filter Drawer / Modal */}
-      {isMobileFilterOpen && (
-        <div className="mobile-filter-overlay" onClick={() => setIsMobileFilterOpen(false)}>
-          <div className="mobile-filter-drawer" onClick={(e) => e.stopPropagation()}>
-            <div className="mobile-drawer__header">
-              <h2>Filters</h2>
-              <button
-                type="button"
-                className="close-drawer-btn"
-                onClick={() => setIsMobileFilterOpen(false)}
-                aria-label="Close filters"
-              >
-                ✕
-              </button>
-            </div>
-            {filterSidebarContent}
-          </div>
-        </div>
-      )}
+      {/* Mobile Filter Drawer */}
+      <MobileFilterDrawer
+        isOpen={isMobileFilterOpen}
+        onClose={() => setIsMobileFilterOpen(false)}
+      >
+        <CategoryFilters
+          {...filterProps}
+          onApplyFilter={() => setIsMobileFilterOpen(false)}
+        />
+      </MobileFilterDrawer>
+
       <Footer />
     </div>
   );
