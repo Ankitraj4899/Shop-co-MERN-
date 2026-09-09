@@ -8,7 +8,6 @@ const SearchBar = ({ searchTerm, setSearchTerm, onSearch, onTriggerSearch }) => 
         className="search"
         alt=""
         onClick={onTriggerSearch}
-        style={{ cursor: "pointer" }}
       />
       <input
         type="search"

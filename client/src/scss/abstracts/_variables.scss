@@ -44,8 +44,6 @@ $color-swatch-navy: #31344f;
 
 $font-family-body: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 $font-family-heading: 'Integral CF', 'Arial Black', sans-serif;
-$font-family: $font-family-body;
-$heading-font-style: $font-family-heading;
 
 $font-size-2xs: 10px;
 $font-size-xs: 11px;
@@ -112,18 +110,6 @@ $z-modal-backdrop: 900;
 $z-modal: 1000;
 $z-toast: 1100;
 
-$black-color: $color-black;
-$white-color: $color-white;
-$white-1: $color-white;
-$black-1: $color-black;
-$search-color: $color-bg-input;
-$bg-gray: $color-bg-surface;
-$text-gray: $color-text-subtle;
-$discount-color: $color-discount-text;
-$discount-bg-color: $color-discount-bg;
-$star-color: $color-star-yellow;
-$border-color: $color-border-light;
-$hero-bg-color: $color-bg-hero;
 $navlink-height: 38px;
 
 $breakpoint-mobile: 600px;

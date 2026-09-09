@@ -258,7 +258,7 @@ const ProductImageSelector = ({
               ref={fileInputRef}
               onChange={handleFileChange}
               accept="image/*"
-              style={{ display: "none" }}
+              className="hidden-file-input"
             />
             <div
               className={`image-dropzone ${isDragOver ? "is-dragover" : ""}`}
@@ -369,7 +369,7 @@ const ProductImageSelector = ({
               onChange={handleGalleryFileChange}
               accept="image/*"
               multiple
-              style={{ display: "none" }}
+              className="hidden-file-input"
             />
             <button
               type="button"

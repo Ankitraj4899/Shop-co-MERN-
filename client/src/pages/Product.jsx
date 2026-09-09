@@ -142,7 +142,7 @@ const Product = () => {
         <main className="commerce-state">
           <h2>Product Not Found</h2>
           <p>{error || "The product you requested could not be located."}</p>
-          <Link to="/" className="button button--dark" style={{ marginTop: "16px" }}>
+          <Link to="/" className="button button--dark button--return-store">
             Return to Store
           </Link>
         </main>
@@ -167,21 +167,7 @@ const Product = () => {
 
       <main className="product-page-container">
         {toastMessage && (
-          <div
-            style={{
-              position: "fixed",
-              bottom: "24px",
-              right: "24px",
-              backgroundColor: "#000",
-              color: "#fff",
-              padding: "14px 24px",
-              borderRadius: "62px",
-              boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
-              zIndex: 9999,
-              fontWeight: 500,
-              fontSize: "14px",
-            }}
-          >
+          <div className="product-toast">
             {toastMessage}
           </div>
         )}

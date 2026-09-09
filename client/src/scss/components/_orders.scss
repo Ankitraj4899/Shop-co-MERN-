@@ -18,9 +18,7 @@
         border-radius: $radius-3xl;
         padding: $spacing-7xl $spacing-4xl;
         margin: $spacing-lg 0 $spacing-5xl;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        @include flex-center(column);
         text-align: center;
         box-shadow: $shadow-card;
 
@@ -33,9 +31,7 @@
             height: 88px;
             border-radius: $radius-circle;
             background: $color-bg-hero;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            @include flex-center;
             margin-bottom: $spacing-2xl;
             color: $color-black;
             border: 2px dashed $color-border-light;
@@ -90,9 +86,7 @@
         }
 
         &__categories {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            @include flex-center(column);
             gap: $spacing-md;
             margin-bottom: $spacing-4xl;
             padding-top: $spacing-2xl;
@@ -110,9 +104,7 @@
         }
 
         &__chips {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            @include flex-center;
             flex-wrap: wrap;
             gap: 10px;
         }
@@ -134,7 +126,7 @@
         }
 
         &__features {
-            display: grid;
+            @include display-grid;
             grid-template-columns: repeat(3, 1fr);
             gap: $spacing-lg;
             width: 100%;
@@ -165,8 +157,7 @@
         }
 
         &__feature-content {
-            display: flex;
-            flex-direction: column;
+            @include flex-col;
         }
 
         &__feature-title {
@@ -184,8 +175,7 @@
     }
 
     .orders-list {
-        display: flex;
-        flex-direction: column;
+        @include flex-col;
         gap: $spacing-xl;
     }
 
@@ -202,9 +192,7 @@
         }
 
         &__header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            @include flex-between;
             margin-bottom: $spacing-xl;
             flex-wrap: wrap;
             gap: $spacing-md;
@@ -221,8 +209,7 @@
 
                 .order-header-right {
                     width: 100%;
-                    justify-content: space-between;
-                    align-items: center;
+                    @include flex-between;
                 }
             }
 
@@ -274,8 +261,7 @@
         }
 
         &__items {
-            display: flex;
-            flex-direction: column;
+            @include flex-col;
             gap: $spacing-md;
             padding: $spacing-lg 0;
             border-top: 1px solid $color-border-light;
@@ -359,9 +345,7 @@
         }
 
         &__footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            @include flex-between;
             margin-top: $spacing-lg;
             flex-wrap: wrap;
             gap: $spacing-md;
@@ -378,9 +362,7 @@
 
                 .order-total-block {
                     width: 100%;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
+                    @include flex-between;
                 }
             }
 
@@ -445,9 +427,7 @@
     }
 
     .order-details-heading {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+        @include flex-between;
         margin-bottom: $spacing-4xl;
         flex-wrap: wrap;
         gap: $spacing-md;
@@ -489,9 +469,8 @@
     }
 
     .order-status-tracker {
-        display: flex;
+        @include flex-between;
         align-items: flex-start;
-        justify-content: space-between;
         background: $color-white;
         border: 1px solid $color-border-light;
         border-radius: $radius-2xl;
@@ -507,8 +486,7 @@
         }
 
         .tracker-step {
-            display: flex;
-            flex-direction: column;
+            @include flex-col;
             align-items: center;
             gap: $spacing-sm;
             z-index: 2;
@@ -526,9 +504,7 @@
                 border-radius: $radius-circle;
                 background: $color-bg-surface;
                 border: 2px solid $color-border-light;
-                display: flex;
-                align-items: center;
-                justify-content: center;
+                @include flex-center;
                 font-weight: $font-weight-bold;
                 font-size: $font-size-base;
                 color: $color-text-muted;
@@ -581,7 +557,7 @@
     }
 
     .order-details-layout {
-        display: grid;
+        @include display-grid;
         grid-template-columns: 1fr 380px;
         gap: $spacing-2xl;
         align-items: flex-start;
@@ -620,8 +596,7 @@
 
             &.items-card {
                 .order-items-table {
-                    display: flex;
-                    flex-direction: column;
+                    @include flex-col;
                     gap: $spacing-lg;
 
                     @include responsive-mobile {
@@ -695,7 +670,7 @@
                         }
 
                         @include responsive-mobile {
-                            display: grid;
+                            @include display-grid;
                             grid-template-columns: 56px 1fr auto;
                             grid-template-areas:
                                 "thumb info subtotal"
@@ -810,9 +785,7 @@
                 }
 
                 .summary-row {
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
+                    @include flex-between;
                     margin-bottom: $spacing-md;
                     font-size: $font-size-lg;
                     gap: $spacing-sm;
@@ -886,9 +859,7 @@
                     font-size: $font-size-lg;
                     font-weight: $font-weight-semibold;
                     margin-top: $spacing-2xl;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
+                    @include flex-center;
                     text-decoration: none;
                     transition: background 0.2s ease;
 

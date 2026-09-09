@@ -304,3 +304,22 @@ body {
     }
 }
 
+.stars-rating-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+
+    .star-icon {
+        display: block;
+        flex-shrink: 0;
+    }
+}
+
+.hidden-file-input {
+    display: none;
+}
+
+.button--return-store {
+    margin-top: 16px;
+}
+
