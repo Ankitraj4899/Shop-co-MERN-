@@ -218,6 +218,18 @@
                         width: 14px;
                         height: 14px;
                         object-fit: contain;
+                        display: block;
+                    }
+
+                    &.facebook,
+                    &[href*="facebook"] {
+                        background-color: #000000 !important;
+                        background: #000000 !important;
+                        border-color: #000000 !important;
+
+                        img {
+                            filter: brightness(0) invert(1) !important;
+                        }
                     }
 
                     &:hover {

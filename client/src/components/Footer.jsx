@@ -71,8 +71,8 @@ const Footer = () => {
           <div className="input-with-icon">
             <span className="mail-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="rgba(0,0,0,0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M22 6L12 13L2 6" stroke="rgba(0,0,0,0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="rgba(0,0,0,0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M22 6L12 13L2 6" stroke="rgba(0,0,0,0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </span>
             <input
@@ -97,7 +97,7 @@ const Footer = () => {
           <p>We have clothes that suit your style and which you're proud to wear. From women to men.</p>
           <div className="social-links">
             <a href="#twitter" aria-label="Twitter"><img src={x} alt="Twitter" /></a>
-            <a href="#facebook" aria-label="Facebook"><img src={f} alt="Facebook" /></a>
+            <a href="#facebook" aria-label="Facebook" className="facebook"><img src={f} alt="Facebook" /></a>
             <a href="#instagram" aria-label="Instagram"><img src={i} alt="Instagram" /></a>
             <a href="#github" aria-label="Github"><img src={g} alt="Github" /></a>
           </div>
