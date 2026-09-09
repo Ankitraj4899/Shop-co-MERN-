@@ -2,7 +2,6 @@ import { lazy, Suspense } from "react"
 import { Route, Routes } from "react-router-dom"
 import ProtectedRoute from "./components/ProtectedRoute"
 import ScrollToTop from "./components/ScrollToTop"
-import "./App.css"
 
 const Home = lazy(() => import("./pages/Home.jsx"))
 const Login = lazy(() => import("./pages/Login.jsx"))

@@ -31,9 +31,7 @@
         background: $color-black;
         border-radius: $radius-2xl;
         padding: $spacing-5xl $spacing-7xl;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+        @include flex-between;
         gap: $spacing-4xl;
         box-shadow: 0 12px 36px rgba(0, 0, 0, 0.12);
         box-sizing: border-box;
@@ -72,8 +70,7 @@
         }
 
         .newsletter__form {
-            display: flex;
-            flex-direction: column;
+            @include flex-col;
             gap: $spacing-base;
             width: 350px;
             flex-shrink: 0;
@@ -92,9 +89,7 @@
                     top: 0;
                     bottom: 0;
                     margin: auto 0;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
+                    @include flex-center;
                     pointer-events: none;
                     z-index: 2;
 
@@ -242,8 +237,7 @@
         }
 
         .footer__column {
-            display: flex;
-            flex-direction: column;
+            @include flex-col;
             gap: $spacing-base;
 
             .footer__column-heading {
@@ -272,9 +266,7 @@
         max-width: $breakpoint-desktop;
         margin: $spacing-2xl auto 0;
         padding: 0 $spacing-lg;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+        @include flex-between;
         flex-wrap: wrap;
         gap: $spacing-lg;
         font-size: $font-size-base;
@@ -291,9 +283,7 @@
             gap: 10px;
 
             .pay-badge {
-                display: flex;
-                align-items: center;
-                justify-content: center;
+                @include flex-center;
                 width: 46px;
                 height: 30px;
                 background: $color-white;

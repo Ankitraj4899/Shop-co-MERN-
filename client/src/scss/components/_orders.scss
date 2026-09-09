@@ -7,6 +7,10 @@
     margin: 0 auto;
     padding: $spacing-2xl $spacing-lg 80px;
 
+    @include responsive-mobile {
+        padding: $spacing-lg $spacing-md 50px;
+    }
+
     .orders-empty-state,
     .empty-state {
         background: $color-white;
@@ -20,7 +24,7 @@
         text-align: center;
         box-shadow: $shadow-card;
 
-        @media (max-width: 600px) {
+        @include responsive-mobile {
             padding: $spacing-5xl $spacing-lg;
         }
 
@@ -79,7 +83,7 @@
                 box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
             }
 
-            @media (max-width: 480px) {
+            @include responsive-mobile {
                 width: 100%;
                 padding: $spacing-lg $spacing-4xl;
             }
@@ -138,7 +142,7 @@
             padding-top: $spacing-2xl;
             border-top: 1px solid rgba(0, 0, 0, 0.06);
 
-            @media (max-width: 640px) {
+            @include responsive-mobile {
                 grid-template-columns: 1fr;
                 gap: $spacing-md;
             }
@@ -192,8 +196,9 @@
         padding: $spacing-2xl $spacing-3xl;
         box-shadow: $shadow-card;
 
-        @media (max-width: 600px) {
-            padding: $spacing-xl $spacing-lg;
+        @include responsive-mobile {
+            padding: $spacing-lg $spacing-md;
+            border-radius: $radius-xl;
         }
 
         &__header {
@@ -204,6 +209,23 @@
             flex-wrap: wrap;
             gap: $spacing-md;
 
+            @include responsive-mobile {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: $spacing-sm;
+                margin-bottom: $spacing-md;
+
+                .order-meta-info {
+                    width: 100%;
+                }
+
+                .order-header-right {
+                    width: 100%;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+            }
+
             .order-meta-info {
                 &__id {
                     font-size: $font-size-xl;
@@ -211,6 +233,11 @@
                     display: block;
                     margin-bottom: $spacing-3xs;
                     color: $color-black;
+                    word-break: break-word;
+
+                    @include responsive-mobile {
+                        font-size: $font-size-lg;
+                    }
                 }
 
                 &__time {
@@ -224,12 +251,20 @@
                 align-items: center;
                 gap: $spacing-lg;
 
+                @include responsive-mobile {
+                    gap: $spacing-sm;
+                }
+
                 .view-details-btn {
                     font-size: $font-size-base;
                     font-weight: $font-weight-semibold;
                     color: $color-black;
                     text-decoration: none;
                     transition: color 0.2s ease;
+
+                    @include responsive-mobile {
+                        font-size: $font-size-sm;
+                    }
 
                     &:hover {
                         text-decoration: underline;
@@ -246,10 +281,18 @@
             border-top: 1px solid $color-border-light;
             border-bottom: 1px solid $color-border-light;
 
+            @include responsive-mobile {
+                padding: $spacing-md 0;
+            }
+
             .order-item-snippet {
                 display: flex;
                 align-items: center;
                 gap: $spacing-base;
+
+                @include responsive-mobile {
+                    gap: $spacing-sm;
+                }
 
                 &__thumb {
                     width: 54px;
@@ -258,27 +301,47 @@
                     object-fit: cover;
                     background: $color-bg-surface;
                     border: 1px solid $color-border-light;
+                    flex-shrink: 0;
+
+                    @include responsive-mobile {
+                        width: 44px;
+                        height: 44px;
+                    }
                 }
 
                 &__info {
                     flex: 1;
+                    min-width: 0;
 
                     .order-item-snippet__title {
                         font-size: $font-size-md;
                         font-weight: $font-weight-bold;
                         margin: 0 0 $spacing-3xs;
                         color: $color-black;
+                        word-break: break-word;
+
+                        @include responsive-mobile {
+                            font-size: $font-size-sm;
+                        }
                     }
 
                     .order-item-snippet__specs {
                         display: block;
                         font-size: $font-size-sm;
                         color: $color-text-muted;
+
+                        @include responsive-mobile {
+                            font-size: $font-size-xs;
+                        }
                     }
 
                     .order-item-snippet__unit-price {
                         font-size: $font-size-sm;
                         color: rgba(0, 0, 0, 0.5);
+
+                        @include responsive-mobile {
+                            font-size: $font-size-xs;
+                        }
                     }
                 }
 
@@ -286,6 +349,11 @@
                     font-size: $font-size-lg;
                     font-weight: $font-weight-extrabold;
                     color: $color-black;
+                    flex-shrink: 0;
+
+                    @include responsive-mobile {
+                        font-size: $font-size-base;
+                    }
                 }
             }
         }
@@ -297,6 +365,24 @@
             margin-top: $spacing-lg;
             flex-wrap: wrap;
             gap: $spacing-md;
+
+            @include responsive-mobile {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: $spacing-sm;
+
+                .order-shipping-summary {
+                    width: 100%;
+                    word-break: break-word;
+                }
+
+                .order-total-block {
+                    width: 100%;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+            }
 
             .order-shipping-summary {
                 .shipping-summary-badge__label {
@@ -313,6 +399,10 @@
                     font-size: $font-size-base;
                     font-weight: $font-weight-medium;
                     color: #333333;
+
+                    @include responsive-mobile {
+                        font-size: $font-size-sm;
+                    }
                 }
             }
 
@@ -325,12 +415,20 @@
                     font-size: $font-size-base;
                     color: $color-text-muted;
                     font-weight: $font-weight-semibold;
+
+                    @include responsive-mobile {
+                        font-size: $font-size-sm;
+                    }
                 }
 
                 &__value {
                     font-size: $font-size-3xl;
                     font-weight: $font-weight-extrabold;
                     color: $color-black;
+
+                    @include responsive-mobile {
+                        font-size: $font-size-2xl;
+                    }
                 }
             }
         }
@@ -342,6 +440,10 @@
     margin: 0 auto;
     padding: $spacing-2xl $spacing-lg 80px;
 
+    @include responsive-mobile {
+        padding: $spacing-lg $spacing-md 50px;
+    }
+
     .order-details-heading {
         display: flex;
         align-items: center;
@@ -350,25 +452,45 @@
         flex-wrap: wrap;
         gap: $spacing-md;
 
+        @include responsive-mobile {
+            margin-bottom: $spacing-2xl;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: $spacing-sm;
+
+            &__meta {
+                width: 100%;
+            }
+
+            .status-pill {
+                align-self: flex-start;
+            }
+        }
+
         &__title {
             font-family: $font-family-heading;
-            font-size: clamp(22px, 3.5vw, 32px);
+            font-size: clamp(20px, 3.5vw, 32px);
             font-weight: $font-weight-extrabold;
             margin: 0;
             letter-spacing: -0.5px;
             text-transform: uppercase;
+            word-break: break-word;
         }
 
         .order-placed-date {
             font-size: $font-size-base;
             color: $color-text-muted;
             margin: $spacing-2xs 0 0;
+
+            @include responsive-mobile {
+                font-size: $font-size-sm;
+            }
         }
     }
 
     .order-status-tracker {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: space-between;
         background: $color-white;
         border: 1px solid $color-border-light;
@@ -378,9 +500,10 @@
         position: relative;
         box-shadow: $shadow-subtle;
 
-        @media (max-width: 640px) {
-            padding: $spacing-xl $spacing-lg;
-            gap: $spacing-sm;
+        @include responsive-mobile {
+            padding: $spacing-lg $spacing-xs;
+            margin-bottom: $spacing-2xl;
+            gap: 2px;
         }
 
         .tracker-step {
@@ -389,6 +512,13 @@
             align-items: center;
             gap: $spacing-sm;
             z-index: 2;
+            flex: 1;
+            min-width: 0;
+            text-align: center;
+
+            @include responsive-mobile {
+                gap: $spacing-2xs;
+            }
 
             .step-circle {
                 width: 36px;
@@ -402,11 +532,12 @@
                 font-weight: $font-weight-bold;
                 font-size: $font-size-base;
                 color: $color-text-muted;
+                flex-shrink: 0;
 
-                @media (max-width: 640px) {
+                @include responsive-mobile {
                     width: 28px;
                     height: 28px;
-                    font-size: $font-size-sm;
+                    font-size: $font-size-xs;
                 }
             }
 
@@ -414,9 +545,11 @@
                 font-size: $font-size-base;
                 font-weight: $font-weight-semibold;
                 color: $color-text-muted;
+                word-break: break-word;
+                line-height: 1.2;
 
-                @media (max-width: 640px) {
-                    font-size: $font-size-xs;
+                @include responsive-mobile {
+                    font-size: 11px;
                 }
             }
 
@@ -455,6 +588,7 @@
 
         @media (max-width: 1024px) {
             grid-template-columns: 1fr;
+            gap: $spacing-xl;
         }
 
         .order-details-card {
@@ -465,8 +599,9 @@
             box-sizing: border-box;
             box-shadow: $shadow-card;
 
-            @media (max-width: 600px) {
-                padding: $spacing-xl $spacing-lg;
+            @include responsive-mobile {
+                padding: $spacing-lg $spacing-md;
+                border-radius: $radius-xl;
             }
 
             &__title {
@@ -476,6 +611,11 @@
                 margin: 0 0 $spacing-xl;
                 color: $color-black;
                 text-transform: uppercase;
+
+                @include responsive-mobile {
+                    font-size: $font-size-lg;
+                    margin-bottom: $spacing-md;
+                }
             }
 
             &.items-card {
@@ -483,6 +623,10 @@
                     display: flex;
                     flex-direction: column;
                     gap: $spacing-lg;
+
+                    @include responsive-mobile {
+                        gap: $spacing-md;
+                    }
 
                     .order-item-detail-row {
                         display: flex;
@@ -503,16 +647,19 @@
                             object-fit: cover;
                             background: $color-bg-surface;
                             border: 1px solid $color-border-light;
+                            flex-shrink: 0;
                         }
 
                         &__info {
                             flex: 1;
+                            min-width: 0;
 
                             .order-item-detail-row__title {
                                 font-size: $font-size-lg;
                                 font-weight: $font-weight-bold;
                                 margin: 0 0 $spacing-2xs;
                                 color: $color-black;
+                                word-break: break-word;
                             }
 
                             .order-item-detail-row__specs {
@@ -535,12 +682,78 @@
                             background: $color-bg-surface;
                             padding: $spacing-2xs $spacing-md;
                             border-radius: $radius-pill;
+                            white-space: nowrap;
+                            flex-shrink: 0;
                         }
 
                         &__subtotal {
                             font-size: $font-size-xl;
                             font-weight: $font-weight-extrabold;
                             color: $color-black;
+                            white-space: nowrap;
+                            flex-shrink: 0;
+                        }
+
+                        @include responsive-mobile {
+                            display: grid;
+                            grid-template-columns: 56px 1fr auto;
+                            grid-template-areas:
+                                "thumb info subtotal"
+                                "thumb qty subtotal";
+                            gap: $spacing-xs $spacing-sm;
+                            align-items: center;
+                            padding-bottom: $spacing-md;
+
+                            &__thumb {
+                                grid-area: thumb;
+                                width: 56px;
+                                height: 56px;
+                                align-self: start;
+                            }
+
+                            &__info {
+                                grid-area: info;
+
+                                .order-item-detail-row__title {
+                                    font-size: $font-size-base;
+                                    margin-bottom: 2px;
+                                }
+
+                                .order-item-detail-row__specs {
+                                    font-size: $font-size-xs;
+                                }
+                            }
+
+                            &__qty {
+                                grid-area: qty;
+                                justify-self: start;
+                                font-size: $font-size-xs;
+                                padding: 2px $spacing-sm;
+                            }
+
+                            &__subtotal {
+                                grid-area: subtotal;
+                                font-size: $font-size-base;
+                                align-self: center;
+                            }
+                        }
+
+                        @include responsive-small-mobile {
+                            grid-template-columns: 48px 1fr;
+                            grid-template-areas:
+                                "thumb info"
+                                "thumb qty"
+                                "thumb subtotal";
+
+                            &__thumb {
+                                width: 48px;
+                                height: 48px;
+                            }
+
+                            &__subtotal {
+                                justify-self: start;
+                                font-size: $font-size-base;
+                            }
                         }
                     }
                 }
@@ -553,6 +766,12 @@
                     border-radius: $radius-xl;
                     padding: $spacing-xl;
                     margin-bottom: $spacing-xl;
+                    word-break: break-word;
+
+                    @include responsive-mobile {
+                        padding: $spacing-md $spacing-sm;
+                        margin-bottom: $spacing-md;
+                    }
 
                     &__header strong {
                         font-size: $font-size-md;
@@ -560,6 +779,10 @@
                         color: $color-black;
                         display: block;
                         margin-bottom: $spacing-2xs;
+
+                        @include responsive-mobile {
+                            font-size: $font-size-sm;
+                        }
                     }
 
                     &__text {
@@ -568,6 +791,11 @@
                         line-height: $line-height-loose;
                         color: #333333;
                         font-weight: $font-weight-medium;
+
+                        @include responsive-mobile {
+                            font-size: $font-size-sm;
+                            line-height: $line-height-normal;
+                        }
                     }
                 }
 
@@ -575,6 +803,10 @@
                     border: none;
                     border-top: 1px solid $color-border-light;
                     margin: $spacing-xl 0;
+
+                    @include responsive-mobile {
+                        margin: $spacing-md 0;
+                    }
                 }
 
                 .summary-row {
@@ -583,16 +815,30 @@
                     justify-content: space-between;
                     margin-bottom: $spacing-md;
                     font-size: $font-size-lg;
+                    gap: $spacing-sm;
+
+                    @include responsive-mobile {
+                        font-size: $font-size-base;
+                        margin-bottom: $spacing-sm;
+                    }
 
                     &__label {
                         color: $color-text-muted;
                         font-size: $font-size-lg;
+
+                        @include responsive-mobile {
+                            font-size: $font-size-sm;
+                        }
                     }
 
                     &__value {
                         color: $color-black;
                         font-size: $font-size-xl;
                         font-weight: $font-weight-bold;
+
+                        @include responsive-mobile {
+                            font-size: $font-size-base;
+                        }
                     }
 
                     &--discount {
@@ -605,16 +851,28 @@
                     &--total {
                         margin-top: $spacing-lg;
 
+                        @include responsive-mobile {
+                            margin-top: $spacing-md;
+                        }
+
                         .summary-row__total-label {
                             font-size: $font-size-xl;
                             color: $color-black;
                             font-weight: $font-weight-bold;
+
+                            @include responsive-mobile {
+                                font-size: $font-size-lg;
+                            }
                         }
 
                         .summary-row__total-value {
                             font-size: $font-size-3xl;
                             font-weight: $font-weight-extrabold;
                             color: $color-black;
+
+                            @include responsive-mobile {
+                                font-size: $font-size-2xl;
+                            }
                         }
                     }
                 }
@@ -633,6 +891,12 @@
                     justify-content: center;
                     text-decoration: none;
                     transition: background 0.2s ease;
+
+                    @include responsive-mobile {
+                        height: 48px;
+                        font-size: $font-size-base;
+                        margin-top: $spacing-lg;
+                    }
 
                     &:hover {
                         background: #333333;

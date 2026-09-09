@@ -1,22 +1,86 @@
 import { useState, useRef } from "react";
 
 export const PRESET_CATALOG_IMAGES = [
-  { id: "arrival1", name: "T-Shirt With Tape Details", path: "/images/products/arrival1.png" },
-  { id: "arrival2", name: "Skinny Fit Jeans", path: "/images/products/arrival2.png" },
-  { id: "arrival3", name: "Checkered Shirt", path: "/images/products/Arrival3.png" },
-  { id: "arrival4", name: "Sleeve Striped T-shirt", path: "/images/products/arrival4.png" },
-  { id: "product1", name: "Vertical Striped Shirt", path: "/images/products/product1.png" },
-  { id: "product2", name: "Courage Graphic T-shirt", path: "/images/products/product2.png" },
-  { id: "product3", name: "Loose Fit Bermuda Shorts", path: "/images/products/product3.png" },
-  { id: "product4", name: "Faded Skinny Jeans", path: "/images/products/product4.png" },
-  { id: "image7", name: "Polo With Contrast Trim", path: "/images/products/image 7.png" },
-  { id: "image8", name: "Gradient Graphic T-shirt", path: "/images/products/image 8.png" },
-  { id: "image9", name: "Polo With Tipping Details", path: "/images/products/image 9.png" },
-  { id: "image10", name: "Black Striped T-shirt", path: "/images/products/image 10.png" },
-  { id: "frame32", name: "Casual Denim Collection", path: "/images/products/Frame 32.png" },
-  { id: "frame61", name: "Formal Blazer Classic", path: "/images/products/Frame 61.png" },
-  { id: "frame62", name: "Party Wear Dress Set", path: "/images/products/Frame 62.png" },
-  { id: "frame64", name: "Gym Active Performance", path: "/images/products/Frame 64.png" },
+  {
+    id: "arrival1",
+    name: "T-Shirt With Tape Details",
+    path: "/images/products/arrival1.png",
+  },
+  {
+    id: "arrival2",
+    name: "Skinny Fit Jeans",
+    path: "/images/products/arrival2.png",
+  },
+  {
+    id: "arrival3",
+    name: "Checkered Shirt",
+    path: "/images/products/Arrival3.png",
+  },
+  {
+    id: "arrival4",
+    name: "Sleeve Striped T-shirt",
+    path: "/images/products/arrival4.png",
+  },
+  {
+    id: "product1",
+    name: "Vertical Striped Shirt",
+    path: "/images/products/product1.png",
+  },
+  {
+    id: "product2",
+    name: "Courage Graphic T-shirt",
+    path: "/images/products/product2.png",
+  },
+  {
+    id: "product3",
+    name: "Loose Fit Bermuda Shorts",
+    path: "/images/products/product3.png",
+  },
+  {
+    id: "product4",
+    name: "Faded Skinny Jeans",
+    path: "/images/products/product4.png",
+  },
+  {
+    id: "image7",
+    name: "Polo With Contrast Trim",
+    path: "/images/products/image 7.png",
+  },
+  {
+    id: "image8",
+    name: "Gradient Graphic T-shirt",
+    path: "/images/products/image 8.png",
+  },
+  {
+    id: "image9",
+    name: "Polo With Tipping Details",
+    path: "/images/products/image 9.png",
+  },
+  {
+    id: "image10",
+    name: "Black Striped T-shirt",
+    path: "/images/products/image 10.png",
+  },
+  {
+    id: "frame32",
+    name: "Casual Denim Collection",
+    path: "/images/products/Frame 32.png",
+  },
+  {
+    id: "frame61",
+    name: "Formal Blazer Classic",
+    path: "/images/products/Frame 61.png",
+  },
+  {
+    id: "frame62",
+    name: "Party Wear Dress Set",
+    path: "/images/products/Frame 62.png",
+  },
+  {
+    id: "frame64",
+    name: "Gym Active Performance",
+    path: "/images/products/Frame 64.png",
+  },
 ];
 
 const ProductImageSelector = ({
@@ -31,9 +95,17 @@ const ProductImageSelector = ({
   onRemoveGalleryItem,
   error,
 }) => {
-  const [thumbTab, setThumbTab] = useState(
-    thumbnailFile ? "upload" : thumbnailImage && !thumbnailImage.startsWith("/images/products") && thumbnailImage.startsWith("http") ? "url" : "catalog"
-  );
+  const getInitialTab = () => {
+    if (thumbnailFile) {
+      return "upload";
+    }
+    if (thumbnailImage && thumbnailImage.startsWith("http")) {
+      return "url";
+    }
+    return "catalog";
+  };
+
+  const [thumbTab, setThumbTab] = useState(getInitialTab);
   const [urlInput, setUrlInput] = useState(thumbnailImage || "");
   const [isDragOver, setIsDragOver] = useState(false);
   const [galleryUrlInput, setGalleryUrlInput] = useState("");
@@ -42,12 +114,15 @@ const ProductImageSelector = ({
   const fileInputRef = useRef(null);
   const galleryFileInputRef = useRef(null);
 
-  // Handle local file drop/selection for Thumbnail
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {
       const preview = URL.createObjectURL(file);
-      onThumbnailSelect({ file, preview, url: "" });
+      onThumbnailSelect({
+        file,
+        preview,
+        url: "",
+      });
     }
   };
 
@@ -67,24 +142,33 @@ const ProductImageSelector = ({
     const file = e.dataTransfer.files?.[0];
     if (file && file.type.startsWith("image/")) {
       const preview = URL.createObjectURL(file);
-      onThumbnailSelect({ file, preview, url: "" });
+      onThumbnailSelect({
+        file,
+        preview,
+        url: "",
+      });
     }
   };
 
-  // Handle Catalog Selection for Thumbnail
   const handleCatalogSelect = (item) => {
-    onThumbnailSelect({ file: null, preview: item.path, url: item.path });
+    onThumbnailSelect({
+      file: null,
+      preview: item.path,
+      url: item.path,
+    });
   };
 
-  // Handle URL Input for Thumbnail
   const handleUrlSubmit = (e) => {
     e.preventDefault();
     if (urlInput.trim()) {
-      onThumbnailSelect({ file: null, preview: urlInput.trim(), url: urlInput.trim() });
+      onThumbnailSelect({
+        file: null,
+        preview: urlInput.trim(),
+        url: urlInput.trim(),
+      });
     }
   };
 
-  // Handle Gallery Files
   const handleGalleryFileChange = (e) => {
     const files = Array.from(e.target.files || []);
     if (files.length > 0) {
@@ -95,7 +179,6 @@ const ProductImageSelector = ({
     }
   };
 
-  // Handle adding gallery URL
   const handleAddGalleryUrl = (e) => {
     e.preventDefault();
     if (galleryUrlInput.trim()) {
@@ -115,7 +198,6 @@ const ProductImageSelector = ({
         <span className="image-selector-badge">Visual Image Picker</span>
       </div>
 
-      {/* Main Thumbnail Selector Box */}
       <div className={`thumbnail-selector-container ${error ? "has-error" : ""}`}>
         <div className="thumbnail-tabs-nav">
           <button
@@ -141,7 +223,6 @@ const ProductImageSelector = ({
           </button>
         </div>
 
-        {/* Tab 1: Store Catalog Grid */}
         {thumbTab === "catalog" && (
           <div className="catalog-picker-panel">
             <p className="picker-hint">
@@ -170,7 +251,6 @@ const ProductImageSelector = ({
           </div>
         )}
 
-        {/* Tab 2: Upload from Device */}
         {thumbTab === "upload" && (
           <div className="device-upload-panel">
             <input
@@ -208,7 +288,6 @@ const ProductImageSelector = ({
           </div>
         )}
 
-        {/* Tab 3: URL / Path */}
         {thumbTab === "url" && (
           <div className="url-input-panel">
             <div className="url-input-group">
@@ -234,7 +313,6 @@ const ProductImageSelector = ({
           </div>
         )}
 
-        {/* Active Thumbnail Preview Bar */}
         {currentThumbnailPreview ? (
           <div className="current-thumbnail-preview">
             <div className="preview-img-wrapper">
@@ -274,7 +352,6 @@ const ProductImageSelector = ({
         {error && <span className="field-error-text mt-1">{error}</span>}
       </div>
 
-      {/* Gallery Images (Optional Extra Product Views) */}
       <div className="gallery-selector-container">
         <div className="gallery-header-row">
           <div>
@@ -311,7 +388,6 @@ const ProductImageSelector = ({
           </div>
         </div>
 
-        {/* Add Gallery URL Quick Row */}
         <div className="gallery-url-quickrow">
           <input
             type="text"
@@ -333,7 +409,6 @@ const ProductImageSelector = ({
           </button>
         </div>
 
-        {/* Gallery Preview Grid */}
         {galleryItems.length > 0 ? (
           <div className="gallery-items-grid">
             {galleryItems.map((item, index) => {
@@ -370,7 +445,6 @@ const ProductImageSelector = ({
         )}
       </div>
 
-      {/* Catalog Modal for Quick Gallery Selection */}
       {isCatalogModalOpen && (
         <div className="gallery-catalog-modal-overlay" onClick={() => setIsCatalogModalOpen(false)}>
           <div className="gallery-catalog-modal-content" onClick={(e) => e.stopPropagation()}>

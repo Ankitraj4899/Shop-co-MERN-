@@ -182,7 +182,6 @@ const AdminProductModal = ({
             </label>
           </div>
 
-          {/* Product Image Selection Component */}
           <ProductImageSelector
             thumbnailImage={productForm.thumbnailImage}
             thumbnailFile={productForm.thumbnailFile}

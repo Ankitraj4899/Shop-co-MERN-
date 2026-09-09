@@ -5,7 +5,7 @@ import ProductCard from "../components/ProductCard";
 import Footer from "../components/Footer";
 import { getProducts } from "../lib/api";
 
-import HeroSection from "../components/home/HeroSection";
+import Hero from "../components/home/Hero";
 import BrandsStrip from "../components/home/BrandsStrip";
 import DressStyleSection from "../components/home/DressStyleSection";
 import TestimonialsSection, { testimonialsList } from "../components/home/TestimonialsSection";
@@ -58,7 +58,7 @@ const Home = () => {
       <Navbar />
 
       <main>
-        <HeroSection />
+        <Hero />
         <BrandsStrip />
 
         {error && <p className="catalog-message catalog-message--error">{error}</p>}

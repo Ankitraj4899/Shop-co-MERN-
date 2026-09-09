@@ -67,7 +67,7 @@ const Admin = () => {
 
   const [deleteDialog, setDeleteDialog] = useState({
     isOpen: false,
-    type: null, // "product" | "category"
+    type: null,
     id: null,
     name: "",
     isLoading: false,
@@ -470,8 +470,21 @@ const Admin = () => {
       await loadData();
     } catch (err) {
       setError(err.message || `Failed to delete ${deleteDialog.type}`);
-      setDeleteDialog((prev) => ({ ...prev, isLoading: false }));
+      setDeleteDialog((prev) => ({
+        ...prev,
+        isLoading: false,
+      }));
     }
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setDeleteDialog({
+      isOpen: false,
+      type: null,
+      id: null,
+      name: "",
+      isLoading: false,
+    });
   };
 
   const handleUpdateOrderStatus = async (orderId, newStatus) => {
@@ -619,7 +632,7 @@ const Admin = () => {
         isDestructive={true}
         isLoading={deleteDialog.isLoading}
         onConfirm={handleConfirmDelete}
-        onClose={() => setDeleteDialog({ isOpen: false, type: null, id: null, name: "", isLoading: false })}
+        onClose={handleCloseDeleteDialog}
       />
 
       <Footer />

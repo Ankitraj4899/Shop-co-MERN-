@@ -14,7 +14,7 @@
 .cart-layout,
 .checkout-layout,
 .profile-layout {
-    display: grid;
+    @include display-grid;
     grid-template-columns: 1fr 380px;
     gap: $spacing-2xl;
     align-items: flex-start;
@@ -55,9 +55,7 @@
     border-radius: $radius-3xl;
     padding: $spacing-7xl $spacing-4xl;
     margin: $spacing-lg 0 $spacing-5xl;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    @include flex-center(column);
     text-align: center;
     box-shadow: $shadow-card;
 
@@ -70,9 +68,7 @@
         height: 88px;
         border-radius: $radius-circle;
         background: $color-bg-hero;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        @include flex-center;
         margin-bottom: $spacing-2xl;
         color: $color-black;
         border: 2px dashed $color-border-light;
@@ -119,7 +115,7 @@
                 box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
             }
 
-            @media (max-width: 480px) {
+            @include responsive-small-mobile {
                 width: 100%;
                 padding: $spacing-lg $spacing-4xl;
             }
@@ -127,8 +123,7 @@
     }
 
     &__categories {
-        display: flex;
-        flex-direction: column;
+        @include flex-col;
         align-items: center;
         gap: $spacing-md;
         margin-bottom: $spacing-4xl;
@@ -146,9 +141,7 @@
         }
 
         .categories-chips {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            @include flex-center;
             flex-wrap: wrap;
             gap: 10px;
 

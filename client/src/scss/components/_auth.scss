@@ -4,9 +4,7 @@
 
 .auth-page-container {
     min-height: calc(100vh - 200px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include flex-center;
     padding: $spacing-6xl $spacing-lg;
     background-color: $color-bg-light;
 
@@ -20,7 +18,7 @@
         box-shadow: $shadow-card;
         transition: none;
 
-        @media (max-width: 480px) {
+        @include responsive-small-mobile {
             padding: $spacing-3xl $spacing-xl;
             border-radius: $radius-md;
         }
@@ -59,13 +57,11 @@
         }
 
         .auth-form {
-            display: flex;
-            flex-direction: column;
+            @include flex-col;
             gap: $spacing-xl;
 
             .auth-input-group {
-                display: flex;
-                flex-direction: column;
+                @include flex-col;
                 gap: $spacing-xs;
 
                 .auth-label {
@@ -75,9 +71,7 @@
                 }
 
                 .auth-label-row {
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
+                    @include flex-between;
 
                     .auth-label {
                         font-size: $font-size-sm;
@@ -150,9 +144,7 @@
                 color: $color-white;
                 border: none;
                 cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
+                @include flex-center;
                 transition: none;
 
                 &:hover:not(:disabled) {
