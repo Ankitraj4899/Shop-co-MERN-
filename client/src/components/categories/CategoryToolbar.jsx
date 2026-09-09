@@ -37,7 +37,7 @@ const CategoryToolbar = ({
           </select>
         </label>
 
-        {/* Mobile Filter Trigger Button */}
+        
         <button
           type="button"
           className="mobile-filter-btn"

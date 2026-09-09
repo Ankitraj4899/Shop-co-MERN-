@@ -38,7 +38,7 @@ const ProductInfo = ({
 
       <hr className="detail-divider" />
 
-      {/* Select Colors */}
+      
       <div className="product-option">
         <h3>Select Colors</h3>
         <div className="color-swatches-grid">
@@ -68,7 +68,7 @@ const ProductInfo = ({
 
       <hr className="detail-divider" />
 
-      {/* Choose Size */}
+      
       <div className="product-option">
         <h3>Choose Size</h3>
         <div className="size-pills-grid">
@@ -87,7 +87,7 @@ const ProductInfo = ({
 
       <hr className="detail-divider" />
 
-      {/* Actions: Quantity & Add to Cart */}
+      
       <div className="product-detail__actions">
         <div className="quantity-stepper">
           <button

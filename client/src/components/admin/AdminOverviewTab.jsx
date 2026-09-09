@@ -53,7 +53,7 @@ const AdminOverviewTab = ({ stats, products, orders, onOpenEditProduct }) => {
         </div>
       </div>
 
-      {/* Quick Summary Tables */}
+      
       <div className="dashboard-split-grid">
         <div className="dashboard-subcard">
           <h3>Low Stock & Out-of-Stock Alert</h3>

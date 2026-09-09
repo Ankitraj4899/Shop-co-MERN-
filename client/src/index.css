@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-/* 1. Integral CF - Exclusively for SHOP.CO Logos & Hero Heading */
 @font-face {
   font-family: 'Integral CF';
   src: url('./assets/fonts/Fontspring-DEMO-integralcf-bold.otf') format('opentype');
@@ -10,7 +9,6 @@
   unicode-range: U+0020, U+0025, U+002B, U+002C, U+002E, U+0030-0039, U+0041-005A, U+0061-007A;
 }
 
-/* 2. Fallback layer for Integral CF symbols */
 @font-face {
   font-family: 'Integral CF';
   src: local('Arial Black'), local('Impact'), local('Segoe UI Black'), local('Arial');
@@ -19,7 +17,6 @@
   font-display: swap;
 }
 
-/* 3. Primary App Font: Satoshi Regular fallback */
 @font-face {
   font-family: 'Satoshi';
   src: url('./assets/fonts/Satoshi-Regular.woff') format('woff');
@@ -38,13 +35,11 @@ body, p, span, button, input, select, textarea {
   font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* Headings and Titles - Bold Satoshi 700 */
 h1, h2, h3, h4, h5, h6, .font-heading, .section-heading {
   font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-weight: 700;
 }
 
-/* Exclusively apply Integral CF to Logos and Hero Main Heading */
 .logo,
 .navbar__logo,
 .footer__logo,

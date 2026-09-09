@@ -59,7 +59,7 @@ const OrderDetails = () => {
       <Navbar />
 
       <main className="order-details-container">
-        {/* Breadcrumb */}
+        
         <nav className="breadcrumbs" aria-label="Breadcrumb">
           <Link to="/">Home</Link>
           <span className="breadcrumb-separator">›</span>
@@ -80,7 +80,7 @@ const OrderDetails = () => {
           </span>
         </div>
 
-        {/* Order Status Progress Tracker */}
+        
         {order.status !== "cancelled" && (
           <div className="order-status-tracker">
             {statusSteps.map((step, idx) => {
@@ -97,7 +97,7 @@ const OrderDetails = () => {
         )}
 
         <div className="order-details-layout">
-          {/* Purchased Products */}
+          
           <section className="order-details-card items-card">
             <h2>Items in this Order ({order.items.reduce((acc, i) => acc + i.quantity, 0)})</h2>
             <div className="order-items-table">
@@ -126,7 +126,7 @@ const OrderDetails = () => {
             </div>
           </section>
 
-          {/* Delivery & Summary Column */}
+          
           <aside className="order-details-card summary-card">
             <h2>Delivery Address</h2>
             <div className="shipping-address-box">

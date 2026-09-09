@@ -1,4 +1,3 @@
-// Brand & Core Colors
 $color-black: #000000;
 $color-white: #ffffff;
 $color-dark-gray: #1a1a1a;
@@ -6,7 +5,6 @@ $color-text-main: #000000;
 $color-text-muted: rgba(0, 0, 0, 0.6);
 $color-text-subtle: #666666;
 
-// Backgrounds & Surface Neutral Colors
 $color-bg-body: #ffffff;
 $color-bg-surface: #f0f0f0;
 $color-bg-surface-warm: #f0eeed;
@@ -14,7 +12,6 @@ $color-bg-input: #f0f0f0;
 $color-border-light: rgba(0, 0, 0, 0.1);
 $color-border-divider: #e5e5e5;
 
-// Status & Accents
 $color-discount-text: #ff3333;
 $color-discount-bg: rgba(255, 51, 51, 0.1);
 $color-star-yellow: #ffc633;
@@ -22,16 +19,13 @@ $color-badge-verified: #01b763;
 $color-stock-out: #dc2626;
 $color-stock-low: #d97706;
 
-// Apparel Color Swatches
 $color-swatch-olive: #4f4631;
 $color-swatch-teal: #314f4a;
 $color-swatch-navy: #31344f;
 
-// Typography & Font Stacks
 $font-family-body: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 $font-family-heading: 'Integral CF', 'Arial Black', sans-serif;
 
-// Compatibility & Standard SCSS Variables
 $font-family: $font-family-body;
 $black-color: $color-black;
 $white-color: $color-white;
@@ -43,14 +37,12 @@ $discount-bg-color: $color-discount-bg;
 $star-color: $color-star-yellow;
 $navlink-height: 38px;
 
-// Hero Section Variables
 $hero-bg-color: #F2F0F1;
 $white-1: #ffffff;
 $black-1: #000000;
 $heading-font-style: $font-family-heading;
 $border-color: rgba(0, 0, 0, 0.1);
 
-// Layout Breakpoints
 $breakpoint-mobile: 600px;
 $breakpoint-tablet: 900px;
 $breakpoint-desktop: 1240px;

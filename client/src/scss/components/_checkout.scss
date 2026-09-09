@@ -1,0 +1,125 @@
+@use "../abstracts/functions" as *;
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+.checkout-form-card {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    h2 {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .form-group-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+
+        @media (max-width: 600px) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    label {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        font-size: 14px;
+        font-weight: 600;
+
+        input,
+        textarea {
+            padding: 14px 18px;
+            border-radius: 14px;
+            border: 1px solid $color-border-light;
+            font-size: 14px;
+            outline: none;
+            background: $color-bg-surface;
+
+            &:focus {
+                border-color: $color-black;
+            }
+        }
+    }
+
+    .payment-heading {
+        margin-top: 12px;
+    }
+
+    .payment-method-box {
+        background: $color-bg-surface;
+        border: 1px solid $color-border-light;
+        border-radius: 14px;
+        padding: 16px;
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+
+            input[type="radio"] {
+                width: 18px;
+                height: 18px;
+                accent-color: $color-black;
+            }
+        }
+    }
+
+    .button--place-order {
+        height: 54px;
+        font-size: 16px;
+        margin-top: 8px;
+    }
+}
+
+.checkout-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .checkout-item-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        img {
+            width: 54px;
+            height: 54px;
+            border-radius: 10px;
+            object-fit: cover;
+            background: $color-bg-surface-warm;
+        }
+
+        &__info {
+            flex: 1;
+
+            h4 {
+                font-size: 14px;
+                font-weight: 700;
+                margin: 0 0 2px;
+            }
+
+            small {
+                font-size: 12px;
+                color: $color-text-muted;
+            }
+        }
+
+        strong {
+            font-size: 15px;
+        }
+    }
+}
+
+.secure-badge {
+    text-align: center;
+    font-size: 12px;
+    color: $color-text-muted;
+    margin: 8px 0 0;
+}

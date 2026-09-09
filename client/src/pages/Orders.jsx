@@ -28,7 +28,7 @@ const Orders = () => {
       <Navbar />
 
       <main className="orders-page-container">
-        {/* Breadcrumbs */}
+        
         <nav className="breadcrumbs" aria-label="Breadcrumb">
           <Link to="/">Home</Link>
           <span className="breadcrumb-separator">›</span>

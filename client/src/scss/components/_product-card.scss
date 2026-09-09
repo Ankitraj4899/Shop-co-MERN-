@@ -1,0 +1,183 @@
+@use "../abstracts/functions" as *;
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+.product-card {
+    position: relative;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+
+    &__image-wrap {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        border-radius: 20px;
+        background: $color-bg-surface-warm;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+
+        @media (max-width: 768px) {
+            border-radius: 14px;
+            aspect-ratio: 1 / 1;
+        }
+
+        img {
+            width: 85%;
+            height: 85%;
+            object-fit: contain;
+        }
+    }
+
+    h3 {
+        margin: 12px 0 4px;
+        font-size: 16px;
+        font-weight: 700;
+        color: $color-black;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+        line-height: 1.25;
+
+        @media (max-width: 768px) {
+            font-size: 14px;
+            margin: 8px 0 3px;
+        }
+
+        @media (max-width: 380px) {
+            font-size: 13px;
+        }
+    }
+
+    &__rating {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        color: $color-text-subtle;
+        min-height: 18px;
+        white-space: nowrap;
+        overflow: hidden;
+
+        @media (max-width: 480px) {
+            font-size: 11px;
+            gap: 4px;
+        }
+
+        .stars-rating-container {
+            display: inline-flex;
+            align-items: center;
+            flex-shrink: 0;
+
+            @media (max-width: 480px) {
+                svg {
+                    width: 12px !important;
+                    height: 12px !important;
+                }
+            }
+        }
+
+        .rating-num {
+            color: $color-black;
+            font-weight: 500;
+
+            @media (max-width: 480px) {
+                font-size: 11px;
+            }
+
+            .rating-max {
+                color: rgba(0, 0, 0, 0.4);
+                font-size: 11px;
+
+                @media (max-width: 480px) {
+                    font-size: 10px;
+                }
+            }
+        }
+    }
+
+    &__price-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 6px;
+        flex-wrap: wrap;
+
+        @media (max-width: 480px) {
+            gap: 5px;
+            margin-top: 4px;
+        }
+
+        .current-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: $color-black;
+
+            @media (max-width: 768px) {
+                font-size: 16px;
+            }
+
+            @media (max-width: 380px) {
+                font-size: 15px;
+            }
+        }
+
+        .original-price {
+            font-size: 18px;
+            color: rgba(0, 0, 0, 0.4);
+            text-decoration: line-through;
+            font-weight: 500;
+
+            @media (max-width: 768px) {
+                font-size: 14px;
+            }
+
+            @media (max-width: 380px) {
+                font-size: 13px;
+            }
+        }
+
+        .discount-pill {
+            background: $color-discount-bg;
+            color: $color-discount-text;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 7px;
+            border-radius: 999px;
+
+            @media (max-width: 480px) {
+                font-size: 10px;
+                padding: 1px 5px;
+            }
+        }
+    }
+
+    .card-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: rgba(0, 0, 0, 0.75);
+        color: $color-white;
+        font-size: 10px;
+        font-weight: 600;
+        padding: 3px 8px;
+        border-radius: 62px;
+        text-transform: uppercase;
+
+        &--out {
+            background: $color-stock-out;
+        }
+
+        &--low {
+            background: $color-stock-low;
+        }
+    }
+}

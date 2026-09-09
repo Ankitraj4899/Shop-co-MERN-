@@ -58,7 +58,7 @@ const CategoryFilters = ({
 
       <hr className="filter-divider" />
 
-      {/* Category List */}
+      
       <div className="filter-group">
         <h3>Category</h3>
         <ul className="category-links">
@@ -92,7 +92,7 @@ const CategoryFilters = ({
 
       <hr className="filter-divider" />
 
-      {/* Price Range */}
+      
       <div className="filter-group">
         <h3>Price Range</h3>
         <div className="price-inputs">
@@ -128,7 +128,7 @@ const CategoryFilters = ({
 
       <hr className="filter-divider" />
 
-      {/* Colors Palette */}
+      
       <div className="filter-group">
         <h3>Colors</h3>
         <div className="color-swatches-grid">
@@ -157,7 +157,7 @@ const CategoryFilters = ({
 
       <hr className="filter-divider" />
 
-      {/* Size Pills */}
+      
       <div className="filter-group">
         <h3>Size</h3>
         <div className="size-pills-grid">
@@ -182,7 +182,7 @@ const CategoryFilters = ({
 
       <hr className="filter-divider" />
 
-      {/* Dress Style */}
+      
       <div className="filter-group">
         <h3>Dress Style</h3>
         <ul className="category-links">
@@ -203,7 +203,7 @@ const CategoryFilters = ({
 
       <hr className="filter-divider" />
 
-      {/* Availability */}
+      
       <div className="filter-group">
         <h3>Availability</h3>
         <select
@@ -220,7 +220,7 @@ const CategoryFilters = ({
         </select>
       </div>
 
-      {/* Sort By (Accessible in Mobile Drawer) */}
+      
       <div className="filter-group mobile-filter-sort">
         <h3>Sort By</h3>
         <select

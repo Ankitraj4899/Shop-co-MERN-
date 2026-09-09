@@ -5,7 +5,7 @@ export const isValidEmail = (email) => {
 
 export const isValidPhone = (phone) => {
   if (!phone || typeof phone !== "string") return false;
-  // Allows international format: +1 (555) 000-0000 or 10-15 digits
+  
   return /^[+]?[(]?[0-9]{1,4}[)]?[-\s./0-9]{6,15}$/.test(phone.trim());
 };
 

@@ -40,7 +40,7 @@ const CartSummary = ({
         <strong>${total.toFixed(2)}</strong>
       </div>
 
-      {/* Promo Code Input */}
+      
       <form className="promo-form" onSubmit={onApplyCoupon}>
         <div className="promo-input-wrap">
           <span className="promo-icon">🏷</span>

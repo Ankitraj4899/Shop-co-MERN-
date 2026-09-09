@@ -168,7 +168,7 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile Expandable Search Bar */}
+        
         {isMobileSearchOpen && (
           <div className="mobile-search-bar">
             <div className="mobile-search-bar__inner">

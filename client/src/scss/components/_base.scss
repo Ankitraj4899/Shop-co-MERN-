@@ -1,0 +1,151 @@
+@use "../abstracts/functions" as *;
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    font-family: $font-family-body;
+    background-color: $color-bg-body;
+    color: $color-text-main;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+}
+
+.commerce-page {
+    width: 100%;
+    max-width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+.commerce-state {
+    text-align: center;
+    padding: 60px 20px;
+    font-size: 18px;
+    color: $color-text-muted;
+}
+
+.commerce-heading {
+    margin-bottom: 24px;
+
+    h1 {
+        font-family: $font-family-heading;
+        font-size: clamp(24px, 4vw, 36px);
+        margin: 0;
+        text-transform: uppercase;
+    }
+}
+
+.breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: $color-text-muted;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+
+    @media (max-width: 640px) {
+        font-size: 13px;
+        margin-bottom: 20px;
+        gap: 6px;
+    }
+
+    a {
+        color: $color-text-muted;
+        text-decoration: none;
+        transition: color 0.2s ease;
+
+        &:hover {
+            color: $color-black;
+        }
+    }
+
+    .breadcrumb-separator {
+        color: rgba(0, 0, 0, 0.3);
+    }
+}
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: $font-family-body;
+    font-weight: 600;
+    border-radius: 62px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+
+    &--dark {
+        background: $color-black;
+        color: $color-white;
+
+        &:hover {
+            background: #333333;
+        }
+    }
+
+    &--white {
+        background: $color-white;
+        color: $color-black;
+
+        &:hover {
+            background: #f0f0f0;
+        }
+    }
+
+    &--outline {
+        background: transparent;
+        border: 1px solid $color-border-light;
+        color: $color-black;
+
+        &:hover {
+            background: $color-bg-surface;
+        }
+    }
+}
+
+.desktop-only {
+    @media (max-width: 900px) {
+        display: none !important;
+    }
+}
+
+.mobile-only {
+    display: none !important;
+
+    @media (max-width: 900px) {
+        display: block !important;
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

@@ -1,6 +1,6 @@
+@use "../abstracts/functions" as *;
 @use "../abstracts/variables" as *;
 @use "../abstracts/mixins" as *;
-@use "../abstracts/functions" as *;
 
 .navbar {
     width: 100%;
@@ -353,18 +353,6 @@
                     display: none;
                 }
 
-                // .search__wrapper {
-                //     display: none;
-                // }
-
-                // .navbar__icons {
-                //     margin-left: auto;
-
-                //     .search-img {
-                //         display: inline;
-                //         cursor: pointer;
-                //     }
-                // }
             }
         }
     }
@@ -457,7 +445,6 @@
     }
 }
 
-/* Mobile Navigation Drawer */
 .mobile-drawer-overlay {
     position: fixed;
     top: 0;
@@ -579,7 +566,6 @@
     }
 }
 
-/* Mobile Search Bar Component */
 .mobile-search-bar {
     width: 100%;
     background-color: #ffffff;

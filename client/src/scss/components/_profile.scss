@@ -1,0 +1,240 @@
+@use "../abstracts/functions" as *;
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+.profile-page-container {
+    max-width: $breakpoint-desktop;
+    margin: 0 auto;
+    padding: 24px 16px 80px;
+
+    .profile-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 28px;
+        align-items: flex-start;
+
+        @media (max-width: 900px) {
+            grid-template-columns: 1fr;
+        }
+    }
+}
+
+.profile-card {
+    background: $color-white;
+    border: 1px solid $color-border-light;
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+
+    @media (max-width: 600px) {
+        padding: 20px 16px;
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid $color-border-light;
+
+        h2 {
+            font-family: $font-family-body;
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0;
+            color: $color-black;
+        }
+    }
+
+    &.profile-form {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+
+        label {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: $color-black;
+
+            input,
+            textarea {
+                padding: 14px 18px;
+                border-radius: 14px;
+                border: 1px solid $color-border-light;
+                font-size: 14px;
+                font-family: $font-family-body;
+                background: $color-bg-surface;
+                outline: none;
+                transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+                &:focus {
+                    border-color: $color-black;
+                    background: $color-white;
+                    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+                }
+
+                &.input--disabled {
+                    background: #f5f5f5;
+                    color: $color-text-muted;
+                    cursor: not-allowed;
+                }
+            }
+
+            .help-text {
+                font-size: 12px;
+                color: $color-text-muted;
+                font-weight: 400;
+            }
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+
+            button {
+                flex: 1;
+                height: 48px;
+                border-radius: 62px;
+                font-size: 14px;
+                font-weight: 700;
+                cursor: pointer;
+            }
+
+            .button--dark {
+                background: $color-black;
+                color: $color-white;
+                border: none;
+
+                &:hover {
+                    background: #333;
+                }
+            }
+
+            .button--outline {
+                background: transparent;
+                border: 1px solid $color-border-light;
+                color: $color-black;
+
+                &:hover {
+                    background: #f8f8f8;
+                    border-color: $color-black;
+                }
+            }
+        }
+    }
+
+    .profile-orders-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+        .profile-order-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border: 1px solid $color-border-light;
+            border-radius: 14px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s ease;
+
+            &:hover {
+                background: $color-bg-surface;
+                border-color: rgba(0, 0, 0, 0.2);
+                transform: translateY(-1px);
+            }
+
+            div strong {
+                display: block;
+                font-size: 14px;
+                color: $color-black;
+            }
+
+            div small {
+                font-size: 12px;
+                color: $color-text-muted;
+            }
+
+            &__right {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+            }
+        }
+
+        .empty-orders-note {
+            text-align: center;
+            padding: 32px 16px;
+
+            p {
+                color: $color-text-muted;
+                margin-bottom: 16px;
+                font-size: 14px;
+            }
+
+            .button {
+                display: inline-block;
+                padding: 12px 28px;
+                border-radius: 62px;
+                text-decoration: none;
+            }
+        }
+    }
+}
+
+.status-pill {
+    padding: 4px 12px;
+    border-radius: 62px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: capitalize;
+
+    &--Pending {
+        background: #FFF3CD;
+        color: #856404;
+    }
+
+    &--Processing {
+        background: #CCE5FF;
+        color: #004085;
+    }
+
+    &--Shipped {
+        background: #E2E3E5;
+        color: #383D41;
+    }
+
+    &--Delivered {
+        background: #D4EDDA;
+        color: #155724;
+    }
+
+    &--Cancelled {
+        background: #F8D7DA;
+        color: #721C24;
+    }
+}
+
+.badge {
+    padding: 4px 10px;
+    border-radius: 62px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+
+    &--admin {
+        background: #000;
+        color: #fff;
+    }
+
+    &--user {
+        background: #f0f0f0;
+        color: #333;
+    }
+}
