@@ -221,15 +221,9 @@
                         display: block;
                     }
 
-                    &.facebook,
-                    &[href*="facebook"] {
-                        background-color: #000000 !important;
-                        background: #000000 !important;
-                        border-color: #000000 !important;
-
-                        img {
-                            filter: brightness(0) invert(1) !important;
-                        }
+                    &[href*="facebook"] img,
+                    &.facebook img {
+                        filter: brightness(0);
                     }
 
                     &:hover {
@@ -238,7 +232,7 @@
                         transform: translateY(-2px);
 
                         img {
-                            filter: brightness(0) invert(1);
+                            filter: brightness(0) invert(1) !important;
                         }
                     }
                 }
@@ -264,7 +258,7 @@
                 color: $color-text-muted;
                 font-size: 14px;
                 text-decoration: none;
-                transition: color 0.2s ease, transform 0.15s ease;
+
 
                 &:hover {
                     color: $color-black;

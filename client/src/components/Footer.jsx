@@ -52,7 +52,10 @@ const Footer = () => {
       setNewsletterSubscribed(true);
       setFeedbackMessage(`✓ Subscription request sent successfully for ${emailToSubscribe}!`);
       setNewsletterEmail("");
-      setTimeout(() => setNewsletterSubscribed(false), 5000);
+      setTimeout(() => {
+        setNewsletterSubscribed(false);
+        setFeedbackMessage("");
+      }, 5000);
     } catch (error) {
       console.error("EmailJS Execution Error:", error);
       setNewsletterSubscribed(false);
