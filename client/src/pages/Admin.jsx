@@ -24,6 +24,7 @@ import AdminOrdersTab from "../components/admin/AdminOrdersTab";
 import AdminProductModal from "../components/admin/AdminProductModal";
 import AdminCategoryModal from "../components/admin/AdminCategoryModal";
 import AdminOrderDetailsModal from "../components/admin/AdminOrderDetailsModal";
+import ConfirmModal from "../components/ConfirmModal";
 
 const emptyProductForm = {
   name: "",
@@ -35,7 +36,9 @@ const emptyProductForm = {
   quantity: "",
   style: "Casual",
   thumbnailImage: "",
-  galleryImages: "",
+  thumbnailFile: null,
+  thumbnailPreview: "",
+  galleryItems: [],
   status: "active",
 };
 
@@ -61,6 +64,14 @@ const Admin = () => {
   const [categoryErrors, setCategoryErrors] = useState({});
   const [editingCategoryId, setEditingCategoryId] = useState(null);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+
+  const [deleteDialog, setDeleteDialog] = useState({
+    isOpen: false,
+    type: null, // "product" | "category"
+    id: null,
+    name: "",
+    isLoading: false,
+  });
 
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [message, setMessage] = useState("");
@@ -100,6 +111,58 @@ const Admin = () => {
     }
   };
 
+  const handleThumbnailSelect = ({ file, preview, url }) => {
+    setProductForm((prev) => ({
+      ...prev,
+      thumbnailFile: file || null,
+      thumbnailPreview: preview || "",
+      thumbnailImage: url || "",
+    }));
+    if (productErrors.thumbnailImage) {
+      setProductErrors((prev) => ({ ...prev, thumbnailImage: "" }));
+    }
+  };
+
+  const handleThumbnailClear = () => {
+    setProductForm((prev) => ({
+      ...prev,
+      thumbnailFile: null,
+      thumbnailPreview: "",
+      thumbnailImage: "",
+    }));
+  };
+
+  const handleAddGalleryFiles = (files) => {
+    const newItems = files.map((file) => ({
+      type: "file",
+      file,
+      preview: URL.createObjectURL(file),
+      url: "",
+    }));
+    setProductForm((prev) => ({
+      ...prev,
+      galleryItems: [...(prev.galleryItems || []), ...newItems],
+    }));
+  };
+
+  const handleAddGalleryUrl = (url) => {
+    if (!url?.trim()) return;
+    setProductForm((prev) => ({
+      ...prev,
+      galleryItems: [
+        ...(prev.galleryItems || []),
+        { type: "url", preview: url.trim(), url: url.trim(), file: null },
+      ],
+    }));
+  };
+
+  const handleRemoveGalleryItem = (index) => {
+    setProductForm((prev) => ({
+      ...prev,
+      galleryItems: (prev.galleryItems || []).filter((_, i) => i !== index),
+    }));
+  };
+
   const handleOpenAddProduct = () => {
     setProductForm(emptyProductForm);
     setProductErrors({});
@@ -112,6 +175,14 @@ const Admin = () => {
   const handleOpenEditProduct = (prod) => {
     setEditingProductId(prod._id);
     setProductErrors({});
+
+    const initialGallery = (prod.galleryImages || []).map((imgUrl) => ({
+      type: "url",
+      preview: imgUrl,
+      url: imgUrl,
+      file: null,
+    }));
+
     setProductForm({
       name: prod.name || "",
       description: prod.description || "",
@@ -122,7 +193,9 @@ const Admin = () => {
       quantity: prod.quantity ?? "",
       style: prod.style || "Casual",
       thumbnailImage: prod.thumbnailImage || "",
-      galleryImages: (prod.galleryImages || []).join(", "),
+      thumbnailFile: null,
+      thumbnailPreview: prod.thumbnailImage || "",
+      galleryItems: initialGallery,
       status: prod.status || "active",
     });
     setIsProductModalOpen(true);
@@ -174,11 +247,13 @@ const Admin = () => {
       errors.quantity = "Enter a valid non-negative integer for stock quantity.";
     }
 
-    const thumb = productForm.thumbnailImage.trim();
-    if (!thumb) {
-      errors.thumbnailImage = "Thumbnail image URL or path is required.";
-    } else if (!isValidUrlOrPath(thumb)) {
-      errors.thumbnailImage = "Enter a valid URL or path (e.g. /images/... or https://...).";
+    const hasThumbnail =
+      Boolean(productForm.thumbnailFile) ||
+      Boolean(productForm.thumbnailImage && isValidUrlOrPath(productForm.thumbnailImage)) ||
+      Boolean(productForm.thumbnailPreview);
+
+    if (!hasThumbnail) {
+      errors.thumbnailImage = "Please select or upload a thumbnail image for the product.";
     }
 
     setProductErrors(errors);
@@ -192,21 +267,69 @@ const Admin = () => {
     setError("");
     setMessage("");
 
-    const payload = {
-      name: productForm.name.trim(),
-      description: productForm.description.trim(),
-      price: Number(productForm.price),
-      originalPrice: productForm.originalPrice ? Number(productForm.originalPrice) : null,
-      discount: productForm.discount ? Number(productForm.discount) : 0,
-      category: productForm.category,
-      quantity: Number(productForm.quantity),
-      style: productForm.style,
-      status: productForm.status,
-      thumbnailImage: productForm.thumbnailImage.trim(),
-      galleryImages: productForm.galleryImages
-        ? productForm.galleryImages.split(",").map((s) => s.trim()).filter(Boolean)
-        : [],
-    };
+    const hasFiles =
+      Boolean(productForm.thumbnailFile) ||
+      (productForm.galleryItems || []).some((item) => item.type === "file" && item.file);
+
+    let payload;
+
+    if (hasFiles) {
+      const formData = new FormData();
+      formData.append("name", productForm.name.trim());
+      formData.append("description", productForm.description.trim());
+      formData.append("price", Number(productForm.price));
+      if (productForm.originalPrice !== "") {
+        formData.append("originalPrice", Number(productForm.originalPrice));
+      }
+      if (productForm.discount !== "") {
+        formData.append("discount", Number(productForm.discount));
+      }
+      formData.append("category", productForm.category);
+      formData.append("quantity", Number(productForm.quantity));
+      formData.append("style", productForm.style);
+      formData.append("status", productForm.status);
+
+      if (productForm.thumbnailFile) {
+        formData.append("thumbnailImage", productForm.thumbnailFile);
+      } else if (productForm.thumbnailImage) {
+        formData.append("thumbnailImage", productForm.thumbnailImage.trim());
+      } else if (productForm.thumbnailPreview) {
+        formData.append("thumbnailImage", productForm.thumbnailPreview.trim());
+      }
+
+      const existingGalleryUrls = [];
+      (productForm.galleryItems || []).forEach((item) => {
+        if (item.type === "file" && item.file) {
+          formData.append("galleryImages", item.file);
+        } else if (item.url) {
+          existingGalleryUrls.push(item.url.trim());
+        }
+      });
+
+      if (existingGalleryUrls.length > 0) {
+        formData.append("galleryImages", JSON.stringify(existingGalleryUrls));
+      }
+
+      payload = formData;
+    } else {
+      const galleryUrls = (productForm.galleryItems || [])
+        .map((item) => item.url || (typeof item === "string" ? item : ""))
+        .filter(Boolean);
+
+      payload = {
+        name: productForm.name.trim(),
+        description: productForm.description.trim(),
+        price: Number(productForm.price),
+        originalPrice: productForm.originalPrice !== "" ? Number(productForm.originalPrice) : null,
+        discount: productForm.discount !== "" ? Number(productForm.discount) : 0,
+        category: productForm.category,
+        quantity: Number(productForm.quantity),
+        style: productForm.style,
+        status: productForm.status,
+        thumbnailImage: (productForm.thumbnailImage || productForm.thumbnailPreview || "").trim(),
+        galleryImages: galleryUrls,
+      };
+    }
 
     try {
       if (editingProductId) {
@@ -227,15 +350,14 @@ const Admin = () => {
     }
   };
 
-  const handleDeleteProduct = async (id, name) => {
-    if (!window.confirm(`Are you sure you want to delete "${name}"?`)) return;
-    try {
-      await deleteProduct(id);
-      setMessage(`Deleted product: ${name}`);
-      await loadData();
-    } catch (err) {
-      setError(err.message || "Failed to delete product");
-    }
+  const handleDeleteProduct = (id, name) => {
+    setDeleteDialog({
+      isOpen: true,
+      type: "product",
+      id,
+      name,
+      isLoading: false,
+    });
   };
 
   const handleCategoryChange = (e) => {
@@ -312,14 +434,43 @@ const Admin = () => {
     }
   };
 
-  const handleDeleteCategory = async (id, name) => {
-    if (!window.confirm(`Are you sure you want to delete category "${name}"?`)) return;
+  const handleDeleteCategory = (id, name) => {
+    setDeleteDialog({
+      isOpen: true,
+      type: "category",
+      id,
+      name,
+      isLoading: false,
+    });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteDialog.id || !deleteDialog.type) return;
+
+    setDeleteDialog((prev) => ({ ...prev, isLoading: true }));
+    setError("");
+    setMessage("");
+
     try {
-      await deleteCategory(id);
-      setMessage(`Deleted category: ${name}`);
+      if (deleteDialog.type === "product") {
+        await deleteProduct(deleteDialog.id);
+        setMessage(`Product "${deleteDialog.name}" was deleted successfully.`);
+      } else if (deleteDialog.type === "category") {
+        await deleteCategory(deleteDialog.id);
+        setMessage(`Category "${deleteDialog.name}" was deleted successfully.`);
+      }
+
+      setDeleteDialog({
+        isOpen: false,
+        type: null,
+        id: null,
+        name: "",
+        isLoading: false,
+      });
       await loadData();
     } catch (err) {
-      setError(err.message || "Failed to delete category");
+      setError(err.message || `Failed to delete ${deleteDialog.type}`);
+      setDeleteDialog((prev) => ({ ...prev, isLoading: false }));
     }
   };
 
@@ -434,6 +585,11 @@ const Admin = () => {
         editingProductId={editingProductId}
         productForm={productForm}
         onInputChange={handleProductChange}
+        onThumbnailSelect={handleThumbnailSelect}
+        onThumbnailClear={handleThumbnailClear}
+        onAddGalleryFiles={handleAddGalleryFiles}
+        onAddGalleryUrl={handleAddGalleryUrl}
+        onRemoveGalleryItem={handleRemoveGalleryItem}
         categories={categories}
         formErrors={productErrors}
       />
@@ -451,6 +607,19 @@ const Admin = () => {
       <AdminOrderDetailsModal
         order={selectedOrder}
         onClose={() => setSelectedOrder(null)}
+      />
+
+      <ConfirmModal
+        isOpen={deleteDialog.isOpen}
+        title={deleteDialog.type === "product" ? "Delete Product" : "Delete Category"}
+        message={`Are you sure you want to permanently delete this ${deleteDialog.type}? This action cannot be undone.`}
+        itemName={deleteDialog.name}
+        confirmText="Yes, Delete"
+        cancelText="Cancel"
+        isDestructive={true}
+        isLoading={deleteDialog.isLoading}
+        onConfirm={handleConfirmDelete}
+        onClose={() => setDeleteDialog({ isOpen: false, type: null, id: null, name: "", isLoading: false })}
       />
 
       <Footer />

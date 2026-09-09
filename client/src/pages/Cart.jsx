@@ -7,6 +7,7 @@ import { useCart } from "../context/CartContext";
 import CartItem from "../components/cart/CartItem";
 import CartSummary from "../components/cart/CartSummary";
 import CartEmptyState from "../components/cart/CartEmptyState";
+import ConfirmModal from "../components/ConfirmModal";
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -28,6 +29,8 @@ const Cart = () => {
   const [inputCoupon, setInputCoupon] = useState("");
   const [feedback, setFeedback] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [isClearModalOpen, setIsClearModalOpen] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
 
   const handleApplyCoupon = (e) => {
     e.preventDefault();
@@ -64,13 +67,20 @@ const Cart = () => {
     }
   };
 
-  const handleClear = async () => {
-    if (!window.confirm("Are you sure you want to clear your entire cart?")) return;
+  const handleClear = () => {
+    setIsClearModalOpen(true);
+  };
+
+  const executeClearCart = async () => {
     setErrorMessage("");
+    setIsClearing(true);
     try {
       await clearCart();
+      setIsClearModalOpen(false);
     } catch (err) {
       setErrorMessage(err.message || "Failed to clear cart");
+    } finally {
+      setIsClearing(false);
     }
   };
 
@@ -131,6 +141,19 @@ const Cart = () => {
           </div>
         )}
       </main>
+
+      <ConfirmModal
+        isOpen={isClearModalOpen}
+        title="Clear Shopping Cart"
+        message="Are you sure you want to remove all items from your shopping cart?"
+        confirmText="Yes, Clear Cart"
+        cancelText="Keep Items"
+        isDestructive={true}
+        isLoading={isClearing}
+        onConfirm={executeClearCart}
+        onClose={() => setIsClearModalOpen(false)}
+      />
+
       <Footer />
     </div>
   );

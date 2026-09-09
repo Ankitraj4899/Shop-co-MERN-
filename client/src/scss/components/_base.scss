@@ -114,6 +114,16 @@ body {
             background: $color-bg-surface;
         }
     }
+
+    &--danger {
+        background: #FF3333;
+        color: $color-white;
+
+        &:hover {
+            background: #E02424;
+            box-shadow: 0 4px 12px rgba(255, 51, 51, 0.3);
+        }
+    }
 }
 
 .desktop-only {
@@ -149,3 +159,149 @@ body {
         opacity: 1;
     }
 }
+
+@keyframes scaleUp {
+    from {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+// Confirmation Popup Modal Styles
+.confirm-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(5px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+    animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+    .confirm-modal-dialog {
+        background: $color-white;
+        border-radius: 24px;
+        padding: 32px 28px 24px;
+        width: 100%;
+        max-width: 440px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        box-sizing: border-box;
+        animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+        @media (max-width: 480px) {
+            padding: 24px 20px 20px;
+            border-radius: 20px;
+        }
+
+        .confirm-modal-icon-wrapper {
+            margin-bottom: 16px;
+
+            .confirm-modal-icon {
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                background: #FFF1F0;
+                color: #FF3333;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 0 0 8px rgba(255, 51, 51, 0.08);
+
+                &--danger {
+                    background: #FFF1F0;
+                    color: #FF3333;
+                }
+            }
+        }
+
+        .confirm-modal-content {
+            margin-bottom: 24px;
+            width: 100%;
+
+            .confirm-modal-title {
+                font-family: $font-family-heading;
+                font-size: 20px;
+                font-weight: 800;
+                margin: 0 0 8px;
+                color: $color-black;
+                text-transform: uppercase;
+                letter-spacing: -0.01em;
+            }
+
+            .confirm-modal-message {
+                font-size: 14px;
+                color: $color-text-muted;
+                margin: 0 0 8px;
+                line-height: 1.5;
+            }
+
+            .confirm-modal-highlight {
+                background: #F8F8F8;
+                border: 1px solid rgba(0, 0, 0, 0.06);
+                border-radius: 8px;
+                padding: 8px 12px;
+                margin-top: 10px;
+                display: inline-block;
+                max-width: 100%;
+                box-sizing: border-box;
+
+                span {
+                    font-size: 13px;
+                    font-weight: 700;
+                    color: #111;
+                    display: block;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+            }
+        }
+
+        .confirm-modal-actions {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+
+            @media (max-width: 480px) {
+                flex-direction: column-reverse;
+                gap: 8px;
+            }
+
+            button {
+                flex: 1;
+                padding: 12px 20px;
+                font-size: 14px;
+                font-weight: 600;
+                border-radius: 62px;
+                box-sizing: border-box;
+
+                &:disabled {
+                    opacity: 0.6;
+                    cursor: not-allowed;
+                }
+            }
+
+            .confirm-cancel-btn {
+                background: #F0F0F0;
+                border-color: transparent;
+
+                &:hover:not(:disabled) {
+                    background: #E5E5E5;
+                }
+            }
+        }
+    }
+}
+

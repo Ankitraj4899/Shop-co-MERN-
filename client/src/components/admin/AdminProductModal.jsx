@@ -1,3 +1,5 @@
+import ProductImageSelector from "./ProductImageSelector";
+
 const AdminProductModal = ({
   isOpen,
   onClose,
@@ -5,6 +7,11 @@ const AdminProductModal = ({
   editingProductId,
   productForm,
   onInputChange,
+  onThumbnailSelect,
+  onThumbnailClear,
+  onAddGalleryFiles,
+  onAddGalleryUrl,
+  onRemoveGalleryItem,
   categories,
   formErrors = {},
 }) => {
@@ -175,29 +182,19 @@ const AdminProductModal = ({
             </label>
           </div>
 
-          <label>
-            Thumbnail Image URL / Path
-            <input
-              name="thumbnailImage"
-              value={productForm.thumbnailImage}
-              onChange={onInputChange}
-              placeholder="e.g. /images/products/arrival1.png or https://..."
-              className={formErrors.thumbnailImage ? "input--error" : ""}
-            />
-            {formErrors.thumbnailImage && (
-              <span className="field-error-text">{formErrors.thumbnailImage}</span>
-            )}
-          </label>
-
-          <label>
-            Gallery Images (Comma separated URLs)
-            <input
-              name="galleryImages"
-              value={productForm.galleryImages}
-              onChange={onInputChange}
-              placeholder="/images/products/arrival1.png, /images/products/arrival4.png"
-            />
-          </label>
+          {/* Product Image Selection Component */}
+          <ProductImageSelector
+            thumbnailImage={productForm.thumbnailImage}
+            thumbnailFile={productForm.thumbnailFile}
+            thumbnailPreview={productForm.thumbnailPreview}
+            onThumbnailSelect={onThumbnailSelect}
+            onThumbnailClear={onThumbnailClear}
+            galleryItems={productForm.galleryItems || []}
+            onAddGalleryFiles={onAddGalleryFiles}
+            onAddGalleryUrl={onAddGalleryUrl}
+            onRemoveGalleryItem={onRemoveGalleryItem}
+            error={formErrors.thumbnailImage}
+          />
 
           <div className="modal-actions-row">
             <button

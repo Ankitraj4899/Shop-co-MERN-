@@ -1,16 +1,20 @@
 import categoryModel from "../models/category.model.js";
 import productModel from "../models/product.model.js";
 import cloudinary from "../config/cloudinary.js";
-// uploading the file on cloudinary server
+// uploading the file on cloudinary server with base64 fallback
 function uploadToCloudinary(file) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
+        if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY) {
+            return resolve(`data:${file.mimetype || "image/png"};base64,${file.buffer.toString("base64")}`);
+        }
         const stream = cloudinary.uploader.upload_stream(
             {
                 folder: "products"
             },
             (error, result) => {
                 if (error) {
-                    reject(error);
+                    console.warn("Cloudinary upload failed, falling back to base64 data URI:", error.message);
+                    resolve(`data:${file.mimetype || "image/png"};base64,${file.buffer.toString("base64")}`);
                 } else {
                     resolve(result.secure_url);
                 }
@@ -18,6 +22,20 @@ function uploadToCloudinary(file) {
         );
         stream.end(file.buffer);
     });
+}
+
+function parseGalleryImages(galleryImages) {
+    if (!galleryImages) return [];
+    if (Array.isArray(galleryImages)) return galleryImages;
+    if (typeof galleryImages === "string") {
+        try {
+            const parsed = JSON.parse(galleryImages);
+            if (Array.isArray(parsed)) return parsed;
+        } catch {
+            return galleryImages.split(",").map((s) => s.trim()).filter(Boolean);
+        }
+    }
+    return [];
 }
 // Get all products
 export async function getProductsController(req, res) {
@@ -170,9 +188,11 @@ export async function createProductController(req, res) {
 
         const thumbnailUrl = thumbnailImage ? await uploadToCloudinary(thumbnailImage) : req.body.thumbnailImage;
 
-        const galleryUrls = galleryImages.length > 0
+        const uploadedGalleryUrls = galleryImages.length > 0
             ? await Promise.all(galleryImages.map((file) => uploadToCloudinary(file)))
-            : (typeof req.body.galleryImages === "string" ? JSON.parse(req.body.galleryImages) : (req.body.galleryImages || []));
+            : [];
+        const existingGalleryUrls = parseGalleryImages(req.body.galleryImages);
+        const galleryUrls = [...uploadedGalleryUrls, ...existingGalleryUrls];
 
         const product = await productModel.create({
             name,
@@ -256,11 +276,13 @@ export async function updateProductController(req, res) {
         }
 
         if (galleryImages.length > 0) {
-            updateData.galleryImages = await Promise.all(
-                galleryImages.map(file => uploadToCloudinary(file))
+            const uploadedUrls = await Promise.all(
+                galleryImages.map((file) => uploadToCloudinary(file))
             );
+            const existingUrls = req.body.galleryImages !== undefined ? parseGalleryImages(req.body.galleryImages) : [];
+            updateData.galleryImages = [...uploadedUrls, ...existingUrls];
         } else if (req.body.galleryImages !== undefined) {
-            updateData.galleryImages = typeof req.body.galleryImages === "string" ? JSON.parse(req.body.galleryImages) : req.body.galleryImages;
+            updateData.galleryImages = parseGalleryImages(req.body.galleryImages);
         }
 
         const updatedProduct = await productModel.findByIdAndUpdate(

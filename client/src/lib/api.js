@@ -20,8 +20,9 @@ async function parseResponse(response) {
 }
 
 export async function apiRequest(path, options = {}, canRefresh = true) {
+    const isFormData = typeof FormData !== "undefined" && options.body instanceof FormData;
     const headers = {
-        "Content-Type": "application/json",
+        ...(isFormData ? {} : { "Content-Type": "application/json" }),
         ...(savedToken ? { Authorization: `Bearer ${savedToken}` } : {}),
         ...(options.headers || {}),
     };
@@ -129,9 +130,21 @@ export const getAdminDashboard = () => apiRequest("/admin/dashboard");
 
 export const getAdminProducts = () => apiRequest("/products/admin/all");
 
-export const createProduct = (product) => apiRequest("/products", { method: "POST", body: JSON.stringify(product) });
+export const createProduct = (product) => {
+    const isFormData = typeof FormData !== "undefined" && product instanceof FormData;
+    return apiRequest("/products", {
+        method: "POST",
+        body: isFormData ? product : JSON.stringify(product),
+    });
+};
 
-export const updateProduct = (id, product) => apiRequest(`/products/${id}`, { method: "PUT", body: JSON.stringify(product) });
+export const updateProduct = (id, product) => {
+    const isFormData = typeof FormData !== "undefined" && product instanceof FormData;
+    return apiRequest(`/products/${id}`, {
+        method: "PUT",
+        body: isFormData ? product : JSON.stringify(product),
+    });
+};
 
 export const deleteProduct = (id) => apiRequest(`/products/${id}`, { method: "DELETE" });
 

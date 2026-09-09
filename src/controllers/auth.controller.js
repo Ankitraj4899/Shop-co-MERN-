@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import config from "../config/config.js";
 import cartModel from "../models/cart.model.js";
+import blacklistModel from "../models/blacklist.model.js";
 
 // Register a new user
 export async function registerController(req, res) {
@@ -198,12 +199,21 @@ export async function updateProfileController(req, res) {
 // Generating a new Refreshing token
 export async function refreshTokenController(req, res) {
     try {
-        const refreshToken = req.cookies.refreshToken;
+        const refreshToken = req.cookies?.refreshToken || req.body?.refreshToken;
         if (!refreshToken) {
             return res.status(401).json({
                 message: "Refresh token not found"
             });
         }
+
+        // Check if refresh token is blacklisted
+        const isBlacklisted = await blacklistModel.findOne({ token: refreshToken });
+        if (isBlacklisted) {
+            return res.status(401).json({
+                message: "Refresh token has been revoked. Please login again."
+            });
+        }
+
         const decoded = jwt.verify(refreshToken, config.JWT_SECRET);
 
         const accessToken = jwt.sign({
@@ -211,14 +221,17 @@ export async function refreshTokenController(req, res) {
             role: decoded.role
         }, config.JWT_SECRET, {
             expiresIn: "7d",
-        })
+        });
 
         const newRefreshToken = jwt.sign({
             id: decoded.id,
             role: decoded.role
         }, config.JWT_SECRET, {
             expiresIn: "7d",
-        })
+        });
+
+        // Invalidate old refresh token (token rotation)
+        await blacklistModel.create({ token: refreshToken }).catch(() => {});
 
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
@@ -249,6 +262,21 @@ export async function refreshTokenController(req, res) {
 // Logout the existing user
 export async function logoutController(req, res) {
     try {
+        const accessToken = req.cookies?.accessToken || (req.headers?.authorization?.startsWith("Bearer ") ? req.headers.authorization.split(" ")[1] : null);
+        const refreshToken = req.cookies?.refreshToken || req.body?.refreshToken;
+
+        const tokensToBlacklist = [];
+        if (accessToken) {
+            tokensToBlacklist.push({ token: accessToken });
+        }
+        if (refreshToken) {
+            tokensToBlacklist.push({ token: refreshToken });
+        }
+
+        if (tokensToBlacklist.length > 0) {
+            await blacklistModel.insertMany(tokensToBlacklist, { ordered: false }).catch(() => {});
+        }
+
         res.clearCookie("accessToken", {
             httpOnly: true,
             secure: false,
