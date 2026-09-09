@@ -1,0 +1,264 @@
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+.hero {
+    width: 100%;
+    background-color: $hero-bg-color;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+
+    @include respond-to(desktop) {
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 660px;
+        padding: 0;
+    }
+
+    &__text {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        padding: 2.5rem 1rem 0;
+        position: relative;
+        z-index: 5;
+
+        @include respond-to(desktop) {
+            width: 55%;
+            max-width: 620px;
+            padding: 4.5rem 0 4.5rem clamp(2rem, 6.5vw, 6.25rem);
+        }
+    }
+
+    &__heading {
+        font-family: $heading-font-style;
+        font-size: 2.25rem;
+        font-weight: 800;
+        padding: 0;
+        margin: 0 0 1rem;
+        line-height: 1.05;
+        color: $color-black;
+
+        @include respond-to(desktop) {
+            font-size: clamp(2.8rem, 4vw, 4rem);
+            line-height: 1.0;
+            letter-spacing: -0.02em;
+            margin: 0 0 1.75rem;
+            max-width: 577px;
+        }
+    }
+
+    &__para {
+        font-size: 0.875rem;
+        font-weight: 400;
+        color: rgba(0, 0, 0, 0.6);
+        padding: 0;
+        line-height: 1.5;
+        margin: 0 0 1.5rem;
+
+        @include respond-to(desktop) {
+            font-size: 1rem;
+            line-height: 1.5;
+            max-width: 545px;
+            margin: 0 0 2rem;
+        }
+    }
+
+    &__button {
+        color: $white-1;
+        background-color: $black-1;
+        border-radius: 62px;
+        height: 52px;
+        width: 100%;
+        max-width: 100%;
+        border: none;
+        margin: 0 0 1.75rem;
+        font-weight: 500;
+        font-size: 16px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s ease, transform 0.15s ease;
+
+        &:hover {
+            background-color: #222222;
+            transform: translateY(-1px);
+        }
+
+        @include respond-to(desktop) {
+            width: 210px;
+            margin: 0 0 2.75rem;
+        }
+    }
+
+    &__stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        width: 100%;
+        padding: 0;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+
+        @include respond-to(desktop) {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 0;
+            width: fit-content;
+            padding: 0;
+            margin: 0;
+        }
+    }
+
+    &__stat-box {
+        box-sizing: border-box;
+
+        .text-stat {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin: 0;
+            color: $color-black;
+            font-family: $font-family-body;
+        }
+
+        .para-stat {
+            font-size: 0.75rem;
+            color: rgba(0, 0, 0, 0.6);
+            font-weight: 400;
+            margin: 4px 0 0;
+            white-space: nowrap;
+        }
+
+        @include respond-to(desktop) {
+            .text-stat {
+                font-size: clamp(2rem, 2.5vw, 2.5rem);
+                line-height: 1.2;
+            }
+
+            .para-stat {
+                font-size: clamp(0.75rem, 1vw, 0.875rem);
+                line-height: 1.35;
+            }
+        }
+    }
+
+    &__image-wrapper {
+        width: 100%;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        line-height: 0;
+
+        @include respond-to(desktop) {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            top: 0;
+            height: 100%;
+            width: auto;
+            aspect-ratio: 1440 / 663;
+            max-width: 100%;
+            pointer-events: none;
+            z-index: 1;
+            display: block;
+        }
+    }
+
+    &__image-mobile {
+        display: block;
+        width: 100%;
+        max-width: 440px;
+        height: auto;
+        object-fit: contain;
+        object-position: center bottom;
+
+        @include respond-to(desktop) {
+            display: none;
+        }
+    }
+
+    &__image-desktop {
+        display: none;
+
+        @include respond-to(desktop) {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: right bottom;
+        }
+    }
+
+    &__diamond-star {
+        position: absolute;
+        pointer-events: none;
+        z-index: 6;
+
+        &--big {
+            width: 4.5rem;
+            height: 4.5rem;
+            right: 1.3em;
+            top: 2.5em;
+
+            @include respond-to(desktop) {
+                width: 7.2%;
+                height: auto;
+                top: 12%;
+                right: 7%;
+                left: auto;
+            }
+        }
+
+        &--small {
+            width: 2.75rem;
+            height: 2.75rem;
+            left: 3em;
+            top: 8.53em;
+
+            @include respond-to(desktop) {
+                width: 3.9%;
+                height: auto;
+                top: 44%;
+                left: 49%;
+                right: auto;
+            }
+        }
+    }
+}
+
+.first-stat-box {
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+
+    @include respond-to(desktop) {
+        padding-right: 2rem;
+    }
+}
+
+.second-stat-box {
+    padding-left: 1rem;
+
+    @include respond-to(desktop) {
+        padding: 0 2rem;
+        border-right: 1px solid rgba(0, 0, 0, 0.1);
+    }
+}
+
+.last-stat-box {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: 100%;
+    text-align: center;
+
+    @include respond-to(desktop) {
+        grid-column: auto;
+        text-align: left;
+        width: auto;
+        padding-left: 2rem;
+    }
+}

@@ -319,6 +319,7 @@
         opacity: 0;
         transform: translateY(-8px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -533,7 +534,9 @@
             gap: 4px;
 
             li {
-                a, button.text-button {
+
+                a,
+                button.text-button {
                     display: block;
                     width: 100%;
                     text-align: left;
@@ -580,6 +583,7 @@
     from {
         transform: translateX(-100%);
     }
+
     to {
         transform: translateX(0);
     }

@@ -2,13 +2,15 @@
 @use "abstracts/variables" as *;
 @use "abstracts/mixins" as *;
 @use "components/navbar";
+@use "components/hero";
 
 /* ==========================================================================
    SHOP.CO COMPLETE STYLESHEET (Design System, All Pages & Components)
    ========================================================================== */
 
 /* Base Global Styles */
-html, body {
+html,
+body {
     width: 100%;
     max-width: 100%;
     overflow-x: hidden;
@@ -347,7 +349,8 @@ body {
             color: #000000;
         }
 
-        p, .hero__description {
+        p,
+        .hero__description {
             font-family: $font-family-body;
             font-size: 16px;
             line-height: 1.55;
@@ -447,7 +450,8 @@ body {
             margin-top: 16px;
         }
 
-        img, .hero__image {
+        img,
+        .hero__image {
             max-width: 100%;
             height: auto;
             object-fit: contain;
@@ -490,7 +494,8 @@ body {
     }
 }
 
-.brands-strip, .brand-strip {
+.brands-strip,
+.brand-strip {
     width: 100%;
     background: #000000;
     padding: 42px 24px;
@@ -500,7 +505,8 @@ body {
         padding: 32px 16px;
     }
 
-    .brands-container, .brand-strip__inner {
+    .brands-container,
+    .brand-strip__inner {
         max-width: $breakpoint-desktop;
         margin: 0 auto;
         display: flex;
@@ -518,7 +524,8 @@ body {
             gap: 20px 28px;
         }
 
-        img, .brand-logo {
+        img,
+        .brand-logo {
             height: 36px;
             max-height: 38px;
             width: auto;
@@ -629,6 +636,7 @@ body {
 
                 h3 {
                     font-size: 15px;
+                    font-weight: 700;
                     margin: 12px 0 4px;
                     white-space: nowrap;
                     overflow: hidden;
@@ -962,6 +970,7 @@ body {
 
 .mobile-only {
     display: none !important;
+
     @media (max-width: 900px) {
         display: block !important;
     }
@@ -971,6 +980,7 @@ body {
     from {
         transform: translateX(100%);
     }
+
     to {
         transform: translateX(0);
     }
@@ -980,6 +990,7 @@ body {
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
@@ -1586,7 +1597,8 @@ body {
         }
     }
 
-    .product-spec-card, .product-faq-card {
+    .product-spec-card,
+    .product-faq-card {
         background: $color-white;
         border: 1px solid #E5E5E5;
         border-radius: 20px;
@@ -1855,7 +1867,8 @@ body {
             cursor: pointer;
             transition: color 0.2s ease;
 
-            &:hover, &.is-active {
+            &:hover,
+            &.is-active {
                 color: $color-black;
                 font-weight: 600;
             }
@@ -2363,6 +2376,7 @@ body {
         opacity: 0;
         transform: scale(0.94);
     }
+
     to {
         opacity: 1;
         transform: scale(1);
@@ -2373,6 +2387,7 @@ body {
     from {
         transform: translateY(100%);
     }
+
     to {
         transform: translateY(0);
     }
@@ -2490,7 +2505,8 @@ body {
 }
 
 /* Empty State & Cart Empty Styling */
-.cart-empty-state, .empty-state {
+.cart-empty-state,
+.empty-state {
     background: $color-white;
     border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 24px;
@@ -2970,7 +2986,8 @@ body {
         font-size: 14px;
         font-weight: 600;
 
-        input, textarea {
+        input,
+        textarea {
             padding: 14px 18px;
             border-radius: 14px;
             border: 1px solid $color-border-light;
@@ -3629,7 +3646,7 @@ body {
                             background: #ffffff;
                             box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
 
-                            & ~ .input-icon {
+                            &~.input-icon {
                                 color: $color-black;
                             }
                         }
@@ -3728,12 +3745,21 @@ body {
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-4px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Profile Page & Order Overview Layout */
@@ -3795,7 +3821,8 @@ body {
             font-weight: 600;
             color: $color-black;
 
-            input, textarea {
+            input,
+            textarea {
                 padding: 14px 18px;
                 border-radius: 14px;
                 border: 1px solid $color-border-light;
@@ -4725,7 +4752,8 @@ body {
 }
 
 /* Status & Stock Badges */
-.status-pill, .status-badge {
+.status-pill,
+.status-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -4736,19 +4764,23 @@ body {
     text-transform: capitalize;
     white-space: nowrap;
 
-    &--active, &--delivered, &--confirmed {
+    &--active,
+    &--delivered,
+    &--confirmed {
         background: #E6F9F0;
         color: #01B763;
         border: 1px solid #B8F0D4;
     }
 
-    &--pending, &--shipped {
+    &--pending,
+    &--shipped {
         background: #FFF8E6;
         color: #B78103;
         border: 1px solid #FFE6A3;
     }
 
-    &--inactive, &--cancelled {
+    &--inactive,
+    &--cancelled {
         background: #FEECEB;
         color: #D92D20;
         border: 1px solid #FECDCA;
@@ -4872,7 +4904,9 @@ body {
                     font-weight: 400;
                 }
 
-                input, select, textarea {
+                input,
+                select,
+                textarea {
                     padding: 12px 14px;
                     border-radius: 10px;
                     border: 1px solid $color-border-light;
@@ -4883,7 +4917,8 @@ body {
                     font-family: inherit;
 
                     @media (max-width: 600px) {
-                        font-size: 16px; /* Avoid iOS zoom */
+                        font-size: 16px;
+                        /* Avoid iOS zoom */
                     }
 
                     &:focus {
@@ -4914,7 +4949,8 @@ body {
                 }
             }
 
-            .modal-actions-row, .modal-actions {
+            .modal-actions-row,
+            .modal-actions {
                 display: flex;
                 justify-content: flex-end;
                 gap: 12px;

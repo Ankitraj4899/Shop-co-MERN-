@@ -1,13 +1,25 @@
 @import "tailwindcss";
 
+/* 1. Integral CF - Exclusively for SHOP.CO Logos & Hero Heading */
 @font-face {
   font-family: 'Integral CF';
   src: url('./assets/fonts/Fontspring-DEMO-integralcf-bold.otf') format('opentype');
-  font-weight: 100 900;
+  font-weight: 700 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0020, U+0025, U+002B, U+002C, U+002E, U+0030-0039, U+0041-005A, U+0061-007A;
+}
+
+/* 2. Fallback layer for Integral CF symbols */
+@font-face {
+  font-family: 'Integral CF';
+  src: local('Arial Black'), local('Impact'), local('Segoe UI Black'), local('Arial');
+  font-weight: 400 900;
   font-style: normal;
   font-display: swap;
 }
 
+/* 3. Primary App Font: Satoshi Regular fallback */
 @font-face {
   font-family: 'Satoshi';
   src: url('./assets/fonts/Satoshi-Regular.woff') format('woff');
@@ -18,17 +30,32 @@
 
 :root {
   --font-body: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-heading: 'Integral CF', 'Arial Black', sans-serif;
+  --font-heading: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-logo: 'Integral CF', 'Arial Black', sans-serif;
 }
 
-body {
+body, p, span, button, input, select, textarea {
   font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2, .font-heading {
-  font-family: 'Integral CF', 'Arial Black', sans-serif;
+/* Headings and Titles - Bold Satoshi 700 */
+h1, h2, h3, h4, h5, h6, .font-heading, .section-heading {
+  font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 700;
+}
+
+/* Exclusively apply Integral CF to Logos and Hero Main Heading */
+.logo,
+.navbar__logo,
+.footer__logo,
+.hero__heading,
+.font-integral {
+  font-family: 'Integral CF', 'Arial Black', sans-serif !important;
+  font-weight: 700;
+}
+
+.product-card h3 {
+  font-weight: 700 !important;
 }
 
 .sr-only {
@@ -61,6 +88,3 @@ a.active hr {
   font-weight: 500;
   line-height: 1.3;
 }
-
-
-
