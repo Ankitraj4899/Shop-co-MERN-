@@ -498,28 +498,28 @@ const Admin = () => {
             className={`admin-tab-btn ${currentTab === "overview" ? "is-active" : ""}`}
             onClick={() => setCurrentTab("overview")}
           >
-            📊 Dashboard Overview
+            Dashboard Overview
           </button>
           <button
             type="button"
             className={`admin-tab-btn ${currentTab === "products" ? "is-active" : ""}`}
             onClick={() => setCurrentTab("products")}
           >
-            👕 Products ({products.length})
+            Products ({products.length})
           </button>
           <button
             type="button"
             className={`admin-tab-btn ${currentTab === "categories" ? "is-active" : ""}`}
             onClick={() => setCurrentTab("categories")}
           >
-            📁 Categories ({categories.length})
+            Categories ({categories.length})
           </button>
           <button
             type="button"
             className={`admin-tab-btn ${currentTab === "orders" ? "is-active" : ""}`}
             onClick={() => setCurrentTab("orders")}
           >
-            📦 Customer Orders ({orders.length})
+            Customer Orders ({orders.length})
           </button>
         </nav>
 
