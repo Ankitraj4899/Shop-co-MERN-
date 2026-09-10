@@ -9,7 +9,7 @@ user credentials:-
       password:- ankit123
 
 Detailed Tech stack:-
-   For frontend : React.js
+   frontend : React.js
    server :- Express.js
    Database :- MongoDB
    Backend :- Node.js
@@ -20,4 +20,3 @@ jwt, access tokens, refresh tokens, token blacklisting
 
 deployement :- Render for backend
                vercel for frontend
-

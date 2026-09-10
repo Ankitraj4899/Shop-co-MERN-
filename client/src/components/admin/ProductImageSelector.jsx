@@ -272,7 +272,7 @@ const ProductImageSelector = ({
                 <strong>Click to browse</strong> or drag & drop image here
               </p>
               <span className="dropzone-subtitle">
-                Supports PNG, JPG, JPEG, WEBP (Max 5MB)
+                Supports PNG, JPG, JPEG, WEBP
               </span>
               <button
                 type="button"
