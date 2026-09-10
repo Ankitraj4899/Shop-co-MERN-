@@ -206,6 +206,7 @@
             right: 1.3em;
             top: 2.5em;
 
+
             @include respond-to(desktop) {
                 width: 7.2%;
                 height: auto;
@@ -218,7 +219,7 @@
         &--small {
             width: 2.75rem;
             height: 2.75rem;
-            left: 3em;
+            left: 1.5em;
             top: 8.53em;
 
             @include respond-to(desktop) {
