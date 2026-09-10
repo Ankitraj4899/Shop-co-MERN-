@@ -50,7 +50,7 @@ const Footer = () => {
 
       console.log("EmailJS Success Response:", res);
       setNewsletterSubscribed(true);
-      setFeedbackMessage(`✓ Subscription request sent successfully for ${emailToSubscribe}!`);
+      setFeedbackMessage(`Subscription request sent successfully for ${emailToSubscribe}!`);
       setNewsletterEmail("");
       setTimeout(() => {
         setNewsletterSubscribed(false);
@@ -60,7 +60,7 @@ const Footer = () => {
       console.error("EmailJS Execution Error:", error);
       setNewsletterSubscribed(false);
       const errMsg = error?.text || error?.message || "Error sending EmailJS message";
-      setFeedbackMessage(`❌ EmailJS Error: ${errMsg}`);
+      setFeedbackMessage(`EmailJS Error: ${errMsg}`);
     } finally {
       setIsSending(false);
     }
