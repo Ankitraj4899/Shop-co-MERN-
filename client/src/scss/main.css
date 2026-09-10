@@ -1137,15 +1137,15 @@ body {
 .hero__diamond-star--small {
   width: 2.75rem;
   height: 2.75rem;
-  left: 1.5em;
+  left: 1em;
   top: 8.53em;
 }
 @media (min-width: 769px) {
   .hero__diamond-star--small {
     width: 3.9%;
     height: auto;
-    top: 44%;
-    left: 49%;
+    top: 40%;
+    left: 52%;
     right: auto;
   }
 }
