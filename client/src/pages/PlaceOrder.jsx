@@ -107,6 +107,7 @@ const PlaceOrder = () => {
     }
 
     setFormErrors(errors);
+    //object.keys gives all the property or attribute name
     return Object.keys(errors).length === 0;
   };
 

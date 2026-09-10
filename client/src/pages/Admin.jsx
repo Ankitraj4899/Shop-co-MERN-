@@ -2,19 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import {
-  getAdminDashboard,
-  getAdminProducts,
-  getCategories,
-  getAllOrders,
-  createProduct,
-  updateProduct,
-  deleteProduct,
-  createCategory,
-  updateCategory,
-  deleteCategory,
-  updateOrderStatus,
-} from "../lib/api";
+import { getAdminDashboard, getAdminProducts, getCategories, getAllOrders, createProduct, updateProduct, deleteProduct, createCategory, updateCategory, deleteCategory, updateOrderStatus,} from "../lib/api";
 import { isValidUrlOrPath } from "../lib/validation";
 
 import AdminOverviewTab from "../components/admin/AdminOverviewTab";
@@ -26,20 +14,7 @@ import AdminCategoryModal from "../components/admin/AdminCategoryModal";
 import AdminOrderDetailsModal from "../components/admin/AdminOrderDetailsModal";
 import ConfirmModal from "../components/ConfirmModal";
 
-const emptyProductForm = {
-  name: "",
-  description: "",
-  price: "",
-  originalPrice: "",
-  discount: "",
-  category: "",
-  quantity: "",
-  style: "Casual",
-  thumbnailImage: "",
-  thumbnailFile: null,
-  thumbnailPreview: "",
-  galleryItems: [],
-  status: "active",
+const emptyProductForm = { name: "", description: "", price: "", originalPrice: "", discount: "", category: "", quantity: "", style: "Casual", thumbnailImage: "", thumbnailFile: null, thumbnailPreview: "", galleryItems: [], status: "active",
 };
 
 const emptyCategoryForm = {
